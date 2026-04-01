@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import soda_roja.backend.repository.ProductoRepository;
 import soda_roja.backend.model.Producto;
-import soda_roja.backend.dto.ProductoDTO;
 import java.util.List;
 
 @Service
