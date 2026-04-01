@@ -23,20 +23,20 @@ public class Persona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
-    @Schema(example = "1", description = "Identificador único del producto")
+    @Schema(examples = "1", description = "Identificador único del producto")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
     @NotBlank(message = "El tipo de documento no puede estar vacío")
     @Pattern(regexp = "DNI|Pasaporte|Cédula", message = "El tipo de documento debe ser DNI, Pasaporte o Cédula")
     @Column(name = "tipoDoc", nullable = false)
-    @Schema(example = "DNI")
+    @Schema(examples = "DNI")
     private String tipoDoc;
 
     @NotBlank(message = "El número de documento no puede estar vacío")
     @Pattern(regexp = "\\d{7,10}", message = "El número de documento debe tener entre 7 y 10 dígitos")
     @Column(name = "nroDocumento", unique = true, nullable = false)
-    @Schema(example = "12345678")
+    @Schema(examples = "12345678")
     private String nroDocumento;
 
     @NotBlank(message = "El nombre no puede estar vacío")
