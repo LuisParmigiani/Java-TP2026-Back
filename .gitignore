@@ -1,4 +1,5 @@
 HELP.md
+target/
 ### Variables de entorno ###
 .env
 
