@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
+import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.service.DomicilioService;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class DomicilioController {
     @PostMapping
     public ResponseEntity<DomicilioDTOResponse> create(@Valid @RequestBody DomicilioDTORequest entidad) {
         return ResponseEntity.ok(service.save(entidad));
+
     }
 
     // PUT - actualizar

@@ -1,6 +1,7 @@
 package soda_roja.backend.dtoResponse;
 
 import lombok.*;
+import soda_roja.backend.model.Usuario;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -17,6 +18,4 @@ public class PersonaDTOResponse {
     private String email;
     private String telefono;
     private float deuda;
-
-
 }

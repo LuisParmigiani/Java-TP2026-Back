@@ -1,5 +1,7 @@
 package soda_roja.backend.dtoRequest;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -13,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class DomicilioDTORequest {
-
     @NotBlank(message = "La calle no puede estar vacía")
+    @Schema(description = "La calle del domicilio", example = "Calle Falsa")
     private String calle;
 
     @NotBlank(message = "El número no puede estar vacío")
