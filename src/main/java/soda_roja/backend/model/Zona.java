@@ -43,13 +43,13 @@ public class Zona {
         name = "zonaProducto", // Nombre de la tabla intermedia
         joinColumns = @JoinColumn(name = "zonaId"), // Clave foránea que referencia a Zona
         inverseJoinColumns = @JoinColumn(name = "productoId") )// Clave foránea que referencia a Producto
-    @Schema(example = "[{\"id\": 1, \"nombre\": \"Producto A\", \"detalle\": \"Detalle del producto A\", \"precio\": 19.99, \"stock\": 100}]", description = "Lista de productos asociados a la zona")
+    @Schema(example = "[{\"id\": 1}]", description = "Lista de productos asociados a la zona")
     private List<Producto> producto;
 
     @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch =  FetchType.LAZY)
     // cascade: para que todo lo que se haga en zona quede aplicado en el domicilio, por ejemplo si borro zona se borran todos los domicilios relacionados
     // orphanRemoval: Es para el manejo de entidades huerfanas es decir si uno borra un domicilio de la lista de zona se elimina el domicilio de la base de datos.
-    @Schema(example = "[{\"id\": 1, \"calle\": \"Calle Falsa\", \"numero\": \"123\", \"ciudad\": \"Rosario\"}]", description = "Lista de domicilios asociados a la zona")
+    @Schema(example = "[{\"id\": 1", description = "Lista de domicilios asociados a la zona")
     @JsonManagedReference
     private List<Domicilio> domicilio;
 }

@@ -28,6 +28,7 @@ public class Domicilio {
     @Schema(example = "1", description = "Identificador único del domicilio")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
+    
     @NotBlank(message = "La calle no puede estar vacía")
     @Column(name = "calle", nullable = false)
     @Schema(example = "Av jorge newbery", description = "Nombre de la calle del domicilio")
@@ -45,7 +46,7 @@ public class Domicilio {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zonaId", nullable = false)
     // joinColumn: el name es el nombre de la cplumna en la que se va a guardar la clave foranea
-    @Schema(example = "{\"id\": 1, \"nombre\": \"Fisherton\", \"detalle\": \"Zona de Rosario\"}", description = "Zona a la que pertenece el domicilio")
+    @Schema(example = "{\"id\": 1,}", description = "Zona a la que pertenece el domicilio")
     @JsonBackReference
     private Zona zona;
 }
