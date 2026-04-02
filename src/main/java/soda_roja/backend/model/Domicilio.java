@@ -1,6 +1,8 @@
 package soda_roja.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -40,4 +42,10 @@ public class Domicilio {
     @Column(name = "casa")
     private String casa;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "zonaId", nullable = false)
+    // joinColumn: el name es el nombre de la cplumna en la que se va a guardar la clave foranea
+    @Schema(example = "{\"id\": 1, \"nombre\": \"Fisherton\", \"detalle\": \"Zona de Rosario\"}", description = "Zona a la que pertenece el domicilio")
+    @JsonBackReference
+    private Zona zona;
 }

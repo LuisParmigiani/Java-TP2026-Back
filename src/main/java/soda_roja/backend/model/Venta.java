@@ -26,7 +26,7 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Schema(example = "1", description = "Identificador único de la venta")
-    private long id;
+    private Long id;
     @NotNull(message = "La fecha no puede ser nula")
     @Column(name = "fecha", nullable = false)
     @Schema(example = "2024-06-01", description = "Fecha de la venta")

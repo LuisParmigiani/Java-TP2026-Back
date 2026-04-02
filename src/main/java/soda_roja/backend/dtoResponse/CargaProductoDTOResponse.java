@@ -1,4 +1,5 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoResponse;
+
 
 import lombok.*;
 
@@ -8,8 +9,8 @@ import lombok.*;
 @Builder
 
 
-public class ZonaDTO {
+public class CargaProductoDTOResponse {
     private long id;
-    private String nombre;
-    private String detalle;
+    private int cantLleno;
+    private int cantVacio;
 }

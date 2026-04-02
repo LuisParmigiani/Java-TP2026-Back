@@ -1,4 +1,4 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoRequest;
 
 
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 
 
-public class CargaProductoDTO {
+public class CargaProductoDTORequest {
     private long id;
     private int cantLleno;
     private int cantVacio;

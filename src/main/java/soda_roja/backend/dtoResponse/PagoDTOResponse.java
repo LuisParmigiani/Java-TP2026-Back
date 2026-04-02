@@ -1,4 +1,4 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoResponse;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 
-public class PagoDTO {
+public class PagoDTOResponse {
     private Long id;
     private float monto;
     private Date fecha;

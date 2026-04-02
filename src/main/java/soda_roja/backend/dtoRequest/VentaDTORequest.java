@@ -1,4 +1,5 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoRequest;
+
 import lombok.*;
 
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 
-public class VentaDTO {
+public class VentaDTORequest {
     private long id;
     private Date fecha;
     private double total;

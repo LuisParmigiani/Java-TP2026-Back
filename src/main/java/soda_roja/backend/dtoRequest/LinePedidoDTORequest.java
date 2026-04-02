@@ -1,15 +1,14 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoRequest;
 
 import lombok.*;
-
-import java.util.Date;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CargaDTO {
+
+public class LinePedidoDTORequest {
     private Long id;
-    private String tipo;;
-    private Date fechaHora;
+    private int cantidad;
+    private float subtotal;
 }

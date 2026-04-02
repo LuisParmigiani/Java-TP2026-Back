@@ -1,4 +1,4 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoRequest;
 
 import lombok.*;
 
@@ -7,8 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 
-public class LinePedidoDTO {
+
+public class PersonaDomicilioDTORequest {
     private Long id;
-    private int cantidad;
-    private float subtotal;
+    private String dia;
 }

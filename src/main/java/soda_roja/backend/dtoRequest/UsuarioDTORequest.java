@@ -1,4 +1,4 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoRequest;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 
 
-public class UsuarioDTO {
+public class UsuarioDTORequest {
     private Long id;
     private String nombreUsuario;
     private String contrasena;

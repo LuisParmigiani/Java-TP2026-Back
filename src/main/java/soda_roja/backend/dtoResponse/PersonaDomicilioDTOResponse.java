@@ -1,4 +1,4 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoResponse;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 
 
-public class PersonaDomicilioDTO {
+public class PersonaDomicilioDTOResponse {
     private Long id;
     private String dia;
 }

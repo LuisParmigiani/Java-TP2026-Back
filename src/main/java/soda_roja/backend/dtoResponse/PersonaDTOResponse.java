@@ -1,4 +1,4 @@
-package soda_roja.backend.dto;
+package soda_roja.backend.dtoResponse;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 
-public class PersonaDTO {
+public class PersonaDTOResponse {
 
     private Long id;
     private String tipoDoc;
