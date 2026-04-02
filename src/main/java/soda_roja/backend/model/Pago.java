@@ -17,7 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "persona")
+@Table(name = "pago")
 @Schema(description = "Entidad que representa una persona")
 
 public class Pago {

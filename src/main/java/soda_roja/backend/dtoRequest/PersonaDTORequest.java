@@ -12,8 +12,7 @@ import lombok.*;
 @Builder
 @Schema(description = "Entidad que representa una persona")
 public class PersonaDTORequest {
-    @Schema(examples = "1", description = "Identificador único del producto")
-    private Long id;
+
     @NotBlank(message = "El tipo de documento no puede estar vacío")
     @Pattern(regexp = "DNI|Pasaporte|Cédula", message = "El tipo de documento debe ser DNI, Pasaporte o Cédula")
     @Schema(examples = "DNI")

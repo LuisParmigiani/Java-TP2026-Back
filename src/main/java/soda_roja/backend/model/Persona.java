@@ -21,7 +21,7 @@ public class Persona {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
+    @Column( unique = true, nullable = false)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
@@ -45,7 +45,6 @@ public class Persona {
 
     @Column(name = "deuda", nullable = true)
     private float deuda;
-    @OneToOne
-    @JoinColumn(name = "usuarioId")
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
     private Usuario usuario;
 }

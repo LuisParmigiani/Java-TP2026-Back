@@ -3,6 +3,8 @@ package soda_roja.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import soda_roja.backend.dtoRequest.UsuarioDTORequest;
+import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.service.UsuarioService;
 import soda_roja.backend.model.Usuario;
 import java.util.List;
@@ -18,25 +20,25 @@ public class UsuarioController {
 
     // GET - traer todos
     @GetMapping
-    public ResponseEntity<List<Usuario>> getAll() {
+    public ResponseEntity<List<UsuarioDTOResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     // GET - traer por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getById(@PathVariable long id) {
+    public ResponseEntity<UsuarioDTOResponse> getById(@PathVariable long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     // POST - crear nuevo
     @PostMapping
-    public ResponseEntity<Usuario> create(@Valid @RequestBody Usuario entidad) {
+    public ResponseEntity<UsuarioDTOResponse> create(@Valid @RequestBody UsuarioDTORequest entidad) {
         return ResponseEntity.ok(service.save(entidad));
     }
 
     // PUT - actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> update(@PathVariable long id, @Valid @RequestBody Usuario entidad) {
+    public ResponseEntity<UsuarioDTOResponse> update(@PathVariable long id, @Valid @RequestBody UsuarioDTORequest entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

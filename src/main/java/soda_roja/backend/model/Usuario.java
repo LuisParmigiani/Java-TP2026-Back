@@ -29,6 +29,7 @@ public class Usuario {
     private String contrasena;
      @Column(name = "nivelAcceso", nullable = false)
      private String nivelAcceso;
-     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+     @OneToOne
+     @JoinColumn(name = "personaId",nullable = false)
      private Persona persona;
 }

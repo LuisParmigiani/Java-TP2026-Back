@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
@@ -19,7 +20,7 @@ public class UsuarioDTORequest {
     @Schema(example = "1", description = "Identificador único del producto")
     private Long id;
     @NotBlank(message = "El nombre de usuario no puede estar vacío")
-    @Pattern(regexp = "^[a-zA-Z0-9_]{3,)}$", message = "El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras, números y guiones bajos")
+    @Pattern(regexp = "^[a-zA-Z0-9_]{3,}$", message = "El nombre de usuario debe tener al menos 3 caracteres y solo puede contener letras, números y guiones bajos.")
     @Schema(example = "juan_perez", description = "Nombre de usuario único para iniciar sesión")
     private String nombreUsuario;
     @NotBlank(message = "La contraseña no puede estar vacía")
@@ -30,7 +31,7 @@ public class UsuarioDTORequest {
     @Pattern(regexp = "Administrador|Usuario|Empleado", message = "El nivel de acceso debe ser algunas de las opciones correctas: Administrador, Usuario o Empleado")
     @Schema(example = "Usuario", description = "Nivel de acceso del usuario, puede ser Administrador, Usuario o Empleado")
     private String nivelAcceso;
-    @NotBlank(message = "El id del usuario no puede estar vacío")
+    @NotNull(message = "El id de la persona no puede estar vacío")
     @Schema(example = "1", description = "Identificador del usuario al que pertenece este domicilio")
-    private int Usuario;
+    private Long personaId;
 }
