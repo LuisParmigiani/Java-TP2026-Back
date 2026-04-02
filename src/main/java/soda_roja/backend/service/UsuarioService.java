@@ -59,7 +59,7 @@ public class UsuarioService {
         repository.deleteById(id);
     }
 
-    private UsuarioDTOResponse mapToDTO(Usuario usuario) {
+    public UsuarioDTOResponse mapToDTO(Usuario usuario) {
         return UsuarioDTOResponse.builder()
                 .id(usuario.getId())
                 .nombreUsuario(usuario.getNombreUsuario())

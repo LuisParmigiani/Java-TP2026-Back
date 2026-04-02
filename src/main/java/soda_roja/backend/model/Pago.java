@@ -23,19 +23,15 @@ import java.util.Date;
 public class Pago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Schema(example = "1", description = "Identificador único del pago")
     private Long id;
-    @NotNull(message = "El monto no puede ser nulo")
-    @Min(value = 0, message = "El monto debe ser mayor o igual a 0")
     @Column(name = "monto", nullable = false)
     private float monto;
-    @NotNull(message = "La fecha no puede ser nula")
     @Column(name = "fecha", nullable = false)
-    @FutureOrPresent(message = "La fecha no puede ser en el pasado")
     private Date fecha;
-    @NotBlank(message = "El método de pago no puede estar vacío")
-    @Column(name = "metodo_pago", nullable = false)
+    @Column(name = "metodoPago", nullable = false)
     private String metodoPago;
+    @ManyToOne
+    @JoinColumn(name="personaId")
+    private Persona persona;
+
 }

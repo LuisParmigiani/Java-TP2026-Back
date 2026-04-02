@@ -1,5 +1,10 @@
 package soda_roja.backend.dtoRequest;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Date;
@@ -10,8 +15,19 @@ import java.util.Date;
 @Builder
 
 public class PagoDTORequest {
-    private Long id;
+    @NotNull(message = "El monto no puede ser nulo")
+    @Min(value = 0, message = "El monto debe ser mayor o igual a 0")
     private float monto;
+    @FutureOrPresent(message = "La fecha no puede ser en el pasado")
+    @NotNull(message = "La fecha no puede ser nula")
+    @Schema(description = "Fecha del pago en formato ISO 8601", example = "2029-06-01T14:30:00")
     private Date fecha;
+
+    @NotBlank(message = "El método de pago no puede estar vacío")
+    @Schema(description = "Método de pago utilizado para la transacción", example = "Tarjeta de crédito")
     private String metodoPago;
+
+    @NotNull(message = "El id de la pesona no puede ser nulo")
+    @Schema(description = "ID de la persona asociada al pago", example = "1")
+    private Long personaId;
 }

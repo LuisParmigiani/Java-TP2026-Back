@@ -14,6 +14,8 @@ public class PersonaService {
 
     @Autowired
     private PersonaRepository repository;
+    @Autowired
+    private PagoService pagoService;
 
 
     public List<PersonaDTOResponse> getAll() {
@@ -50,6 +52,7 @@ public class PersonaService {
         existing.setTelefono(entidad.getTelefono());
         existing.setDeuda(entidad.getDeuda());
 
+
         return mapToDTO(repository.save(existing));
     }
 
@@ -67,7 +70,11 @@ public class PersonaService {
                 .email(persona.getEmail())
                 .telefono(persona.getTelefono())
                 .deuda(persona.getDeuda())
+                .pagos(persona.getPagos().stream()
+                        .map(pagoService::mapToDTO)
+                        .toList())
                 .build();
     }
+
 }
 

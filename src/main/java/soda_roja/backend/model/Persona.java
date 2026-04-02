@@ -1,5 +1,6 @@
 package soda_roja.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -10,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -46,5 +49,9 @@ public class Persona {
     @Column(name = "deuda", nullable = true)
     private float deuda;
     @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    private List<Pago> pagos;
 }
