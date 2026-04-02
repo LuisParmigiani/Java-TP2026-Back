@@ -48,7 +48,7 @@ public class Producto { //Estos mensajes te tiran la bronca a nivel de app cuand
 	@Schema(example = "20", description = "Cantidad disponible en stock")
 	private int stock;
 
-	@ManyToMany(mappedBy = "producto", fetch = FetchType.LAZY)//fetch.LAZY se utiliza para cargar los productos asociados a la zona solo cuando se soliciten, evitando cargar toda la información de los productos al obtener una zona solo se carga al poner zona.getProducto()
+	@ManyToMany(mappedBy = "productos", fetch = FetchType.LAZY)//fetch.LAZY se utiliza para cargar los productos asociados a la zona solo cuando se soliciten, evitando cargar toda la información de los productos al obtener una zona solo se carga al poner zona.getProducto()
 	@Schema(example = "[{\"id\": 1}]", description = "Lista de zonas asociadas al producto")
 	private List<Zona> zona;
 

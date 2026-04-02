@@ -7,7 +7,6 @@ import lombok.*;
 
 public class CamionDTORequest {
 
-    private Long id;
     private String patente;
     private String modelo;
 	private String marca;

@@ -2,6 +2,9 @@ package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
+import soda_roja.backend.dtoResponse.ProductoDTOResponse;
+import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.repository.ProductoRepository;
 import soda_roja.backend.model.Producto;
 import java.util.List;
@@ -35,5 +38,14 @@ public class ProductoService {
 
     public void delete(int id) {
         repository.deleteById(id);
+    }
+    public ProductoDTOResponse mapToDTO(Producto producto) {
+        return ProductoDTOResponse.builder()
+                .id(producto.getId())
+                .nombre(producto.getNombre())
+                .detalle(producto.getDetalle())
+                .precio(producto.getPrecio())
+                .stock(producto.getStock())
+                .build();
     }
 }

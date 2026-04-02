@@ -9,7 +9,6 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class CargaDTORequest {
-    private Long id;
     private String tipo;;
     private Date fechaHora;
 }

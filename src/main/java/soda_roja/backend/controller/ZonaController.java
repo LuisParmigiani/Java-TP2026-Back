@@ -2,6 +2,8 @@ package soda_roja.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import soda_roja.backend.dtoRequest.ZonaDTORequest;
+import soda_roja.backend.dtoResponse.ZonaDTOResponse;
 import soda_roja.backend.model.Zona;
 import soda_roja.backend.service.ZonaService;
 import java.util.List;
@@ -16,25 +18,25 @@ public class ZonaController {
 
     // GET - traer todos
     @GetMapping
-    public ResponseEntity<List<Zona>> getAll() {
+    public ResponseEntity<List<ZonaDTOResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     // GET - traer por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Zona> getById(@PathVariable long id) {
+    public ResponseEntity<ZonaDTOResponse> getById(@PathVariable long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     // POST - crear nuevo
     @PostMapping
-    public ResponseEntity<Zona> create(@Valid @RequestBody Zona entidad) {
+    public ResponseEntity<ZonaDTOResponse> create(@Valid @RequestBody ZonaDTORequest entidad) {
         return ResponseEntity.ok(service.save(entidad));
     }
 
     // PUT - actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<Zona> update(@PathVariable long id, @Valid @RequestBody Zona entidad) {
+    public ResponseEntity<ZonaDTOResponse> update(@PathVariable long id, @Valid @RequestBody ZonaDTORequest entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

@@ -25,17 +25,10 @@ public class Zona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id",unique = true, nullable = false)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Schema(example = "1", description = "Identificador único de la zona")
     private Long id;
-    @NotBlank(message = "El nombre no puede estar vacío")
     @Column(name = "nombre", nullable = false,unique = true)
-    @Schema(example = "Fisherton", description = "Nombre de la zona")
-    @Pattern(regexp = "[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{3,50}", message = "El nombre debe tener entre 3 y 50 caracteres")
     private String nombre;
     @Column(name = "detalle")
-    @Schema(example = "Zona de Rosario", description = "Detalle de la zona")
-    @Pattern(regexp = "[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{0,200}", message = "El detalle debe tener entre 0 y 200 caracteres")
     private String detalle;
 
     @ManyToMany
@@ -43,13 +36,12 @@ public class Zona {
         name = "zonaProducto", // Nombre de la tabla intermedia
         joinColumns = @JoinColumn(name = "zonaId"), // Clave foránea que referencia a Zona
         inverseJoinColumns = @JoinColumn(name = "productoId") )// Clave foránea que referencia a Producto
-    @Schema(example = "[{\"id\": 1}]", description = "Lista de productos asociados a la zona")
-    private List<Producto> producto;
+    private List<Producto> productos;
 
-    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true,fetch =  FetchType.LAZY)
     // cascade: para que todo lo que se haga en zona quede aplicado en el domicilio, por ejemplo si borro zona se borran todos los domicilios relacionados
     // orphanRemoval: Es para el manejo de entidades huerfanas es decir si uno borra un domicilio de la lista de zona se elimina el domicilio de la base de datos.
-    @Schema(example = "[{\"id\": 1", description = "Lista de domicilios asociados a la zona")
     @JsonManagedReference
+
     private List<Domicilio> domicilio;
 }

@@ -1,9 +1,14 @@
 package soda_roja.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import soda_roja.backend.dtoRequest.ZonaDTORequest;
+import soda_roja.backend.dtoResponse.ZonaDTOResponse;
+import soda_roja.backend.dtoResponse.ZonaDTOResponse;
+import soda_roja.backend.model.Domicilio;
+import soda_roja.backend.model.Producto;
 import soda_roja.backend.model.Zona;
 import soda_roja.backend.repository.ZonaRepository;
-
+import soda_roja.backend.service.ProductoService;
 import java.util.List;
 @Service
 public class ZonaService {
@@ -11,29 +16,52 @@ public class ZonaService {
     @Autowired
     private ZonaRepository repository;
 
-    public List<Zona> getAll() {
-        return repository.findAll();
+    public List<ZonaDTOResponse> getAll() {
+        return repository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public Zona getById(Long id) {
-        return repository.findById(id).orElseThrow();
+    public ZonaDTOResponse getById(Long id) {
+        Zona zona = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Zona no encontrado con id: " + id));
+        return mapToDTO(zona);
     }
 
-    public Zona save(Zona entidad) {
-        return repository.save(entidad);
+    public ZonaDTOResponse save(ZonaDTORequest entidad) {
+
+
+        Zona zona = Zona.builder()
+                .nombre(entidad.getNombre())
+                .detalle(entidad.getDetalle())
+                .build();
+
+        return mapToDTO(repository.save(zona));
     }
 
-    public Zona update(Long id, Zona entidad) {
-        Zona existing = repository.findById(id).orElseThrow();
-        existing.setDetalle(entidad.getDetalle());
-        existing.setNombre(entidad.getNombre());
+    public ZonaDTOResponse update(Long id, ZonaDTORequest entidad) {
 
+        Zona zona = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Zona no encontrada con id: " +id));
+        zona.setDetalle(entidad.getDetalle());
+        zona.setNombre(entidad.getNombre());
 
-        return repository.save(existing);
+        return mapToDTO(repository.save(zona));
     }
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    private ZonaDTOResponse mapToDTO(Zona zona) {
+        return ZonaDTOResponse.builder()
+                .id(zona.getId())
+                .nombre(zona.getNombre())
+                .detalle(zona.getDetalle())
+                .productos(zona.getProductos() != null
+                        ? zona.getProductos().stream()
+                          .map(producto -> new ProductoService().mapToDTO(producto))
+                          .toList()
+                        : List.of()) // Return an empty list if productos is null
+                .build();
     }
 
 }
