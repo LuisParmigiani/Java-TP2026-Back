@@ -1,3 +1,4 @@
+/bin/
 HELP.md
 ### Variables de entorno ###
 .env
@@ -33,6 +34,5 @@ out/
 hs_err_pid*
 replay_pid*
 /target/
-
 
 *.DS_Store

@@ -1,6 +1,7 @@
 package soda_roja.backend.dtoResponse;
 
 import lombok.*;
+import soda_roja.backend.dtoRequest.ZonaDTORequest;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ProductoDTOResponse {
 	private String detalle;
 	private double precio;
 	private int stock;
-	private List<soda_roja.backend.dtoResponse.ZonaDTORequest> zona;
+	private List<ZonaDTORequest> zona;
 	
 	
 
