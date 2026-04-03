@@ -31,7 +31,6 @@ public class Carga {
     private Long id;
 
     @Column(name = "tipo", nullable = false)
-    @Schema(example = "Carga", description = "Tipo de carga, puede ser Carga o Descarga")
     private String tipo;;
     @Column(name = "fechaHora", nullable = false)
     private Date fechaHora;

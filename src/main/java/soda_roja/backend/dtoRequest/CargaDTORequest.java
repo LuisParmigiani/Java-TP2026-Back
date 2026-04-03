@@ -16,6 +16,7 @@ public class CargaDTORequest {
 
     @NotBlank(message = "El tipo de carga no puede estar vacío")
     @Pattern(regexp = "Carga|Descarga", message = "El tipo de carga debe ser Carga o Descarga")
+    @Schema(example = "Carga", description = "Tipo de carga, puede ser Carga o Descarga")
     private String tipo;;
     @NotNull(message = "La fecha y hora no puede estar vacía")
     @Schema(example = "2024-06-01T14:30:00", description = "Fecha y hora de la carga o descarga en formato ISO 8601")

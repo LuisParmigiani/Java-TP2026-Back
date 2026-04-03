@@ -20,7 +20,7 @@ public class Producto { //Estos mensajes te tiran la bronca a nivel de app cuand
 	@Id // Marca este campo como la clave primaria
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // Genera el valor automáticamente
 	@Column(name = "id", unique=true, nullable=false) // Especifica el nombre de la columna en la base de datos
-	private Long id;
+	private long id;
 	
 	
 	@Column(unique=true, length=100) // Solo hace falta column si le queremos poner propiedades o nombres distintos.

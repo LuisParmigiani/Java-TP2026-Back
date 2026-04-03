@@ -4,7 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.service.CargaProductoService;
+import soda_roja.backend.service.ProductoService;
+import soda_roja.backend.dtoRequest.CargaProductoDTORequest;
+import soda_roja.backend.dtoResponse.CargaProductoDTOResponse;
+import soda_roja.backend.dtoResponse.ZonaDTOResponse;
 import soda_roja.backend.model.CargaProducto;
+import soda_roja.backend.model.Zona;
+
 import java.util.List;
 import jakarta.validation.Valid;
 
@@ -18,25 +24,25 @@ public class CargaProductoController {
 
     // GET - traer todos
     @GetMapping
-    public ResponseEntity<List<CargaProducto>> getAll() {
+    public ResponseEntity<List<CargaProductoDTOResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     // GET - traer por ID
     @GetMapping("/{id}")
-    public ResponseEntity<CargaProducto> getById(@PathVariable long id) {
+    public ResponseEntity<CargaProductoDTOResponse> getById(@PathVariable long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     // POST - crear nuevo
     @PostMapping
-    public ResponseEntity<CargaProducto> create(@Valid @RequestBody CargaProducto entidad) {
+    public ResponseEntity<CargaProductoDTOResponse> create(@Valid @RequestBody CargaProductoDTORequest entidad) {
         return ResponseEntity.ok(service.save(entidad));
     }
 
     // PUT - actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<CargaProducto> update(@PathVariable long id, @Valid @RequestBody CargaProducto entidad) {
+    public ResponseEntity<CargaProductoDTOResponse> update(@PathVariable long id, @Valid @RequestBody CargaProductoDTORequest entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 
@@ -46,5 +52,6 @@ public class CargaProductoController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 
 }

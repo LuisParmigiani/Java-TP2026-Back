@@ -13,4 +13,6 @@ public class CargaProductoDTOResponse {
     private long id;
     private int cantLleno;
     private int cantVacio;
+    private long idCarga;
+    private long idProducto;
 }

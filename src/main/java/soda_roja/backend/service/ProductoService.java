@@ -28,7 +28,7 @@ public class ProductoService {
         return repository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public ProductoDTOResponse getById(int id) {
+    public ProductoDTOResponse getById(long id) {
     	Producto producto = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + id));
         return mapToDTO(producto);
@@ -53,7 +53,7 @@ public class ProductoService {
         return mapToDTO(repository.save(producto));
     }
 
-    public ProductoDTOResponse update(int id, ProductoDTORequest entidad) {
+    public ProductoDTOResponse update(long id, ProductoDTORequest entidad) {
         Producto existing = repository.findById(id).orElseThrow();
         
      // Remove producto de las zonas viejas
@@ -76,7 +76,7 @@ public class ProductoService {
         return mapToDTO(repository.save(existing));
     }
 
-    public void delete(int id) {
+    public void delete(long id) {
         Producto producto = repository.findById(id).orElseThrow();
         for (Zona zona : producto.getZonas()) { //borro los productos de las zonas (padre)
             zona.getProductos().remove(producto);

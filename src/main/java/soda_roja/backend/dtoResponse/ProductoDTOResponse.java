@@ -5,6 +5,8 @@ import soda_roja.backend.dtoRequest.ZonaDTORequest;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +19,8 @@ public class ProductoDTOResponse {
 	private String detalle;
 	private double precio;
 	private int stock;
+	
+	@JsonBackReference
 	private List<ZonaDTOResponse> zonas;
 	
 	

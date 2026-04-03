@@ -27,13 +27,18 @@ public class CargaProducto {
     @Schema(example = "1", description = "Identificador único de la carga de producto")
     private Long id;
 
-    @Min(value = 0, message = "La cantidad de llenos no puede ser negativa")
     @Column(name = "cant_lleno", nullable = false)
-    @Schema(example = "10", description = "Cantidad de productos llenos")
     private int cantLleno;
 
-    @Min(value = 0, message = "La cantidad de vacíos no puede ser negativa")
+    
     @Column(name = "cant_vacio", nullable = false)
-    @Schema(example = "5", description = "Cantidad de productos vacíos")
     private int cantVacio;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productoId", nullable = false)
+    private Producto producto;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cargaId", nullable = false)
+    private Carga carga;
 }
