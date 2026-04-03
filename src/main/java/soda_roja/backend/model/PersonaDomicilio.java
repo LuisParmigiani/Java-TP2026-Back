@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
@@ -33,11 +34,14 @@ public class PersonaDomicilio {
     @JoinColumn(name = "domicilioId", nullable = false)
     private Domicilio domicilio;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "camionId")
     private Camion camion;
 
     @OneToMany(mappedBy = "personaDomicilio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Venta> ventas;
+
+    @OneToMany(mappedBy = "personaDomicilio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<ProductoPersonaDomicilio> productosPersonaDomicilio;
 }

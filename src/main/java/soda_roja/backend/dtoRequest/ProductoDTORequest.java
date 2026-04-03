@@ -32,4 +32,6 @@ public class ProductoDTORequest {
 	@Min(value = 0, message = "El stock no puede ser negativo")
 	@Schema(example = "20", description = "Cantidad disponible en stock")
 	private int stock;
+	
+	
 }

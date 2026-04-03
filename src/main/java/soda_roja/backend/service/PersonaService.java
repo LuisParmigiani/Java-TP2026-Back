@@ -72,11 +72,12 @@ public class PersonaService {
                 .email(persona.getEmail())
                 .telefono(persona.getTelefono())
                 .deuda(persona.getDeuda())
-                .pagos(persona.getPagos().stream().map(pago ->
+                .pagos(persona.getPagos() != null ? persona.getPagos().stream().map(pago ->
                         new PagoService().mapToDTO(pago)
-                ).collect(Collectors.toList()))
+                ).collect(Collectors.toList()) : List.of())
                 .build();
     }
+
 
 }
 

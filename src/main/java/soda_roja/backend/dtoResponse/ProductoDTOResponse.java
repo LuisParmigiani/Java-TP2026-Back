@@ -23,4 +23,6 @@ public class ProductoDTOResponse {
 
     @Schema(example = "20", description = "Cantidad disponible en stock")
     private int stock;
+    
+    
 }
