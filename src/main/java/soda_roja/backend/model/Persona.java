@@ -1,5 +1,6 @@
 package soda_roja.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +53,8 @@ public class Persona {
     @JsonIgnore
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Pago> pagos;
 
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)

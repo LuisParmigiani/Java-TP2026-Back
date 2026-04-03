@@ -8,6 +8,7 @@ import soda_roja.backend.model.*;
 import soda_roja.backend.repository.DomicilioRepository;
 import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.PersonaDomicilioRepository;
+import soda_roja.backend.repository.VentaRepository;
 
 import java.util.List;
 @Service
@@ -20,7 +21,8 @@ public class PersonaDomicilioService {
     private PersonaRepository PersonaRepository;
     @Autowired
     private DomicilioRepository DomicilioRepository;
-
+    @Autowired
+    private VentaRepository VentaRepository;
 
     public List<PersonaDomicilioDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
@@ -37,7 +39,6 @@ public class PersonaDomicilioService {
             .orElseThrow(() -> new RuntimeException("Persona no encontrada con id: " + entidad.getPersonaId()));
         Domicilio domicilio = DomicilioRepository.findById(entidad.getDomicilioId())
             .orElseThrow(() -> new RuntimeException("Domicilio no encontrado con id: " + entidad.getDomicilioId()));
-
         PersonaDomicilio personaDomicilio = PersonaDomicilio.builder()
                 .persona(persona)
                 .domicilio(domicilio)
@@ -71,8 +72,13 @@ public class PersonaDomicilioService {
         return PersonaDomicilioDTOResponse.builder()
                 .id(personaDomicilio.getId())
                 .dia(personaDomicilio.getDia())
-                .personas(new PersonaService().mapToDTOSinPago(personaDomicilio.getPersona()))
+                .personas(new PersonaService().mapToDTO(personaDomicilio.getPersona()))
                 .domicilios(new DomicilioService().mapToDTO(personaDomicilio.getDomicilio()))
+                .ventas(personaDomicilio.getVentas() != null
+                        ? personaDomicilio.getVentas().stream()
+                          .map(venta -> new VentaService().mapToDTO(venta))
+                          .toList()
+                        : List.of()) // Return an empty list if ventas is null
                 .build();
     }
 }

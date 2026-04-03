@@ -13,4 +13,5 @@ public class VentaDTOResponse {
     private Date fecha;
     private double total;
     private boolean pagado;
+    private long idPersonaDomicilio;
 }

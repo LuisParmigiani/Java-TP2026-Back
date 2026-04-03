@@ -1,8 +1,10 @@
 package soda_roja.backend.dtoRequest;
 import lombok.*;
 import io.swagger.v3.oas.annotations.media.Schema;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
+
+import java.util.List;
+
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,6 +34,12 @@ public class CamionDTORequest {
 	@Min(value = 0, message = "El kilometraje no puede ser negativo") // Valida que el valor sea mayor o igual a 0
 	@Schema(example = "20", description = "Kilometraje del camión")
 	private Integer kilometraje;
-	
-}
 
+	@Schema(
+			example = "[1, 6, 9]",
+			description = "Lista de IDs de PersonaDomicilio que se asignarán a la persona. Puede ser nula o vacía. Si se proporciona, cada ID debe ser un número entero positivo."
+	)
+	@Size(max = 100, message = "La lista de IDs de PersonaDomicilio no puede contener más de 100 elementos") // Valida un tamaño máximo razonable
+	private List<@Positive(message = "Cada ID de PersonaDomicilio debe ser un número entero positivo") Long> personasDomiciliosId;
+
+}
