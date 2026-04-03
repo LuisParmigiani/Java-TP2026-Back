@@ -34,4 +34,8 @@ public class LineaPedido {
     @Column(name = "subtotal", nullable = false)
     @Min(value = 0, message = "El subtotal debe ser mayor o igual a 0")
     private float subtotal;
+    @ManyToOne
+    @JoinColumn(name = "productoZonaId", nullable = false)
+    private ProductoZona productoZona;
+
 }
