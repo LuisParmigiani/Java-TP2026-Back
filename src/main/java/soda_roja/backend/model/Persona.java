@@ -52,7 +52,7 @@ public class Persona {
     @JsonIgnore
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
     private List<Pago> pagos;
 
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)

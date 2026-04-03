@@ -14,5 +14,5 @@ public class DomicilioDTOResponse {
     private String calle;
     private String numero;
     private String casa; // es el número de la casa o del departamento dentro de un conjunto de hogares
-    private Zona zona;
+    private ZonaDTOResponse zona;
 }

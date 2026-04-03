@@ -51,7 +51,7 @@ public class ZonaService {
         repository.deleteById(id);
     }
 
-    private ZonaDTOResponse mapToDTO(Zona zona) {
+    public ZonaDTOResponse mapToDTO(Zona zona) {
         return ZonaDTOResponse.builder()
                 .id(zona.getId())
                 .nombre(zona.getNombre())
