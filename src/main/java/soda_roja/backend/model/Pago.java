@@ -1,6 +1,7 @@
 package soda_roja.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.util.Date;
 @Builder
 @Entity
 @Table(name = "pago")
-@Schema(description = "Entidad que representa una persona")
+@Schema(description = "Entidad que representa una pago")
 
 public class Pago {
     @Id
@@ -30,8 +31,9 @@ public class Pago {
     private Date fecha;
     @Column(name = "metodoPago", nullable = false)
     private String metodoPago;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="personaId")
+    @JsonBackReference
     private Persona persona;
 
 }

@@ -8,6 +8,8 @@ import soda_roja.backend.model.Persona;
 import soda_roja.backend.repository.PersonaRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 
 public class PersonaService {
@@ -61,7 +63,6 @@ public class PersonaService {
     }
 
     public PersonaDTOResponse mapToDTO(Persona persona) {
-
         return PersonaDTOResponse.builder()
                 .id(persona.getId())
                 .tipoDoc(persona.getTipoDoc())
@@ -71,24 +72,11 @@ public class PersonaService {
                 .email(persona.getEmail())
                 .telefono(persona.getTelefono())
                 .deuda(persona.getDeuda())
-                .pagos(persona.getPagos() != null ?
-                        persona.getPagos().stream().map(pagoService::mapToDTO).toList() :
-                        List.of())
-
+                .pagos(persona.getPagos().stream().map(pago ->
+                        new PagoService().mapToDTO(pago)
+                ).collect(Collectors.toList()))
                 .build();
     }
-    public PersonaDTOResponse mapToDTOSinPago(Persona persona) {
 
-        return PersonaDTOResponse.builder()
-                .id(persona.getId())
-                .tipoDoc(persona.getTipoDoc())
-                .nroDocumento(persona.getNroDocumento())
-                .nombre(persona.getNombre())
-                .apellido(persona.getApellido())
-                .email(persona.getEmail())
-                .telefono(persona.getTelefono())
-                .deuda(persona.getDeuda())
-                .build();
-    }
 }
 
