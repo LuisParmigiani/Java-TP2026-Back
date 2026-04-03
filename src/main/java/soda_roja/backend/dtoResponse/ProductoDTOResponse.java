@@ -12,12 +12,12 @@ import java.util.List;
 
 public class ProductoDTOResponse {
 	
-	private int id;
+	private Long id;
 	private String nombre;
 	private String detalle;
 	private double precio;
 	private int stock;
-	private List<ZonaDTORequest> zona;
+	private List<ZonaDTOResponse> zonas;
 	
 	
 
