@@ -59,7 +59,8 @@ public class DomicilioService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
-    private DomicilioDTOResponse mapToDTO(Domicilio domicilio) {
+    public DomicilioDTOResponse mapToDTO(Domicilio domicilio) {
+
         return DomicilioDTOResponse.builder()
                 .id(domicilio.getId())
                 .calle(domicilio.getCalle())

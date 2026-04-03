@@ -1,30 +1,49 @@
 package soda_roja.backend.service;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import soda_roja.backend.repository.PersonaRepository;
+import soda_roja.backend.dtoRequest.PersonaDTORequest;
+import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.model.Persona;
-import java.util.List;
+import soda_roja.backend.repository.PersonaRepository;
 
+import java.util.List;
 @Service
+
 public class PersonaService {
 
     @Autowired
     private PersonaRepository repository;
+    @Autowired
+    private PagoService pagoService;
 
-    public List<Persona> getAll() {
-        return repository.findAll();
+
+    public List<PersonaDTOResponse> getAll() {
+        return repository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public Persona getById(Long id) {
-        return repository.findById(id).orElseThrow();
+   public PersonaDTOResponse getById(Long id) {
+        Persona persona = repository.findById(id).orElseThrow(() -> new RuntimeException("Persona no encontrado con id: " + id));
+        return mapToDTO(persona);
     }
 
-    public Persona save(Persona entidad) {
-        return repository.save(entidad);
+    public PersonaDTOResponse save(PersonaDTORequest entidad) {
+        Persona persona = Persona.builder()
+                .tipoDoc(entidad.getTipoDoc())
+                .nroDocumento(entidad.getNroDocumento())
+                .nombre(entidad.getNombre())
+                .apellido(entidad.getApellido())
+                .email(entidad.getEmail())
+                .telefono(entidad.getTelefono())
+                .deuda(entidad.getDeuda())
+                .build();
+
+        return mapToDTO(repository.save(persona));
     }
 
-    public Persona update(Long id, Persona entidad) {
-        Persona existing = repository.findById(id).orElseThrow();
+    public PersonaDTOResponse update(Long id, PersonaDTORequest entidad) {
+
+        Persona existing = repository.findById(id).orElseThrow(()-> new RuntimeException("Persona no encontrado con id: " + id));
         existing.setTipoDoc(entidad.getTipoDoc());
         existing.setNroDocumento(entidad.getNroDocumento());
         existing.setNombre(entidad.getNombre());
@@ -33,11 +52,43 @@ public class PersonaService {
         existing.setTelefono(entidad.getTelefono());
         existing.setDeuda(entidad.getDeuda());
 
-        return repository.save(existing);
+
+        return mapToDTO(repository.save(existing));
     }
 
     public void delete(Long id) {
         repository.deleteById(id);
     }
 
+    public PersonaDTOResponse mapToDTO(Persona persona) {
+
+        return PersonaDTOResponse.builder()
+                .id(persona.getId())
+                .tipoDoc(persona.getTipoDoc())
+                .nroDocumento(persona.getNroDocumento())
+                .nombre(persona.getNombre())
+                .apellido(persona.getApellido())
+                .email(persona.getEmail())
+                .telefono(persona.getTelefono())
+                .deuda(persona.getDeuda())
+                .pagos(persona.getPagos() != null ?
+                        persona.getPagos().stream().map(pagoService::mapToDTO).toList() :
+                        List.of())
+
+                .build();
+    }
+    public PersonaDTOResponse mapToDTOSinPago(Persona persona) {
+
+        return PersonaDTOResponse.builder()
+                .id(persona.getId())
+                .tipoDoc(persona.getTipoDoc())
+                .nroDocumento(persona.getNroDocumento())
+                .nombre(persona.getNombre())
+                .apellido(persona.getApellido())
+                .email(persona.getEmail())
+                .telefono(persona.getTelefono())
+                .deuda(persona.getDeuda())
+                .build();
+    }
 }
+

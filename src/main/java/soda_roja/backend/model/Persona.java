@@ -1,5 +1,6 @@
 package soda_roja.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -11,6 +12,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +24,7 @@ public class Persona {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", unique = true, nullable = false)
+    @Column( unique = true, nullable = false)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
@@ -45,7 +48,13 @@ public class Persona {
 
     @Column(name = "deuda", nullable = true)
     private float deuda;
-    @OneToOne
-    @JoinColumn(name = "usuarioId")
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Pago> pagos;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    private List<PersonaDomicilio> personaDomicilios;
 }

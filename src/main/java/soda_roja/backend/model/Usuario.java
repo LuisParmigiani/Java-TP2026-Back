@@ -1,6 +1,7 @@
 package soda_roja.backend.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -11,6 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -29,6 +32,11 @@ public class Usuario {
     private String contrasena;
      @Column(name = "nivelAcceso", nullable = false)
      private String nivelAcceso;
-     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+     @OneToOne
+     @JoinColumn(name = "personaId",nullable = false)
+     @JsonManagedReference
      private Persona persona;
+     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
+     private List<Carga> cargas;
+
 }

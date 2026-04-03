@@ -14,4 +14,5 @@ public class PagoDTOResponse {
     private float monto;
     private Date fecha;
     private String metodoPago;
+    private Long personaId;
 }

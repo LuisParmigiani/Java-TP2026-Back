@@ -14,6 +14,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,4 +41,8 @@ public class Domicilio {
     // joinColumn: el name es el nombre de la cplumna en la que se va a guardar la clave foranea
     @JsonBackReference
     private Zona zona;
+
+
+    @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL)
+    private List<PersonaDomicilio> personaDomicilios;
 }

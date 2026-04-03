@@ -21,12 +21,15 @@ public class PersonaDomicilio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Schema(example = "1", description = "Identificador único del domicilio de la persona")
     private Long id;
-    @NotBlank(message = "El día no puede estar vacío")
     @Column(name = "dia", nullable = false)
-    @Schema(example = "Lunes", description = "Día de la semana en el que la persona recibe el pedido, debe ser un día de la semana válido (Lunes, Martes, Miércoles, Jueves, Viernes, Sábado o Domingo)")
-    @Pattern(regexp = "(Lunes|Martes|Miércoles|Jueves|Viernes|Sábado|Domingo)", message = "El día debe ser un día de la semana válido (Lunes, Martes, Miércoles, Jueves, Viernes, Sábado o Domingo)")
     private String dia;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "personaId", nullable = false)
+    private Persona persona;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "domicilioId", nullable = false)
+    private Domicilio domicilio;
 }

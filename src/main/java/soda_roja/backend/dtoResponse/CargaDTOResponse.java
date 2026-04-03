@@ -12,4 +12,5 @@ public class CargaDTOResponse {
     private Long id;
     private String tipo;;
     private Date fechaHora;
+    private UsuarioDTOResponse usuario;
 }
