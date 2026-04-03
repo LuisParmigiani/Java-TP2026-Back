@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Data // Genera getters, setters, toString, equals y hashCode
 @AllArgsConstructor // Genera un constructor con todos los campos
 @NoArgsConstructor// Genera un constructor sin argumentos
@@ -39,8 +41,10 @@ public class Producto { //Estos mensajes te tiran la bronca a nivel de app cuand
 	@Column(nullable = false) // Especifica que la columna no puede ser nula en la base de datos
 	private int stock;
 
-	@ManyToMany(mappedBy = "productos", fetch = FetchType.LAZY)//fetch.LAZY se utiliza para cargar los productos asociados a la zona solo cuando se soliciten, evitando cargar toda la información de los productos al obtener una zona solo se carga al poner zona.getProducto()
-	private List<Zona> zonas;
+	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	private List<ProductoZona> productosZona;
+;
 
 
 }
