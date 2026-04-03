@@ -2,35 +2,77 @@ package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import soda_roja.backend.model.PersonaDomicilio;
+import soda_roja.backend.dtoRequest.PersonaDomicilioDTORequest;
+import soda_roja.backend.dtoResponse.PersonaDomicilioDTOResponse;
+import soda_roja.backend.model.*;
+import soda_roja.backend.repository.DomicilioRepository;
+import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.PersonaDomicilioRepository;
 
 import java.util.List;
 @Service
 
 public class PersonaDomicilioService {
+
     @Autowired
     private PersonaDomicilioRepository repository;
+    @Autowired
+    private PersonaRepository PersonaRepository;
+    @Autowired
+    private DomicilioRepository DomicilioRepository;
 
-    public List<PersonaDomicilio> getAll() {
-        return repository.findAll();
+
+    public List<PersonaDomicilioDTOResponse> getAll() {
+        return repository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public PersonaDomicilio getById(Long id) {
-        return repository.findById(id).orElseThrow();
+    public PersonaDomicilioDTOResponse getById(Long id) {
+        PersonaDomicilio usuario = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrado con id: " + id));
+        return mapToDTO(usuario);
     }
 
-    public PersonaDomicilio save(PersonaDomicilio entidad) {
-        return repository.save(entidad);
+    public PersonaDomicilioDTOResponse save (PersonaDomicilioDTORequest entidad) {
+        Persona persona = PersonaRepository.findById(entidad.getPersonaId())
+            .orElseThrow(() -> new RuntimeException("Persona no encontrada con id: " + entidad.getPersonaId()));
+        Domicilio domicilio = DomicilioRepository.findById(entidad.getDomicilioId())
+            .orElseThrow(() -> new RuntimeException("Domicilio no encontrado con id: " + entidad.getDomicilioId()));
+
+        PersonaDomicilio personaDomicilio = PersonaDomicilio.builder()
+                .persona(persona)
+                .domicilio(domicilio)
+                .dia(entidad.getDia())
+                .build();
+        return mapToDTO(repository.save(personaDomicilio));
     }
 
-    public PersonaDomicilio update(Long id, PersonaDomicilio entidad) {
-        PersonaDomicilio existing = repository.findById(id).orElseThrow();
+    public PersonaDomicilioDTOResponse update(Long id,PersonaDomicilioDTORequest entidad) {
+        PersonaDomicilio existing = repository.findById(id).orElseThrow(()-> new RuntimeException("PersonaDomicilio no encontrado con id: " + id));
+
+        Persona persona = PersonaRepository.findById(entidad.getPersonaId())
+                .orElseThrow(() -> new RuntimeException("Persona no encontrada con id: " + entidad.getPersonaId()));
+         Domicilio domicilio = DomicilioRepository.findById(entidad.getDomicilioId())
+                .orElseThrow(() -> new RuntimeException("Domicilio no encontrado con id: " + entidad.getDomicilioId()));
+
+        existing.setPersona(persona);
         existing.setDia(entidad.getDia());
-        return repository.save(existing);
+        existing.setDomicilio(domicilio);
+
+
+        return mapToDTO(repository.save(existing));
     }
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public PersonaDomicilioDTOResponse mapToDTO(PersonaDomicilio personaDomicilio) {
+
+        return PersonaDomicilioDTOResponse.builder()
+                .id(personaDomicilio.getId())
+                .dia(personaDomicilio.getDia())
+                .personas(new PersonaService().mapToDTOSinPago(personaDomicilio.getPersona()))
+                .domicilios(new DomicilioService().mapToDTO(personaDomicilio.getDomicilio()))
+                .build();
     }
 }

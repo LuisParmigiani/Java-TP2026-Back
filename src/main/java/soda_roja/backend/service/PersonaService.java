@@ -61,6 +61,7 @@ public class PersonaService {
     }
 
     public PersonaDTOResponse mapToDTO(Persona persona) {
+
         return PersonaDTOResponse.builder()
                 .id(persona.getId())
                 .tipoDoc(persona.getTipoDoc())
@@ -70,11 +71,24 @@ public class PersonaService {
                 .email(persona.getEmail())
                 .telefono(persona.getTelefono())
                 .deuda(persona.getDeuda())
-                .pagos(persona.getPagos().stream()
-                        .map(pagoService::mapToDTO)
-                        .toList())
+                .pagos(persona.getPagos() != null ?
+                        persona.getPagos().stream().map(pagoService::mapToDTO).toList() :
+                        List.of())
+
                 .build();
     }
+    public PersonaDTOResponse mapToDTOSinPago(Persona persona) {
 
+        return PersonaDTOResponse.builder()
+                .id(persona.getId())
+                .tipoDoc(persona.getTipoDoc())
+                .nroDocumento(persona.getNroDocumento())
+                .nombre(persona.getNombre())
+                .apellido(persona.getApellido())
+                .email(persona.getEmail())
+                .telefono(persona.getTelefono())
+                .deuda(persona.getDeuda())
+                .build();
+    }
 }
 
