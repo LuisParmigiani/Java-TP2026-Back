@@ -33,9 +33,9 @@ public class Domicilio {
     private String casa;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "zonaId", nullable = false)
     // joinColumn: el name es el nombre de la cplumna en la que se va a guardar la clave foranea
-    @JsonBackReference
     private Zona zona;
 
 
