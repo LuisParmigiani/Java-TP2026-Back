@@ -7,8 +7,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import soda_roja.backend.model.LineaPedido;
 
 import java.util.Date;
+import java.util.List;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -28,7 +30,9 @@ public class VentaDTORequest {
     @Schema(example = "true", description = "Indica si la venta ha sido pagada")
     @NotNull(message = "El estado de pago no puede ser nulo")
     private boolean pagado;
-    @JoinColumn(name = "idPersonaDomicilio", nullable = false)
     @Schema(example = "1", description = "Identificador del domicilio de la persona asociado a esta venta")
     private Long idPersonaDomicilio;
+    @Schema(example = "[1, 2, 3]", description = "Lista de identificadores de las líneas de pedido asociadas a esta venta")
+    private List<Long> lineasPedidoIds;
+
 }

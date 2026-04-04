@@ -38,4 +38,9 @@ public class LineaPedido {
     @JoinColumn(name = "productoZonaId", nullable = false)
     private ProductoZona productoZona;
 
+    @ManyToOne
+    @JoinColumn(name = "ventaId")
+    private Venta venta;
+
+
 }

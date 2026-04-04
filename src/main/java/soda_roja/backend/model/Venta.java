@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -34,4 +35,6 @@ public class Venta {
     private boolean pagado;
     @ManyToOne
     private PersonaDomicilio personaDomicilio;
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LineaPedido> lineasPedido;
 }
