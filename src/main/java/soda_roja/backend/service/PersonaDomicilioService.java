@@ -72,8 +72,8 @@ public class PersonaDomicilioService {
         return PersonaDomicilioDTOResponse.builder()
                 .id(personaDomicilio.getId())
                 .dia(personaDomicilio.getDia())
-                .personas(new PersonaService().mapToDTO(personaDomicilio.getPersona()))
-                .domicilios(new DomicilioService().mapToDTO(personaDomicilio.getDomicilio()))
+                .persona(new PersonaService().mapToDTO(personaDomicilio.getPersona()))
+                .domicilio(new DomicilioService().mapToDTO(personaDomicilio.getDomicilio()))
                 .ventas(personaDomicilio.getVentas() != null
                         ? personaDomicilio.getVentas().stream()
                           .map(venta -> new VentaService().mapToDTO(venta))

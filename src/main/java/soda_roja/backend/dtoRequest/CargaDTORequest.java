@@ -25,4 +25,8 @@ public class CargaDTORequest {
     @NotNull(message = "El id del usuario no puede estar vacío")
     @Schema(example = "1", description = "ID del usuario asociado a la carga o descarga")
     private Long idUsuario;
+    
+    @NotNull(message = "El id del camion no puede estar vacío")
+    @Schema(example = "1", description = "ID del camion asociado a la carga o descarga")
+    private Long idCamion;
 }

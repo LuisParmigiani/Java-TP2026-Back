@@ -50,4 +50,7 @@ public class Camion {
 	@OneToMany(mappedBy = "camion", cascade = CascadeType.ALL)
 	@JsonManagedReference
 	private List<PersonaDomicilio> personaDomicilios;
+	
+    @OneToMany(mappedBy = "camion", fetch = FetchType.LAZY)
+    private List<Carga> cargas;
 }

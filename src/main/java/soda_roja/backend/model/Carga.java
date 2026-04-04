@@ -38,6 +38,10 @@ public class Carga {
     @ManyToOne()
     @JoinColumn(name = "usuarioCarga",nullable = false)
     private Usuario usuario;
+    
+    @ManyToOne()
+    @JoinColumn(name = "camionCarga",nullable = false)
+    private Camion camion;
 
 
 }

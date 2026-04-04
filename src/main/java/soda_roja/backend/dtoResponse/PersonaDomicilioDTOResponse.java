@@ -13,7 +13,7 @@ import java.util.List;
 public class PersonaDomicilioDTOResponse {
     private Long id;
     private boolean[] dia;
-    private PersonaDTOResponse personas;
-    private DomicilioDTOResponse domicilios;
+    private PersonaDTOResponse persona;
+    private DomicilioDTOResponse domicilio;
     private List<VentaDTOResponse> ventas;
 }
