@@ -22,7 +22,7 @@ public class ProductoPersonaDomicilioDTORequest {
     @NotNull(message = "El ID de persona domicilio no puede ser nulo")
     @Positive(message = "El ID de persona domicilio debe ser positivo")
     @Schema(description = "ID de la persona domicilio", example = "1")
-    private Long personaDomicilioId;
+    private Long domicilioId;
     
     @NotNull(message = "La cantidad de vacíos actuales no puede ser nula")
     @Positive(message = "La cantidad de vacíos actuales debe ser positiva")

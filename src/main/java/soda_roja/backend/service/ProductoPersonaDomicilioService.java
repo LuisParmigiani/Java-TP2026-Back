@@ -2,12 +2,12 @@ package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.model.ProductoPersonaDomicilio;
 import soda_roja.backend.model.Producto;
-import soda_roja.backend.model.PersonaDomicilio;
+import soda_roja.backend.repository.DomicilioRepository;
 import soda_roja.backend.repository.ProductoPersonaDomicilioRepository;
 import soda_roja.backend.repository.ProductoRepository;
-import soda_roja.backend.repository.PersonaDomicilioRepository;
 import soda_roja.backend.dtoRequest.ProductoPersonaDomicilioDTORequest;
 import soda_roja.backend.dtoResponse.ProductoPersonaDomicilioDTOResponse;
 
@@ -21,9 +21,9 @@ public class ProductoPersonaDomicilioService {
 
     @Autowired
     private ProductoRepository productoRepository;
-
     @Autowired
-    private PersonaDomicilioRepository personaDomicilioRepository;
+    private DomicilioRepository DomicilioRepository;
+
 
     public List<ProductoPersonaDomicilioDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
@@ -39,12 +39,12 @@ public class ProductoPersonaDomicilioService {
         Producto producto = productoRepository.findById(entidad.getProductoId())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + entidad.getProductoId()));
 
-        PersonaDomicilio personaDomicilio = personaDomicilioRepository.findById(entidad.getPersonaDomicilioId())
-                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrado con id: " + entidad.getPersonaDomicilioId()));
+        Domicilio Domicilio = DomicilioRepository.findById(entidad.getDomicilioId())
+                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrado con id: " + entidad.getDomicilioId()));
 
         ProductoPersonaDomicilio productoPersonaDomicilio = ProductoPersonaDomicilio.builder()
                 .producto(producto)
-                .personaDomicilio(personaDomicilio)
+                .domicilio(Domicilio)
                 .cantVaciosActuales(entidad.getCantVaciosActuales())
                 .aproxSemanal(entidad.getAproxSemanal())
                 .build();
@@ -57,14 +57,14 @@ public class ProductoPersonaDomicilioService {
         Producto producto = productoRepository.findById(entidad.getProductoId())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + entidad.getProductoId()));
 
-        PersonaDomicilio personaDomicilio = personaDomicilioRepository.findById(entidad.getPersonaDomicilioId())
-                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrado con id: " + entidad.getPersonaDomicilioId()));
+        Domicilio Domicilio = DomicilioRepository.findById(entidad.getDomicilioId())
+                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrado con id: " + entidad.getDomicilioId()));
 
         ProductoPersonaDomicilio existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ProductoPersonaDomicilio no encontrado con id: " + id));
 
         existing.setProducto(producto);
-        existing.setPersonaDomicilio(personaDomicilio);
+        existing.setDomicilio(Domicilio);
         existing.setCantVaciosActuales(entidad.getCantVaciosActuales());
         existing.setAproxSemanal(entidad.getAproxSemanal());
 
@@ -80,7 +80,7 @@ public class ProductoPersonaDomicilioService {
                 .id(productoPersonaDomicilio.getId())
                 .productoId(productoPersonaDomicilio.getProducto() != null ? productoPersonaDomicilio.getProducto().getId() : null)
                 .nombreProducto(productoPersonaDomicilio.getProducto() != null ? productoPersonaDomicilio.getProducto().getNombre() : null)
-                .personaDomicilioId(productoPersonaDomicilio.getPersonaDomicilio() != null ? productoPersonaDomicilio.getPersonaDomicilio().getId() : null)
+                .DomicilioId(productoPersonaDomicilio.getDomicilio() != null ? productoPersonaDomicilio.getDomicilio().getId() : null)
                 .cantVaciosActuales(productoPersonaDomicilio.getCantVaciosActuales())
                 .aproxSemanal(productoPersonaDomicilio.getAproxSemanal())
                 .build();

@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import soda_roja.backend.dtoRequest.PersonaDTORequest;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
+import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.model.Persona;
+import soda_roja.backend.repository.DomicilioRepository;
 import soda_roja.backend.repository.PersonaRepository;
 
 import java.util.List;
@@ -18,6 +20,8 @@ public class PersonaService {
     private PersonaRepository repository;
     @Autowired
     private PagoService pagoService;
+    @Autowired
+    private DomicilioRepository DomicilioRepository;
 
 
     public List<PersonaDTOResponse> getAll() {
@@ -30,7 +34,13 @@ public class PersonaService {
     }
 
     public PersonaDTOResponse save(PersonaDTORequest entidad) {
+
+        List<Domicilio> Domicilios = entidad.getDomicilioId().stream()
+                .map(idpd -> DomicilioRepository.findById(idpd)
+                        .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + idpd)))
+                .toList();
         Persona persona = Persona.builder()
+                .Domicilios(Domicilios)
                 .tipoDoc(entidad.getTipoDoc())
                 .nroDocumento(entidad.getNroDocumento())
                 .nombre(entidad.getNombre())
@@ -46,6 +56,10 @@ public class PersonaService {
     public PersonaDTOResponse update(Long id, PersonaDTORequest entidad) {
 
         Persona existing = repository.findById(id).orElseThrow(()-> new RuntimeException("Persona no encontrado con id: " + id));
+        List<Domicilio> Domicilios = entidad.getDomicilioId().stream()
+                .map(idpd -> DomicilioRepository.findById(idpd)
+                        .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + idpd)))
+                .toList();
         existing.setTipoDoc(entidad.getTipoDoc());
         existing.setNroDocumento(entidad.getNroDocumento());
         existing.setNombre(entidad.getNombre());
@@ -53,6 +67,7 @@ public class PersonaService {
         existing.setEmail(entidad.getEmail());
         existing.setTelefono(entidad.getTelefono());
         existing.setDeuda(entidad.getDeuda());
+        existing.setDomicilios(Domicilios);
 
 
         return mapToDTO(repository.save(existing));
@@ -72,6 +87,9 @@ public class PersonaService {
                 .email(persona.getEmail())
                 .telefono(persona.getTelefono())
                 .deuda(persona.getDeuda())
+                .domicilios(persona.getDomicilios() != null ? persona.getDomicilios().stream().map(domicilio->
+                        new DomicilioService().mapToDTO(domicilio))
+                .collect(Collectors.toList()) : List.of())
                 .pagos(persona.getPagos() != null ? persona.getPagos().stream().map(pago ->
                         new PagoService().mapToDTO(pago)
                 ).collect(Collectors.toList()) : List.of())

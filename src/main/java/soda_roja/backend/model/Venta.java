@@ -34,7 +34,10 @@ public class Venta {
     @Column(name = "pagado", nullable = false)
     private boolean pagado;
     @ManyToOne
-    private PersonaDomicilio personaDomicilio;
+    @JoinColumn(name = "domicilio_id", nullable = false)
+    private Domicilio domicilio;
+
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LineaPedido> lineasPedido;
 }

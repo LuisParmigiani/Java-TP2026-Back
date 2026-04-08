@@ -58,5 +58,5 @@ public class Persona {
     private List<Pago> pagos;
 
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
-    private List<PersonaDomicilio> personaDomicilios;
+    private List<Domicilio> Domicilios;
 }

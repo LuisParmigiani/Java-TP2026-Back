@@ -27,8 +27,8 @@ public class ProductoPersonaDomicilio {
     private Integer aproxSemanal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "personaDomicilioId", nullable = false)
-    private PersonaDomicilio personaDomicilio;
+    @JoinColumn(name = "DomicilioId", nullable = false)
+    private Domicilio domicilio;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productoId", nullable = false)

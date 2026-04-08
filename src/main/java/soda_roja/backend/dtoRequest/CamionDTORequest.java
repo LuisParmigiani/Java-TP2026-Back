@@ -40,6 +40,6 @@ public class CamionDTORequest {
 			description = "Lista de IDs de PersonaDomicilio que se asignarán a la persona. Puede ser nula o vacía. Si se proporciona, cada ID debe ser un número entero positivo."
 	)
 	@Size(max = 100, message = "La lista de IDs de PersonaDomicilio no puede contener más de 100 elementos") // Valida un tamaño máximo razonable
-	private List<@Positive(message = "Cada ID de PersonaDomicilio debe ser un número entero positivo") Long> personasDomiciliosId;
+	private List<@Positive(message = "Cada ID de PersonaDomicilio debe ser un número entero positivo") Long> domiciliosId;
 
 }

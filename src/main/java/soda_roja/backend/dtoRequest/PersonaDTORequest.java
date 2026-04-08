@@ -3,8 +3,11 @@ package soda_roja.backend.dtoRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+
+import java.util.List;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -42,8 +45,12 @@ public class PersonaDTORequest {
     private String telefono;
     @Min(value = 0, message = "La deuda no puede ser negativa")
     @Schema(example = "0.0")
-
     private float deuda;
+
+
+    @NotNull(message = "El id del domicilio no puede estar vacío")
+    @Schema(example = "[1,2,3]", description = "ID del domicilio que se asignará a la persona, debe ser un número entero positivo")
+    private List<Long> domicilioId;
 
 
 

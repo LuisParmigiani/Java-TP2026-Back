@@ -23,7 +23,7 @@ public class ProductoPersonaDomicilioDTOResponse {
     private String nombreProducto;
 
     @Schema(description = "ID de la persona domicilio", example = "1")
-    private Long personaDomicilioId;
+    private Long DomicilioId;
 
     @Schema(description = "Cantidad de vacíos actuales", example = "5")
     private Integer cantVaciosActuales;

@@ -31,7 +31,7 @@ public class VentaDTORequest {
     @NotNull(message = "El estado de pago no puede ser nulo")
     private boolean pagado;
     @Schema(example = "1", description = "Identificador del domicilio de la persona asociado a esta venta")
-    private Long idPersonaDomicilio;
+    private Long idDomicilio;
     @Schema(example = "[1, 2, 3]", description = "Lista de identificadores de las líneas de pedido asociadas a esta venta")
     private List<Long> lineasPedidoIds;
 

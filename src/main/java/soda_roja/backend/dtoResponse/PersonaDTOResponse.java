@@ -22,4 +22,6 @@ public class PersonaDTOResponse {
     private String telefono;
     private float deuda;
     private List<PagoDTOResponse> pagos;
+    private List<DomicilioDTOResponse> domicilios;
+
 }

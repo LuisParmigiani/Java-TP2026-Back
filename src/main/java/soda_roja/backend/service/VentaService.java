@@ -6,7 +6,7 @@ import soda_roja.backend.dtoRequest.VentaDTORequest;
 import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.LineaPedidoRepository;
-import soda_roja.backend.repository.PersonaDomicilioRepository;
+import soda_roja.backend.repository.DomicilioRepository;
 import soda_roja.backend.repository.VentaRepository;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class VentaService {
     @Autowired
     private VentaRepository repository;
     @Autowired
-    private PersonaDomicilioRepository PersonaDomicilioRepository;
+    private DomicilioRepository DomicilioRepository;
     @Autowired
     private LineaPedidoRepository lineaPedidoRepository;
     @Autowired
@@ -37,8 +37,8 @@ public class VentaService {
     }
 
     public VentaDTOResponse save(VentaDTORequest entidad) {
-        PersonaDomicilio personaDomicilio = PersonaDomicilioRepository.findById(entidad.getIdPersonaDomicilio())
-                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrada con id: " + entidad.getIdPersonaDomicilio()));
+        Domicilio Domicilio = DomicilioRepository.findById(entidad.getIdDomicilio())
+                .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + entidad.getIdDomicilio()));
         List<LineaPedido> lineasPedido =
                 entidad.getLineasPedidoIds().stream().map(id -> lineaPedidoRepository.findById(id)
                         .orElseThrow(() -> new RuntimeException("LineaPedido no encontrada con id: " + id)))
@@ -47,7 +47,7 @@ public class VentaService {
                 .fecha(entidad.getFecha())
                 .total(entidad.getTotal())
                 .pagado(entidad.isPagado())
-                .personaDomicilio(personaDomicilio)
+                .domicilio(Domicilio)
                 .lineasPedido(lineasPedido)
                 .build();
         return mapToDTO(repository.save(venta));
@@ -55,15 +55,15 @@ public class VentaService {
 
     public VentaDTOResponse update(Long id, VentaDTORequest entidad) {
         Venta existing = repository.findById(id).orElseThrow(()-> new RuntimeException("Venta no encontrado con id: " + id));
-        PersonaDomicilio personaDomicilio = PersonaDomicilioRepository.findById(entidad.getIdPersonaDomicilio())
-                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrada con id: " + entidad.getIdPersonaDomicilio()));
+        Domicilio Domicilio = DomicilioRepository.findById(entidad.getIdDomicilio())
+                .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + entidad.getIdDomicilio()));
         List<LineaPedido> lineasPedido =
                 entidad.getLineasPedidoIds().stream().map(idlp -> lineaPedidoRepository.findById(idlp)
                                 .orElseThrow(() -> new RuntimeException("LineaPedido no encontrada con id: " + idlp)))
                         .toList();
         existing.setTotal(entidad.getTotal());
         existing.setFecha(entidad.getFecha());
-        existing.setPersonaDomicilio(personaDomicilio);
+        existing.setDomicilio(Domicilio);
         existing.setPagado(entidad.isPagado());
 
 
@@ -80,7 +80,7 @@ public class VentaService {
                 .fecha(venta.getFecha())
                 .total(venta.getTotal())
                 .pagado(venta.isPagado())
-                .idPersonaDomicilio( venta.getPersonaDomicilio().getId() )
+                .idDomicilio( venta.getDomicilio().getId() )
                 .lineasPedido(venta.getLineasPedido().stream().map(lp -> lineaPedidoService.mapToDTO(lp)).toList())
                 .build();
     }

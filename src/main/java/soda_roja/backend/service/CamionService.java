@@ -3,9 +3,9 @@ package soda_roja.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import soda_roja.backend.model.Camion;
-import soda_roja.backend.model.PersonaDomicilio;
+import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.repository.CamionRepository;
-import soda_roja.backend.repository.PersonaDomicilioRepository;
+import soda_roja.backend.repository.DomicilioRepository;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class CamionService {
     @Autowired
     private GastoService gastoService;
     @Autowired
-    private PersonaDomicilioRepository personaDomicilioRepository;
+    private DomicilioRepository DomicilioRepository;
 
     public List<CamionDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
@@ -33,34 +33,36 @@ public class CamionService {
     }
 
     public CamionDTOResponse save(CamionDTORequest entidad) {
-        List<PersonaDomicilio> personasDomicilios = entidad.getPersonasDomiciliosId().stream()
-                .map(id -> personaDomicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrada con id: " + id)))
+        List<Domicilio> Domicilios = entidad.getDomiciliosId().stream()
+                .map(id -> DomicilioRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + id)))
                 .toList();
+
         Camion camion = Camion.builder()
                 .patente(entidad.getPatente())
                 .modelo(entidad.getModelo())
                 .marca(entidad.getMarca())
                 .kilometraje(entidad.getKilometraje())
-                .personaDomicilios(personasDomicilios)
+                .domicilios(Domicilios)
                 .build();
         Camion saved = repository.save(camion);
         return mapToDTO(saved);
     }
 
     public CamionDTOResponse update(Long id, CamionDTORequest entidad) {
+        List<Domicilio> Domicilios = entidad.getDomiciliosId().stream()
+                .map(idD -> DomicilioRepository.findById(idD)
+                        .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + idD)))
+                .toList();
         Camion existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Camion no encontrado con id: " + id));
         existing.setPatente(entidad.getPatente());
         existing.setModelo(entidad.getModelo());
         existing.setMarca(entidad.getMarca());
+        existing.setDomicilios(Domicilios);
         existing.setKilometraje(entidad.getKilometraje());
 
-		List<PersonaDomicilio> personasDomicilios = entidad.getPersonasDomiciliosId().stream()
-				.map(idpd -> personaDomicilioRepository.findById(idpd)
-						.orElseThrow(() -> new RuntimeException("PersonaDomicilio no encontrada con id: " + idpd)))
-				.toList();
-        existing.setPersonaDomicilios(personasDomicilios);
+
 
         return mapToDTO(repository.save(existing));
     }
@@ -77,9 +79,9 @@ public class CamionService {
                 .marca(camion.getMarca())
                 .kilometraje(camion.getKilometraje())
                 .gastos(camion.getGastos() != null ? camion.getGastos().stream().map(gasto -> gastoService.mapToDTO(gasto)).toList() : null)
-                .personasDomicilios(camion.getPersonaDomicilios() != null
-                        ? camion.getPersonaDomicilios().stream()
-                        .map(personaDomicilio -> new PersonaDomicilioService().mapToDTO(personaDomicilio))
+                .Domicilios(camion.getDomicilios() != null
+                        ? camion.getDomicilios().stream()
+                        .map(Domicilio -> new DomicilioService().mapToDTO(Domicilio))
                         .toList()
                         : List.of())
                 .build();

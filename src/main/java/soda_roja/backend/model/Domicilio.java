@@ -39,6 +39,20 @@ public class Domicilio {
     private Zona zona;
 
 
-    @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL)
-    private List<PersonaDomicilio> personaDomicilios;
+    @ManyToOne
+    @JoinColumn(name = "personaId")
+    private Persona persona;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "camionId")
+    private Camion camion;
+
+    @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Venta> ventas;
+
+    @Column(name = "dia", nullable = false)
+    private boolean[] dia = new boolean[7];
+
+    @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoPersonaDomicilio> productoPersonaDomicilio;
 }
