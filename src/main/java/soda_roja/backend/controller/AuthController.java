@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 import soda_roja.backend.dtoRequest.LoginDTORequest;
+import soda_roja.backend.dtoRequest.RegisterDTORequest;
 import soda_roja.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +24,15 @@ public class AuthController {
             return ResponseEntity.ok(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(401).body(e.getMessage());
+        }
+    }
+    
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterDTORequest request) {
+        try {
+            return ResponseEntity.ok(authService.register(request));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(500).body(e.getMessage());
         }
     }
 }

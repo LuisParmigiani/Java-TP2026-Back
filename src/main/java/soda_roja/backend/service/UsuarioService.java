@@ -34,7 +34,7 @@ public class UsuarioService {
     
     public Usuario getByEmail(String email) {
 		return repository.findByEmail(email)
-				.orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+				.orElse(null);
 	}
 
     public UsuarioDTOResponse save(UsuarioDTORequest entidad) {

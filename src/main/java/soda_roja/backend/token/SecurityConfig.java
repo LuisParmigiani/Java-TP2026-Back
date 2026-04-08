@@ -40,7 +40,7 @@ public class SecurityConfig {
                /* SINTAXIS 
                 * .requestMatchers(método, "endpoint").
                 * permitAll()
-                * hasAuthority("Rol") -> requiere autenticación y que el rol del token sea el indicado (si no hay token o el rol no coincide, devuelve 403)
+                * hasAuthority("Administrador/Usuario/Empleado") -> requiere autenticación y que el rol del token sea el indicado (si no hay token o el rol no coincide, devuelve 403)
                   authenticated()*/
                 
               
