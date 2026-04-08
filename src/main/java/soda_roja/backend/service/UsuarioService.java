@@ -7,6 +7,7 @@ import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.UsuarioRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 @Service
@@ -17,6 +18,9 @@ public class UsuarioService {
     private UsuarioRepository repository;
     @Autowired
     private PersonaRepository PersonaRepository;
+    
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     public List<UsuarioDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
@@ -34,7 +38,7 @@ public class UsuarioService {
 
         Usuario usuario = Usuario.builder()
                 .nombreUsuario(entidad.getNombreUsuario())
-                .contrasena(entidad.getContrasena())
+                .contrasena(passwordEncoder.encode(entidad.getContrasena()))
                 .nivelAcceso(entidad.getNivelAcceso())
                 .persona(persona)
                 .build();
@@ -66,5 +70,9 @@ public class UsuarioService {
                 .nivelAcceso(usuario.getNivelAcceso())
                 .persona(new PersonaService().mapToDTO(usuario.getPersona()))
                 .build();
+    }
+    
+    public boolean verifyPassword(String rawPassword, String hashedPassword) {
+        return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 }
