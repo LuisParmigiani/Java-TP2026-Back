@@ -19,5 +19,5 @@ public class LoginDTORequest {
 	
 	@NotBlank(message = "La contraseña es requerida")
 	@Schema(description = "Contraseña del usuario", example = "password123")
-	private String password;
+	private String contrasena;
 }

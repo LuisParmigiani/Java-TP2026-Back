@@ -22,7 +22,8 @@ public class SecurityConfig {
     
     
 
-    @Bean
+    @Bean //En Spring, un Bean es un objeto que es instanciado, configurado y administrado por el contenedor central
+    //de Spring (conocido como IoC container o contexto de aplicación). No hace falta usar new manualmente.
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
             .csrf(csrf -> csrf.disable()) // Disables CSRF (not needed for JWT)
@@ -32,16 +33,27 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/usuario").hasRole("Administrador")
-                .requestMatchers(HttpMethod.GET, "/api/usuario/**").permitAll()
-               
+                .requestMatchers(HttpMethod.GET, "/api/usuario").hasAuthority("Administrador") //si no hay contexto, devuelve 401
+                .requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
+                //.requestMatchers(HttpMethod.GET, "/api/usuario/**").permitAll() descomentar si lo necesitan para algo
+                
+               /* SINTAXIS 
+                * .requestMatchers(método, "endpoint").
+                * permitAll()
+                * hasAuthority("Rol") -> requiere autenticación y que el rol del token sea el indicado (si no hay token o el rol no coincide, devuelve 403)
+                  authenticated()*/
+                
               
 
                 
-                .anyRequest().permitAll()
+                .anyRequest().permitAll() //todas las demás, permitidas
             )
-            // Add JWT filter before the standard username/password filter
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            //Antes de lo de arriba, el jwtAuthFilter intercepta:
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) 
+            //esto le dice, pone el filtro antes de la autenticación de Spring de usuario y clave
+            //pero como nosotros tenemos una API Stateless que es el estandar
+            //no tenemos ese tipo de autenticacón pero lo dejamos para guiar a Spring para que ponga este filtro primero
+            //sino, no sabe donde poner el filtro y tira error.
             .build();
     }
 }

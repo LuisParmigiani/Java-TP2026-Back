@@ -23,16 +23,15 @@ public class AuthService {
             throw new RuntimeException("Usuario no encontrado");
         }
         
-        if (!usuarioService.verifyPassword(request.getPassword(), usuario.getContrasena())) {
+        if (!usuarioService.verifyPassword(request.getContrasena(), usuario.getContrasena())) {
             throw new RuntimeException("Contraseña incorrecta");
         }
 
         UserDetails userDetails = User.builder()
-                .username(usuario.getEmail())
-                .password(usuario.getContrasena())
-                .authorities(new SimpleGrantedAuthority("ROLE_" + usuario.getNivelAcceso()))
+                .username(usuario.getId().toString())
+                .authorities(new SimpleGrantedAuthority(usuario.getNivelAcceso()))
                 .build();
 
-        return jwtService.generateToken(userDetails, usuario.getId());
+        return jwtService.generateToken(userDetails);
     }
 }

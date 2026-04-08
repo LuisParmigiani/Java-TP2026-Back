@@ -21,14 +21,14 @@ public class JwtService {
     @Value("${jwt.expiration}") // Inyecta el valor de jwt.expiration desde application.properties
     private long expirationMs;
 
-    public String generateToken(UserDetails userDetails, Long userId) {
+    public String generateToken(UserDetails userDetails) { //User Details es una interfaz que se usa de identificación
+    	//un usuario autenticado, dura en memoria lo mismo que la petición y AuthFilter lo guarda en un contexto para que lo lea Config.
         Map<String, Object> claims = new HashMap<>();
-        claims.put("rol", userDetails.getAuthorities().iterator().next().getAuthority().replace("ROLE_", ""));
-        claims.put("userId", userId);
-
+        claims.put("rol", userDetails.getAuthorities().iterator().next().getAuthority()); //pone en un claim el rol que vino de la interfaz usada en auth
+        //los claims son un Map de Clave-Valor pero así los llama JWT
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userDetails.getUsername()) // email
+                .setSubject(userDetails.getUsername()) //Se pone como subject el id para poder acceder más rápido con GetSubject
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -36,17 +36,8 @@ public class JwtService {
     }
 
 
-    public boolean isTokenValid(String token, UserDetails userDetails) { // Verifica si el token es válido
-        final String username = extractUsername(token); // Extrae el usuario del token
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token); // Compara usuario y expiración
-    }
-
     public String extractUsername(String token) { // Extrae el usuario (subject) del token
         return extractClaim(token, Claims::getSubject); // Usa extractClaim con Claims::getSubject
-    }
-
-    private boolean isTokenExpired(String token) { // Verifica si el token está expirado
-        return extractClaim(token, Claims::getExpiration).before(new Date()); // Compara la fecha de expiración
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) { // Extrae un claim específico usando una función
