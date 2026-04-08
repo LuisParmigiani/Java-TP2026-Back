@@ -2,6 +2,7 @@ package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.ZonaDTORequest;
 import soda_roja.backend.dtoResponse.ZonaDTOResponse;
 import soda_roja.backend.model.Zona;
@@ -20,9 +21,9 @@ public class ZonaService {
     }
 
     public ZonaDTOResponse getById(Long id) {
-        Zona zona = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Zona no encontrado con id: " + id));
-        return mapToDTO(zona);
+        return repository.findById(id)
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
     }
 
     public ZonaDTOResponse save(ZonaDTORequest entidad) {
@@ -30,21 +31,21 @@ public class ZonaService {
                 .nombre(entidad.getNombre())
                 .detalle(entidad.getDetalle())
                 .build();
-
         return mapToDTO(repository.save(zona));
     }
 
     public ZonaDTOResponse update(Long id, ZonaDTORequest entidad) {
         Zona zona = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Zona no encontrada con id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
         zona.setDetalle(entidad.getDetalle());
         zona.setNombre(entidad.getNombre());
-
         return mapToDTO(repository.save(zona));
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        Zona zona = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
+        repository.delete(zona);
     }
 
     public ZonaDTOResponse mapToDTO(Zona zona) {

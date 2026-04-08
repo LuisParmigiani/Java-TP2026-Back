@@ -1,12 +1,10 @@
 package soda_roja.backend.dtoRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import soda_roja.backend.model.Domicilio;
-
-import java.util.List;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor

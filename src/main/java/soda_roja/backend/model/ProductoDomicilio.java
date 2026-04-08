@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "productoPersonaDomicilio")
 @Schema(description = "Tabla intermedia entre Producto y PersonaDomicilio")
-public class ProductoPersonaDomicilio {
+public class ProductoDomicilio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)

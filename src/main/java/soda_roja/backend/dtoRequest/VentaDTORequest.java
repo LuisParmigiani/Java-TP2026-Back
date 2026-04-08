@@ -1,13 +1,11 @@
 package soda_roja.backend.dtoRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.JoinColumn;
+
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import soda_roja.backend.model.LineaPedido;
 
 import java.util.Date;
 import java.util.List;

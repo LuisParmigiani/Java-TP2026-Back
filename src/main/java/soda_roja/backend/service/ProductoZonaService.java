@@ -2,6 +2,7 @@ package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.model.ProductoZona;
 import soda_roja.backend.model.Producto;
 import soda_roja.backend.model.Zona;
@@ -38,15 +39,12 @@ public class ProductoZonaService {
     public ProductoZonaDTOResponse getById(Long id) {
         return repository.findById(id)
                 .map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("ProductoZona no encontrado con id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + id));
     }
 
     public ProductoZonaDTOResponse save(ProductoZonaDTORequest entidad) {
-        Producto producto = productoRepository.findById(entidad.getProductoId())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + entidad.getProductoId()));
-
-        Zona zona = zonaRepository.findById(entidad.getZonaId())
-                .orElseThrow(() -> new RuntimeException("Zona no encontrada con id: " + entidad.getZonaId()));
+        Producto producto = findProductoOrThrow(entidad.getProductoId());
+        Zona zona = findZonaOrThrow(entidad.getZonaId());
 
         ProductoZona productoZona = ProductoZona.builder()
                 .producto(producto)
@@ -58,14 +56,11 @@ public class ProductoZonaService {
     }
 
     public ProductoZonaDTOResponse update(Long id, ProductoZonaDTORequest entidad) {
-        Producto producto = productoRepository.findById(entidad.getProductoId())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado con id: " + entidad.getProductoId()));
-
-        Zona zona = zonaRepository.findById(entidad.getZonaId())
-                .orElseThrow(() -> new RuntimeException("Zona no encontrada con id: " + entidad.getZonaId()));
+        Producto producto = findProductoOrThrow(entidad.getProductoId());
+        Zona zona = findZonaOrThrow(entidad.getZonaId());
 
         ProductoZona existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("ProductoZona no encontrado con id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + id));
 
         existing.setProducto(producto);
         existing.setZona(zona);
@@ -74,7 +69,19 @@ public class ProductoZonaService {
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        ProductoZona productoZona = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + id));
+        repository.delete(productoZona);
+    }
+
+    private Producto findProductoOrThrow(Long id) {
+        return productoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
+    }
+
+    private Zona findZonaOrThrow(Long id) {
+        return zonaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
     }
 
     public ProductoZonaDTOResponse mapToDTO(ProductoZona productoZona) {

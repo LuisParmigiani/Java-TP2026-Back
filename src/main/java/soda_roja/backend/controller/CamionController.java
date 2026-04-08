@@ -1,12 +1,12 @@
 package soda_roja.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.service.CamionService;
 import soda_roja.backend.dtoRequest.CamionDTORequest;
 import soda_roja.backend.dtoResponse.CamionDTOResponse;
-import soda_roja.backend.model.Camion;
 import java.util.List;
 import jakarta.validation.Valid;
 
@@ -21,6 +21,7 @@ public class CamionController {
     // GET - traer todos
     @GetMapping
     public ResponseEntity<List<CamionDTOResponse>> getAll() {
+    	
         return ResponseEntity.ok(service.getAll());
     }
 
@@ -33,7 +34,7 @@ public class CamionController {
     // POST - crear nuevo
     @PostMapping
     public ResponseEntity<CamionDTOResponse> create(@Valid @RequestBody CamionDTORequest entidad) {
-        return ResponseEntity.ok(service.save(entidad));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));
     }
 
     // PUT - actualizar

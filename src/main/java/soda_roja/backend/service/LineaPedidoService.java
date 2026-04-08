@@ -1,14 +1,17 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.model.LineaPedido;
 import soda_roja.backend.model.ProductoZona;
 import soda_roja.backend.repository.LineaPedidoRepository;
 import soda_roja.backend.repository.ProductoZonaRepository;
+import soda_roja.backend.repository.VentaRepository;
 import soda_roja.backend.dtoRequest.LineaPedidoDTORequest;
 import soda_roja.backend.dtoResponse.LineaPedidoDTOResponse;
-import soda_roja.backend.service.ProductoZonaService; 
+import soda_roja.backend.model.Venta;
 
 import java.util.List;
 
@@ -17,6 +20,9 @@ public class LineaPedidoService {
 
     @Autowired
     private LineaPedidoRepository repository;
+    
+    @Autowired
+    private VentaRepository ventaRepository;
 
     @Autowired
     private ProductoZonaRepository productoZonaRepository;
@@ -31,17 +37,18 @@ public class LineaPedidoService {
     public LineaPedidoDTOResponse getById(Long id) {
         return repository.findById(id)
                 .map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("LineaPedido no encontrado con id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("LineaPedido no encontrado con id: " + id));
     }
 
     public LineaPedidoDTOResponse save(LineaPedidoDTORequest entidad) {
-        ProductoZona productoZona = productoZonaRepository.findById(entidad.getProductoZonaId())
-                .orElseThrow(() -> new RuntimeException("ProductoZona no encontrado con id: " + entidad.getProductoZonaId()));
+        ProductoZona productoZona = findProductoZonaOrThrow(entidad.getProductoZonaId());
+        Venta venta = findVentaOrThrow(entidad.getVentaId());
 
         LineaPedido lineaPedido = LineaPedido.builder()
                 .cantidad(entidad.getCantidad())
                 .subtotal(entidad.getSubtotal())
                 .productoZona(productoZona)
+                .venta(venta)
                 .build();
 
         LineaPedido saved = repository.save(lineaPedido);
@@ -49,21 +56,32 @@ public class LineaPedidoService {
     }
 
     public LineaPedidoDTOResponse update(Long id, LineaPedidoDTORequest entidad) {
-        ProductoZona productoZona = productoZonaRepository.findById(entidad.getProductoZonaId())
-                .orElseThrow(() -> new RuntimeException("ProductoZona no encontrado con id: " + entidad.getProductoZonaId()));
-
+        ProductoZona productoZona = findProductoZonaOrThrow(entidad.getProductoZonaId());
+        Venta venta = findVentaOrThrow(entidad.getVentaId());
+        
         LineaPedido existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("LineaPedido no encontrado con id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("LineaPedido no encontrado con id: " + id));
 
         existing.setCantidad(entidad.getCantidad());
         existing.setSubtotal(entidad.getSubtotal());
         existing.setProductoZona(productoZona);
+        existing.setVenta(venta);
 
         return mapToDTO(repository.save(existing));
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+        LineaPedido lineaPedido = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("LineaPedido no encontrado con id: " + id));
+        repository.delete(lineaPedido);
+    }
+    private Venta findVentaOrThrow(Long id) {
+    			return ventaRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
+	}
+    private ProductoZona findProductoZonaOrThrow(Long id) {
+        return productoZonaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + id));
     }
 
     public LineaPedidoDTOResponse mapToDTO(LineaPedido lineaPedido) {
@@ -75,6 +93,3 @@ public class LineaPedidoService {
                 .build();
     }
 }
-
-
-

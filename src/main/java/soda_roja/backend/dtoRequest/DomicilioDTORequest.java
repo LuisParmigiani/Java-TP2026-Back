@@ -1,15 +1,12 @@
 package soda_roja.backend.dtoRequest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -30,14 +27,24 @@ public class DomicilioDTORequest {
 
     @NotNull(message = "El array de días no puede estar vacío")
     @Size(min = 7, max = 7, message = "El array de días debe tener exactamente 7 elementos")
-    @Schema(example = "[true, false, true, false, true, false, true]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana (true para activo, false para inactivo)")
+    @Schema(example = "[true, false, true, false, true, false, true]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana")
     private boolean[] dia;
 
     @NotNull(message = "El id de la zona no puede estar vacío")
     @Schema(description = "El ID de la zona a la que pertenece el domicilio", example = "1")
     private Long zonaId;
 
+    @NotNull(message = "El id de la persona no puede estar vacío")
+    @Schema(description = "El ID de la persona asociada al domicilio", example = "1")
+    private Long personaId;
 
+    @Schema(description = "El ID del camión asignado al domicilio (opcional)", example = "1")
+    private Long camionId;
 
-
+    @Schema(
+            example = "[1, 2, 3]",
+            description = "Lista de IDs de ProductoPersonaDomicilio asociados al domicilio. Puede ser nula o vacía."
+    )
+    @Size(max = 100, message = "La lista de IDs de ProductoPersonaDomicilio no puede contener más de 100 elementos")
+    private List<@Positive(message = "Cada ID debe ser un número entero positivo") Long> productoPersonaDomicilioIds;
 }

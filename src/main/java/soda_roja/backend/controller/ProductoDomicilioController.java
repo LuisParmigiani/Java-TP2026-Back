@@ -8,41 +8,41 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import soda_roja.backend.dtoRequest.ProductoPersonaDomicilioDTORequest;
-import soda_roja.backend.dtoResponse.ProductoPersonaDomicilioDTOResponse;
-import soda_roja.backend.service.ProductoPersonaDomicilioService;
+import soda_roja.backend.dtoRequest.ProductoDomicilioDTORequest;
+import soda_roja.backend.dtoResponse.ProductoDomicilioDTOResponse;
+import soda_roja.backend.service.ProductoDomicilioService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/producto-persona-domicilio")
 @Tag(name = "ProductoPersonaDomicilio", description = "Gestión de asociaciones entre Productos y PersonaDomicilio")
-public class ProductoPersonaDomicilioController {
+public class ProductoDomicilioController {
 
     @Autowired
-    private ProductoPersonaDomicilioService service;
+    private ProductoDomicilioService service;
 
     @GetMapping
     @Operation(summary = "Obtener todas las asociaciones ProductoPersonaDomicilio")
-    public ResponseEntity<List<ProductoPersonaDomicilioDTOResponse>> getAll() {
+    public ResponseEntity<List<ProductoDomicilioDTOResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener una asociación ProductoPersonaDomicilio por ID")
-    public ResponseEntity<ProductoPersonaDomicilioDTOResponse> getById(@PathVariable Long id) {
+    public ResponseEntity<ProductoDomicilioDTOResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
     @PostMapping
     @Operation(summary = "Crear una nueva asociación ProductoPersonaDomicilio")
-    public ResponseEntity<ProductoPersonaDomicilioDTOResponse> save(@Valid @RequestBody ProductoPersonaDomicilioDTORequest request) {
+    public ResponseEntity<ProductoDomicilioDTOResponse> save(@Valid @RequestBody ProductoDomicilioDTORequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar una asociación ProductoPersonaDomicilio")
-    public ResponseEntity<ProductoPersonaDomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoPersonaDomicilioDTORequest request) {
+    public ResponseEntity<ProductoDomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoDomicilioDTORequest request) {
         return ResponseEntity.ok(service.update(id, request));
     }
 

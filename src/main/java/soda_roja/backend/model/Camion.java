@@ -1,5 +1,6 @@
 package soda_roja.backend.model;
 import lombok.*;
+
 import jakarta.persistence.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 

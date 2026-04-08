@@ -1,6 +1,7 @@
 package soda_roja.backend.seeder;
 
 import net.datafaker.Faker;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -11,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.text.SimpleDateFormat;
 
 
 @Component

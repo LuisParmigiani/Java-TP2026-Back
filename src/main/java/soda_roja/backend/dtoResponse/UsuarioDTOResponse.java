@@ -1,7 +1,7 @@
 package soda_roja.backend.dtoResponse;
 
 import lombok.*;
-import soda_roja.backend.model.Persona;
+
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor

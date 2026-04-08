@@ -1,7 +1,10 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
+
+import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.model.Camion;
 import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.repository.CamionRepository;
@@ -10,7 +13,19 @@ import soda_roja.backend.repository.DomicilioRepository;
 import java.util.List;
 
 import soda_roja.backend.dtoRequest.CamionDTORequest;
+
 import soda_roja.backend.dtoResponse.CamionDTOResponse;
+/*
+ * Cabe aclarar que las otras excepciones existentes como las Constraint de la base de datos
+ * o las de validacion de datos de acuerdo con los objetos DTORequest son manejadas
+ * por el global Exception Handler, por lo que no es necesario capturarlas en el service.
+ * ¿COMO HACE ESTO SPRING?
+ * El controlador tiene el decorador @Valid, @REquestBody CamionDTORequest entidad,
+ * lo que hace que Spring valide automáticamente los datos entrantes contra las 
+ * restricciones definidas en el DTORequest.
+ * Si la validacion falla, Spring lanza una MethodArgumentNotValidException, que es capturada por el 
+ * GlobalExceptionHandler.
+ * */
 
 @Service
 public class CamionService {
@@ -29,13 +44,12 @@ public class CamionService {
     public CamionDTOResponse getById(Long id) {
         return repository.findById(id)
                 .map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Camion no encontrado con id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
     }
 
     public CamionDTOResponse save(CamionDTORequest entidad) {
-        List<Domicilio> Domicilios = entidad.getDomiciliosId().stream()
-                .map(id -> DomicilioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + id)))
+        List<Domicilio> domicilios = entidad.getDomiciliosId().stream()
+                .map(this::findDomicilioOrThrow)
                 .toList();
 
         Camion camion = Camion.builder()
@@ -43,7 +57,7 @@ public class CamionService {
                 .modelo(entidad.getModelo())
                 .marca(entidad.getMarca())
                 .kilometraje(entidad.getKilometraje())
-                .domicilios(Domicilios)
+                .domicilios(domicilios)
                 .build();
         Camion saved = repository.save(camion);
         return mapToDTO(saved);
@@ -51,8 +65,7 @@ public class CamionService {
 
     public CamionDTOResponse update(Long id, CamionDTORequest entidad) {
         List<Domicilio> Domicilios = entidad.getDomiciliosId().stream()
-                .map(idD -> DomicilioRepository.findById(idD)
-                        .orElseThrow(() -> new RuntimeException("Domicilio no encontrada con id: " + idD)))
+                .map(this::findDomicilioOrThrow)
                 .toList();
         Camion existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Camion no encontrado con id: " + id));
@@ -68,9 +81,14 @@ public class CamionService {
     }
 
     public void delete(Long id) {
-        repository.deleteById(id);
+    	Camion existing = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
+        repository.delete(existing);
     }
-
+    private Domicilio findDomicilioOrThrow(Long id) {
+        return DomicilioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
+    }
     public CamionDTOResponse mapToDTO(Camion camion) {
         return CamionDTOResponse.builder()
                 .id(camion.getId())

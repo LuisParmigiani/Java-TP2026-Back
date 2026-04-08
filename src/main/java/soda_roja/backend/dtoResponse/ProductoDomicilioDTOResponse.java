@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Schema(description = "DTO de respuesta para ProductoPersonaDomicilio")
-public class ProductoPersonaDomicilioDTOResponse {
+public class ProductoDomicilioDTOResponse {
 
     @Schema(description = "ID de la relación", example = "1")
     private Long id;

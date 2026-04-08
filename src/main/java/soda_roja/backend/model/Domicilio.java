@@ -3,6 +3,7 @@ package soda_roja.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -49,10 +50,12 @@ public class Domicilio {
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Venta> ventas;
-
+    //Le avisa a Lombok que el valor por defecto de dia es un array de booleanos con 7 posiciones,
+    //cada una representando un día de la semana (0: domingo, 1: lunes, ..., 6: sábado). Esto es útil para indicar en qué días se realizan los domicilios.
+    @Builder.Default
     @Column(name = "dia", nullable = false)
     private boolean[] dia = new boolean[7];
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductoPersonaDomicilio> productoPersonaDomicilio;
+    private List<ProductoDomicilio> productoDomicilio;
 }

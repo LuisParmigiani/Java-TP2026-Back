@@ -1,7 +1,7 @@
 package soda_roja.backend.model;
 import lombok.*;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -41,5 +41,5 @@ public class Producto {
 
 	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonManagedReference
-	private List<ProductoPersonaDomicilio> productosPersonaDomicilio;
+	private List<ProductoDomicilio> productosPersonaDomicilio;
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Schema(description = "DTO para crear o actualizar relaciones ProductoPersonaDomicilio")
-public class ProductoPersonaDomicilioDTORequest {
+public class ProductoDomicilioDTORequest {
     @NotNull(message = "El ID del producto no puede ser nulo")
     @Positive(message = "El ID del producto debe ser positivo")
     @Schema(description = "ID del producto", example = "1")

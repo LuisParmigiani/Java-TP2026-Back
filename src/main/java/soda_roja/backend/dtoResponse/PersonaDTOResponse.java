@@ -1,8 +1,7 @@
 package soda_roja.backend.dtoResponse;
 
 import lombok.*;
-import soda_roja.backend.model.Pago;
-import soda_roja.backend.model.Usuario;
+
 
 import java.util.List;
 
