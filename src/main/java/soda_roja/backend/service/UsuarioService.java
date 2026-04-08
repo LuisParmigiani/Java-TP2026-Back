@@ -31,6 +31,11 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con id: " + id));
         return mapToDTO(usuario);
     }
+    
+    public Usuario getByEmail(String email) {
+		return repository.findByEmail(email)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
+	}
 
     public UsuarioDTOResponse save(UsuarioDTORequest entidad) {
         Persona persona = PersonaRepository.findById(entidad.getPersonaId())
@@ -40,6 +45,7 @@ public class UsuarioService {
                 .nombreUsuario(entidad.getNombreUsuario())
                 .contrasena(passwordEncoder.encode(entidad.getContrasena()))
                 .nivelAcceso(entidad.getNivelAcceso())
+                .email(entidad.getEmail())
                 .persona(persona)
                 .build();
         return mapToDTO(repository.save(usuario));
@@ -51,8 +57,9 @@ public class UsuarioService {
         Persona persona = PersonaRepository.findById(entidad.getPersonaId())
                 .orElseThrow(() -> new RuntimeException("Persona no encontrada con id: " + entidad.getPersonaId()));
         existing.setNombreUsuario(entidad.getNombreUsuario());
-        existing.setContrasena(entidad.getContrasena());
+        existing.setContrasena(passwordEncoder.encode(entidad.getContrasena()));
         existing.setNivelAcceso(entidad.getNivelAcceso());
+        existing.setEmail(entidad.getEmail());
         existing.setPersona(persona);
 
 
@@ -62,11 +69,14 @@ public class UsuarioService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+    
+
 
     public UsuarioDTOResponse mapToDTO(Usuario usuario) {
         return UsuarioDTOResponse.builder()
                 .id(usuario.getId())
                 .nombreUsuario(usuario.getNombreUsuario())
+                .email(usuario.getEmail())
                 .nivelAcceso(usuario.getNivelAcceso())
                 .persona(new PersonaService().mapToDTO(usuario.getPersona()))
                 .build();
