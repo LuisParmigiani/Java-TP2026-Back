@@ -9,6 +9,7 @@ import soda_roja.backend.model.Persona;
 import soda_roja.backend.model.Usuario;
 import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.UsuarioRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ public class UsuarioService {
 
     @Autowired
     private PersonaRepository personaRepository;
+    
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     public List<UsuarioDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
@@ -30,14 +34,20 @@ public class UsuarioService {
                 .map(this::mapToDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
     }
+    
+    public Usuario getByEmail(String email) {
+		return repository.findByEmail(email)
+				.orElse(null);
+	}
 
     public UsuarioDTOResponse save(UsuarioDTORequest entidad) {
         Persona persona = findPersonaOrThrow(entidad.getPersonaId());
 
         Usuario usuario = Usuario.builder()
                 .nombreUsuario(entidad.getNombreUsuario())
-                .contrasena(entidad.getContrasena())
+                .contrasena(passwordEncoder.encode(entidad.getContrasena()))
                 .nivelAcceso(entidad.getNivelAcceso())
+                .email(entidad.getEmail())
                 .persona(persona)
                 .build();
         return mapToDTO(repository.save(usuario));
@@ -50,8 +60,9 @@ public class UsuarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
 
         existing.setNombreUsuario(entidad.getNombreUsuario());
-        existing.setContrasena(entidad.getContrasena());
+        existing.setContrasena(passwordEncoder.encode(entidad.getContrasena()));
         existing.setNivelAcceso(entidad.getNivelAcceso());
+        existing.setEmail(entidad.getEmail());
         existing.setPersona(persona);
 
         return mapToDTO(repository.save(existing));
@@ -67,13 +78,20 @@ public class UsuarioService {
         return personaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
     }
+    
+
 
     public UsuarioDTOResponse mapToDTO(Usuario usuario) {
         return UsuarioDTOResponse.builder()
                 .id(usuario.getId())
                 .nombreUsuario(usuario.getNombreUsuario())
+                .email(usuario.getEmail())
                 .nivelAcceso(usuario.getNivelAcceso())
                 .persona(new PersonaService().mapToDTO(usuario.getPersona()))
                 .build();
+    }
+    
+    public boolean verifyPassword(String rawPassword, String hashedPassword) {
+        return passwordEncoder.matches(rawPassword, hashedPassword);
     }
 }

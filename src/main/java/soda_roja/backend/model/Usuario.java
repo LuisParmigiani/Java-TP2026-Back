@@ -2,7 +2,6 @@ package soda_roja.backend.model;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +23,8 @@ public class Usuario {
     private Long id;
     @Column(name = "nombreUsuario", unique = true, nullable = false)
     private String nombreUsuario;
+    @Column(name = "mail", unique = true, nullable = false)
+    private String email;
     @Column(name = "contrasena", nullable = false)
     private String contrasena;
      @Column(name = "nivelAcceso", nullable = false)

@@ -13,5 +13,7 @@ public class UsuarioDTOResponse {
     private Long id;
     private String nombreUsuario;
     private String nivelAcceso;
+    private String email;
     private PersonaDTOResponse persona;
+    
 }
