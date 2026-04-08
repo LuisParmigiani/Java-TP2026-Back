@@ -25,7 +25,7 @@ public class ProductoController {
 
     // GET - traer por ID
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTOResponse> getById(@PathVariable long id) {
+    public ResponseEntity<ProductoDTOResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 
@@ -37,13 +37,13 @@ public class ProductoController {
 
     // PUT - actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoDTOResponse> update(@PathVariable long id, @Valid @RequestBody ProductoDTORequest entidad) {
+    public ResponseEntity<ProductoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoDTORequest entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 
     // DELETE - eliminar
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

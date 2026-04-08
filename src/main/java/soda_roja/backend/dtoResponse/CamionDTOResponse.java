@@ -25,4 +25,6 @@ public class CamionDTOResponse {
 	
 	private List<GastoDTOResponse> gastos;
 
+    private List<PersonaDomicilioDTOResponse> personasDomicilios;
+
 }

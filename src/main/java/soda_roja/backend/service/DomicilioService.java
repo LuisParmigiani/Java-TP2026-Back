@@ -67,7 +67,7 @@ public class DomicilioService {
                 .calle(domicilio.getCalle())
                 .numero(domicilio.getNumero())
                 .casa(domicilio.getCasa())
-                .zona(domicilio.getZona())
+                .zona(new ZonaService().mapToDTO(domicilio.getZona()))
                 .build();
     }
 }

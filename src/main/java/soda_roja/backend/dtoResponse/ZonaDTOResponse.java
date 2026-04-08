@@ -1,22 +1,25 @@
 package soda_roja.backend.dtoResponse;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
-
 public class ZonaDTOResponse {
-    private long id;
-    private String nombre;
-    private String detalle;
     
-    @JsonManagedReference
-    private List<ProductoDTOResponse> productos;
+    @Schema(example = "1", description = "Identificador único")
+    private Long id;
+    
+    @Schema(example = "Fisherton", description = "Nombre de la zona")
+    private String nombre;
+    
+    @Schema(example = "Zona de Rosario", description = "Detalle de la zona")
+    private String detalle;
+
+    
 }
+
+

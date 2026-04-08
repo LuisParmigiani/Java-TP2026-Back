@@ -1,7 +1,6 @@
 package soda_roja.backend.model;
 import lombok.*;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
@@ -47,4 +46,8 @@ public class Camion {
 
     private List<Gasto> gastos;
 
+
+	@OneToMany(mappedBy = "camion", cascade = CascadeType.ALL)
+	@JsonManagedReference
+	private List<PersonaDomicilio> personaDomicilios;
 }

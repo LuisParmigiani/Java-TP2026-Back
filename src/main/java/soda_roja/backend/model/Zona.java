@@ -31,12 +31,10 @@ public class Zona {
     @Column(name = "detalle")
     private String detalle;
 
-    @ManyToMany
-    @JoinTable(
-        name = "zonaProducto", // Nombre de la tabla intermedia
-        joinColumns = @JoinColumn(name = "zonaId"), // Clave foránea que referencia a Zona
-        inverseJoinColumns = @JoinColumn(name = "productoId") )// Clave foránea que referencia a Producto
-    private List<Producto> productos;
+    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<ProductoZona> productosZona;
+
 
     @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true,fetch =  FetchType.LAZY)
     // cascade: para que todo lo que se haga en zona quede aplicado en el domicilio, por ejemplo si borro zona se borran todos los domicilios relacionados

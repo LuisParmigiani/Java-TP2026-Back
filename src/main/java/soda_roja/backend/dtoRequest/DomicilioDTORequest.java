@@ -28,4 +28,5 @@ public class DomicilioDTORequest {
 
     @NotNull(message = "El id de la zona no puede estar vacío")
     private Long zonaId;
+
 }
