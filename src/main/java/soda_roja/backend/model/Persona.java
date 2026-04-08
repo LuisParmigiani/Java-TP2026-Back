@@ -57,6 +57,6 @@ public class Persona {
     @JsonBackReference
     private List<Pago> pagos;
 
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "persona")
     private List<Domicilio> Domicilios;
 }

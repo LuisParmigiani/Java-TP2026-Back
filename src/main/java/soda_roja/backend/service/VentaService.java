@@ -50,6 +50,7 @@ public class VentaService {
                 .domicilio(Domicilio)
                 .lineasPedido(lineasPedido)
                 .build();
+        lineasPedido.forEach(lp -> lp.setVenta(venta));
         return mapToDTO(repository.save(venta));
     }
 
@@ -66,7 +67,7 @@ public class VentaService {
         existing.setDomicilio(Domicilio);
         existing.setPagado(entidad.isPagado());
 
-
+        lineasPedido.forEach(lp -> lp.setVenta(existing));
         return mapToDTO(repository.save(existing));
     }
 
