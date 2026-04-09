@@ -4,6 +4,7 @@ import net.datafaker.Faker;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.*;
@@ -46,6 +47,8 @@ public class DataSeeder implements CommandLineRunner {
 
 
     private final Faker faker = new Faker(new Locale("es")); // datos en español
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -106,43 +109,85 @@ public class DataSeeder implements CommandLineRunner {
         domicilioRepository.saveAll(domicilios);
 
         List<Persona> personas = new ArrayList<>();
-        for (int i = 0; i < 320; i+=3)  {
+        List<Usuario> usuarios = new ArrayList<>();
+
+        // 60 Usuarios con nivel "Usuario"
+        for (int i = 0; i < 60; i++) {
             Persona persona = new Persona();
             persona.setNombre(faker.name().firstName());
             persona.setApellido(faker.name().lastName());
             persona.setTipoDoc(faker.options().option("DNI", "Pasaporte", "Cédula"));
-            persona.setNroDocumento(Integer.toString(faker.number().numberBetween(10000000, 99999999) + i ));
+            persona.setNroDocumento(Integer.toString(faker.number().numberBetween(10000000, 99999999) + i));
             persona.setTelefono(faker.phoneNumber().cellPhone());
-            persona.setEmail(faker.internet().emailAddress() + i);
+            String email = faker.internet().emailAddress() + i;
+            persona.setEmail(email);
             persona.setDeuda(faker.number().numberBetween(0, 100000));
             persona.setDomicilios(new ArrayList<>());
             for (int j = 0; j < faker.number().numberBetween(1, 3); j++) {
-                persona.getDomicilios().add(domicilios.get(i+j));
+                persona.getDomicilios().add(domicilios.get((i * 3 + j) % domicilios.size()));
             }
             personas.add(persona);
-        }
-        personaRepository.saveAll(personas);
 
-        List<Usuario> usuarios = new ArrayList<>();
-        for (int i = 0; i < 60; i++) {
             Usuario usuario = new Usuario();
             usuario.setNombreUsuario(faker.name().username() + i);
-            usuario.setContrasena(faker.internet().password(8, 16));
+            usuario.setContrasena(passwordEncoder.encode("usuario" + i + "123")); // random password
             usuario.setNivelAcceso("Usuario");
-            usuario.setPersona(personas.get(i));
+            usuario.setEmail(email);
+            usuario.setPersona(persona);
             usuarios.add(usuario);
-
-
         }
-        for (int i = 60; i < 80; i++) {
+
+        // 20 Usuarios con nivel "Empleado"
+        for (int i = 0; i < 20; i++) {
+            Persona persona = new Persona();
+            persona.setNombre(faker.name().firstName());
+            persona.setApellido(faker.name().lastName());
+            persona.setTipoDoc(faker.options().option("DNI", "Pasaporte", "Cédula"));
+            persona.setNroDocumento(Integer.toString(faker.number().numberBetween(10000000, 99999999) + 100 + i));
+            persona.setTelefono(faker.phoneNumber().cellPhone());
+            String email = faker.internet().emailAddress() + "emp" + i;
+            persona.setEmail(email);
+            persona.setDeuda(faker.number().numberBetween(0, 100000));
+            persona.setDomicilios(new ArrayList<>());
+            for (int j = 0; j < faker.number().numberBetween(1, 3); j++) {
+                persona.getDomicilios().add(domicilios.get((60 * 3 + i * 3 + j) % domicilios.size()));
+            }
+            personas.add(persona);
+
             Usuario usuario = new Usuario();
-            usuario.setNombreUsuario(faker.name().username());
-            usuario.setContrasena(faker.internet().password(8, 16));
+            usuario.setNombreUsuario(faker.name().username() + "emp" + i);
+            usuario.setContrasena(passwordEncoder.encode("empleado" + i + "123")); // random password
             usuario.setNivelAcceso("Empleado");
-            usuario.setPersona(personas.get(i));
+            usuario.setEmail(email);
+            usuario.setPersona(persona);
             usuarios.add(usuario);
         }
+
+        // 1 Administrador
+        Persona adminPersona = new Persona();
+        adminPersona.setNombre("Admin");
+        adminPersona.setApellido("Principal");
+        adminPersona.setTipoDoc("DNI");
+        adminPersona.setNroDocumento("99999999");
+        adminPersona.setTelefono("123456789");
+        String adminEmail = "admin@sodaroja.com";
+        adminPersona.setEmail(adminEmail);
+        adminPersona.setDeuda(0);
+        adminPersona.setDomicilios(new ArrayList<>());
+        adminPersona.getDomicilios().add(domicilios.get(0));
+        personas.add(adminPersona);
+
+        Usuario adminUsuario = new Usuario();
+        adminUsuario.setNombreUsuario("admin");
+        adminUsuario.setContrasena(passwordEncoder.encode("P@ssw0rd"));
+        adminUsuario.setNivelAcceso("Administrador");
+        adminUsuario.setEmail(adminEmail);
+        adminUsuario.setPersona(adminPersona);
+        usuarios.add(adminUsuario);
+
+        personaRepository.saveAll(personas);
         usuarioRepository.saveAll(usuarios);
+
 
         List<ProductoZona> productoZonas = new ArrayList<>();
         zonas.forEach( zona -> {
