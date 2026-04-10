@@ -28,13 +28,10 @@ public class AuthService {
     public String login(LoginDTORequest request) {
         Usuario usuario = usuarioService.getByEmail(request.getEmail());
         
-        if (usuario == null) {
-            throw new RuntimeException("Usuario no encontrado");
+        if (usuario == null || !usuarioService.verifyPassword(request.getContrasena(), usuario.getContrasena())) {
+            throw new RuntimeException("Credenciales inválidas");
         }
         
-        if (!usuarioService.verifyPassword(request.getContrasena(), usuario.getContrasena())) {
-            throw new RuntimeException("Contraseña incorrecta");
-        }
 
         UserDetails userDetails = User.builder()
                 .username(usuario.getId().toString())
