@@ -43,14 +43,10 @@ public class PersonaDTORequest {
     @Schema(example = "1123456789")
 
     private String telefono;
-    @Min(value = 0, message = "La deuda no puede ser negativa")
-    @Schema(example = "0.0")
-    private float deuda;
+    @Schema(example = "0.0" , description = "El saldo de la persona, que se actualiza con cada pago realizado. No puede ser negativo.")
+    private float saldo;
 
 
-    @NotNull(message = "El id del domicilio no puede estar vacío")
-    @Schema(example = "[1,2,3]", description = "ID del domicilio que se asignará a la persona, debe ser un número entero positivo")
-    private List<Long> domicilioId;
 
 
 

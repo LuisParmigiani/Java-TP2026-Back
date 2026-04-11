@@ -36,28 +36,22 @@ public class PersonaService {
     }
 
     public PersonaDTOResponse save(PersonaDTORequest entidad) {
-        List<Domicilio> domicilios = entidad.getDomicilioId().stream()
-                .map(this::findDomicilioOrThrow)
-                .toList();
+
 
         Persona persona = Persona.builder()
-                .Domicilios(domicilios)
                 .tipoDoc(entidad.getTipoDoc())
                 .nroDocumento(entidad.getNroDocumento())
                 .nombre(entidad.getNombre())
                 .apellido(entidad.getApellido())
                 .email(entidad.getEmail())
                 .telefono(entidad.getTelefono())
-                .deuda(entidad.getDeuda())
+                .saldo(entidad.getSaldo())
                 .build();
 
         return mapToDTO(repository.save(persona));
     }
 
     public PersonaDTOResponse update(Long id, PersonaDTORequest entidad) {
-        List<Domicilio> domicilios = entidad.getDomicilioId().stream()
-                .map(this::findDomicilioOrThrow)
-                .toList();
 
         Persona existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
@@ -68,8 +62,7 @@ public class PersonaService {
         existing.setApellido(entidad.getApellido());
         existing.setEmail(entidad.getEmail());
         existing.setTelefono(entidad.getTelefono());
-        existing.setDeuda(entidad.getDeuda());
-        existing.setDomicilios(domicilios);
+        existing.setSaldo(entidad.getSaldo());
 
         return mapToDTO(repository.save(existing));
     }
@@ -94,7 +87,7 @@ public class PersonaService {
                 .apellido(persona.getApellido())
                 .email(persona.getEmail())
                 .telefono(persona.getTelefono())
-                .deuda(persona.getDeuda())
+                .saldo(persona.getSaldo())
                 .domicilios(persona.getDomicilios() != null
                         ? persona.getDomicilios().stream().map(this::mapDomicilioToDTO).toList()
                         : List.of())

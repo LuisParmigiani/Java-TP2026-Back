@@ -49,23 +49,19 @@ public class DomicilioService {
     public DomicilioDTOResponse save(DomicilioDTORequest dto) {
         Zona zona = findZonaOrThrow(dto.getZonaId());
         Persona persona = findPersonaOrThrow(dto.getPersonaId());
+
         Camion camion = dto.getCamionId() != null
                 ? findCamionOrThrow(dto.getCamionId())
                 : null;
-        List<ProductoDomicilio> productoDomicilios = dto.getProductoPersonaDomicilioIds() != null
-                ? dto.getProductoPersonaDomicilioIds().stream()
-                .map(this::findProductoPersonaDomicilioOrThrow)
-                .toList()
-                : List.of();
 
         Domicilio domicilio = Domicilio.builder()
                 .calle(dto.getCalle())
                 .numero(dto.getNumero())
                 .casa(dto.getCasa())
                 .zona(zona)
+                .activo(dto.getActivo())
                 .persona(persona)
                 .camion(camion)
-                .productoDomicilio(productoDomicilios)
                 .dia(dto.getDia())
                 .build();
         return mapToDTO(repository.save(domicilio));
@@ -77,21 +73,17 @@ public class DomicilioService {
         Camion camion = entidad.getCamionId() != null
                 ? findCamionOrThrow(entidad.getCamionId())
                 : null;
-        List<ProductoDomicilio> productoDomicilios = entidad.getProductoPersonaDomicilioIds() != null
-                ? entidad.getProductoPersonaDomicilioIds().stream()
-                .map(this::findProductoPersonaDomicilioOrThrow)
-                .toList()
-                : List.of();
+
 
         Domicilio existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
         existing.setCalle(entidad.getCalle());
         existing.setNumero(entidad.getNumero());
+        existing.setActivo(entidad.getActivo());
         existing.setCasa(entidad.getCasa());
         existing.setZona(zona);
         existing.setPersona(persona);
         existing.setCamion(camion);
-        existing.setProductoDomicilio(productoDomicilios);
         existing.setDia(entidad.getDia());
         return mapToDTO(repository.save(existing));
     }
@@ -129,7 +121,11 @@ public class DomicilioService {
                 .numero(domicilio.getNumero())
                 .casa(domicilio.getCasa())
                 .zona(domicilio.getZona() != null ? new ZonaService().mapToDTO(domicilio.getZona()) : null)
+                .productosDomicilio(domicilio.getProductoDomicilio() != null
+                        ? domicilio.getProductoDomicilio().stream().map(productoDomicilio -> new ProductoDomicilioService().mapToDTO(productoDomicilio)).toList()
+                        : List.of())
                 .dia(domicilio.getDia())
+                .activo(domicilio.getActivo())
                 .build();
     }
 }

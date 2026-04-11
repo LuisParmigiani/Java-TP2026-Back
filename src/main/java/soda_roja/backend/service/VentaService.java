@@ -49,6 +49,7 @@ public class VentaService {
         Venta venta = Venta.builder()
                 .fecha(entidad.getFecha())
                 .total(entidad.getTotal())
+                .estado(entidad.getEstado())
                 .pagado(entidad.isPagado())
                 .domicilio(domicilio)
                 .lineasPedido(lineasPedido)
@@ -75,6 +76,7 @@ public class VentaService {
         existing.setTotal(entidad.getTotal());
         existing.setFecha(entidad.getFecha());
         existing.setDomicilio(domicilio);
+        existing.setEstado(entidad.getEstado());
         existing.setPagado(entidad.isPagado());
         lineasPedido.forEach(lp -> lp.setVenta(existing));
 
@@ -102,6 +104,7 @@ public class VentaService {
                 .id(venta.getId())
                 .fecha(venta.getFecha())
                 .total(venta.getTotal())
+                .estado(venta.getEstado())
                 .pagado(venta.isPagado())
                 .idDomicilio(venta.getDomicilio().getId())
                 .lineasPedido(venta.getLineasPedido().stream().map(lineaPedidoService::mapToDTO).toList())

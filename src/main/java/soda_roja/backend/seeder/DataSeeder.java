@@ -94,19 +94,7 @@ public class DataSeeder implements CommandLineRunner {
         }
         zonaRepository.saveAll(zonas);
 
-        List<Domicilio> domicilios = new ArrayList<>();
-        for (int i = 0; i < 350; i++) {
 
-            Domicilio domicilio = new Domicilio();
-            domicilio.setCalle(faker.address().streetName());
-            domicilio.setNumero(faker.address().buildingNumber());
-            domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
-            domicilio.setDia(new boolean[]{faker.bool().bool(), faker.bool().bool(), faker.bool().bool(),
-                    faker.bool().bool(), faker.bool().bool(), faker.bool().bool(), faker.bool().bool()});
-            domicilio.setZona(zonas.get(faker.number().numberBetween(0, zonas.size())));
-            domicilios.add(domicilio);
-        }
-        domicilioRepository.saveAll(domicilios);
 
         List<Persona> personas = new ArrayList<>();
         List<Usuario> usuarios = new ArrayList<>();
@@ -121,11 +109,8 @@ public class DataSeeder implements CommandLineRunner {
             persona.setTelefono(faker.phoneNumber().cellPhone());
             String email = faker.internet().emailAddress() + i;
             persona.setEmail(email);
-            persona.setDeuda(faker.number().numberBetween(0, 100000));
+            persona.setSaldo(faker.number().numberBetween(-2000, 100000));
             persona.setDomicilios(new ArrayList<>());
-            for (int j = 0; j < faker.number().numberBetween(1, 3); j++) {
-                persona.getDomicilios().add(domicilios.get((i * 3 + j) % domicilios.size()));
-            }
             personas.add(persona);
 
             Usuario usuario = new Usuario();
@@ -147,13 +132,9 @@ public class DataSeeder implements CommandLineRunner {
             persona.setTelefono(faker.phoneNumber().cellPhone());
             String email = faker.internet().emailAddress() + "emp" + i;
             persona.setEmail(email);
-            persona.setDeuda(faker.number().numberBetween(0, 100000));
+            persona.setSaldo(faker.number().numberBetween(-2000 , 100000));
             persona.setDomicilios(new ArrayList<>());
-            for (int j = 0; j < faker.number().numberBetween(1, 3); j++) {
-                persona.getDomicilios().add(domicilios.get((60 * 3 + i * 3 + j) % domicilios.size()));
-            }
             personas.add(persona);
-
             Usuario usuario = new Usuario();
             usuario.setNombreUsuario(faker.name().username() + "emp" + i);
             usuario.setContrasena(passwordEncoder.encode("123456")); // random password
@@ -162,6 +143,7 @@ public class DataSeeder implements CommandLineRunner {
             usuario.setPersona(persona);
             usuarios.add(usuario);
         }
+
 
         // 1 Administrador
         Persona adminPersona = new Persona();
@@ -172,14 +154,17 @@ public class DataSeeder implements CommandLineRunner {
         adminPersona.setTelefono("123456789");
         String adminEmail = "admin@sodaroja.com";
         adminPersona.setEmail(adminEmail);
-        adminPersona.setDeuda(0);
+        adminPersona.setSaldo(0);
         adminPersona.setDomicilios(new ArrayList<>());
-        adminPersona.getDomicilios().add(domicilios.get(0));
         personas.add(adminPersona);
+
+
+
+
 
         Usuario adminUsuario = new Usuario();
         adminUsuario.setNombreUsuario("admin");
-        adminUsuario.setContrasena(passwordEncoder.encode("P@ssw0rd"));
+        adminUsuario.setContrasena(passwordEncoder.encode("123456"));
         adminUsuario.setNivelAcceso("Administrador");
         adminUsuario.setEmail(adminEmail);
         adminUsuario.setPersona(adminPersona);
@@ -187,7 +172,49 @@ public class DataSeeder implements CommandLineRunner {
 
         personaRepository.saveAll(personas);
         usuarioRepository.saveAll(usuarios);
-
+        List<Camion> camiones = new ArrayList<>();
+        for (int i = 0; i < 250; i+=25) {
+            Camion camion = new Camion();
+            camion.setPatente(faker.bothify("??###??"));
+            camion.setModelo(faker.name().name());
+            camion.setMarca(faker.name().name());
+            camion.setKilometraje(faker.number().numberBetween(0, 200000));
+            camiones.add(camion);
+        }
+        camionRepository.saveAll(camiones);
+        List<Domicilio> domicilios = new ArrayList<>();
+        personas.forEach(persona -> {
+                    if(persona.getId() < 60) {
+                        for (int i = 0; i < faker.number().numberBetween(1, 3); i++) {
+                            Domicilio domicilio = new Domicilio();
+                            domicilio.setCalle(faker.address().streetName());
+                            domicilio.setNumero(faker.address().buildingNumber());
+                            domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
+                            domicilio.setDia(new boolean[]{faker.bool().bool(), faker.bool().bool(), faker.bool().bool(),
+                                    faker.bool().bool(), faker.bool().bool(), faker.bool().bool(), faker.bool().bool()});
+                            domicilio.setZona(zonas.get(faker.number().numberBetween(0, zonas.size())));
+                            domicilio.setProductoDomicilio(new ArrayList<>());
+                            domicilio.setPersona(persona);
+                            domicilio.setCamion(camiones.get(faker.number().numberBetween(0, camiones.size())));
+                            domicilio.setActivo(faker.bool().bool());
+                            domicilios.add(domicilio);
+                        }
+                    }else{
+                        Domicilio domicilio = new Domicilio();
+                        domicilio.setCalle(faker.address().streetName());
+                        domicilio.setNumero(faker.address().buildingNumber());
+                        domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
+                        domicilio.setDia(new boolean[]{faker.bool().bool(), faker.bool().bool(), faker.bool().bool(),
+                                faker.bool().bool(), faker.bool().bool(), faker.bool().bool(), faker.bool().bool()});
+                        domicilio.setZona(zonas.get(faker.number().numberBetween(0, zonas.size())));
+                        domicilio.setProductoDomicilio(new ArrayList<>());
+                        domicilio.setPersona(persona);
+                        domicilio.setActivo(Boolean.TRUE);
+                        domicilios.add(domicilio);
+                    }
+                }
+        );
+        domicilioRepository.saveAll(domicilios);
 
         List<ProductoZona> productoZonas = new ArrayList<>();
         zonas.forEach( zona -> {
@@ -204,52 +231,31 @@ public class DataSeeder implements CommandLineRunner {
 
 
 
-        List<LineaPedido> lineasPedido = new ArrayList<>();
 
-        for (int i = 0; i < 1000; i++) {
-            LineaPedido lineaPedido = new LineaPedido();
-            lineaPedido.setCantidad(faker.number().numberBetween(1, 10));
-            lineaPedido.setSubtotal(faker.number().numberBetween(100, 1000));
-            lineaPedido.setProductoZona(productoZonas.get(faker.number().numberBetween(0, productoZonas.size())));
-            lineasPedido.add(lineaPedido);
+        for (int i = 0; i < 1000; i += 5) {
+            Venta venta = new Venta();
+            venta.setTotal(faker.number().numberBetween(500, 5000));
+            venta.setPagado(faker.bool().bool());
+            venta.setFecha(faker.date().past(30, java.util.concurrent.TimeUnit.DAYS));
+            venta.setDomicilio(domicilios.get(faker.number().numberBetween(0, domicilios.size())));
+            venta.setEstado(faker.options().option("Pendiente", "En proceso", "Completada", "Cancelada"));
+            List<LineaPedido> ventaLineas = new ArrayList<>();
+            for (int j = 0; j < 5; j++) {
+                LineaPedido lp = new LineaPedido();
+                lp.setCantidad(faker.number().numberBetween(1, 10));
+                lp.setSubtotal(faker.number().numberBetween(100, 1000));
+                lp.setProductoZona(productoZonas.get(faker.number().numberBetween(0, productoZonas.size())));
+                lp.setVenta(venta);
+                ventaLineas.add(lp);
+            }
+
+            venta.setLineasPedido(ventaLineas);
+            ventaRepository.save(venta);
         }
 
-        List<Venta> ventas = new ArrayList<>();
-        for (int i = 0; i <1000; i+=5){
-                Venta venta = new Venta();
-                venta.setTotal(faker.number().numberBetween(500, 5000));
-                venta.setPagado(faker.bool().bool());
-                venta.setFecha(faker.date().past(30, java.util.concurrent.TimeUnit.DAYS));
-                venta.setDomicilio(domicilios.get(faker.number().numberBetween(0, domicilios.size())));
-                List<LineaPedido> lineaPedidoIds = new ArrayList<>();
-                for (int k = 0; k < 5; k++) {
-                    lineaPedidoIds.add(lineasPedido.get(i+k));
-                    lineasPedido.get(i+k).setVenta(venta);
-            }
-                venta.setLineasPedido(lineaPedidoIds);
-                ventas.add(venta);
-        };
 
-        ventaRepository.saveAll(ventas);
-        lineasPedido.forEach(linea -> {
-            if (linea.getVenta() != null) {
-                lineaPedidoRepository.save(linea);
-            }
-        });
-        List<Camion> camiones = new ArrayList<>();
-        for (int i = 0; i < 250; i+=25) {
-            Camion camion = new Camion();
-            camion.setPatente(faker.bothify("??###??"));
-            camion.setModelo(faker.name().name());
-            camion.setMarca(faker.name().name());
-            camion.setKilometraje(faker.number().numberBetween(0, 200000));
-            List<Domicilio> domicilioCamion =new ArrayList<>();
-            for (int j=0;j<25;j++){
-                domicilioCamion.add(domicilios.get(i+j));
-            }
-            camiones.add(camion);
-        }
-        camionRepository.saveAll(camiones);
+
+
 
         List<Gasto> gastos = new ArrayList<>();
         camiones.forEach(camion -> {
@@ -303,6 +309,20 @@ public class DataSeeder implements CommandLineRunner {
         });
         cargaProductoRepository.saveAll(cargaProductos);
 
+
+        domicilios.forEach(domicilio -> {
+            if (domicilio.getProductoDomicilio() != null) {
+                for (int i = 0; i < faker.number().numberBetween(1, 5); i++) {
+                    ProductoDomicilio productoDomicilio = new ProductoDomicilio();
+                    productoDomicilio.setAproxSemanal(faker.number().numberBetween(1, 10));
+                    productoDomicilio.setDomicilio(domicilio);
+                    productoDomicilio.setProducto(productos.get(faker.number().numberBetween(0, productos.size())));
+                    productoDomicilio.setCantVaciosActuales(faker.number().numberBetween(1, 10));
+                    domicilio.getProductoDomicilio().add(productoDomicilio);
+                }
+                domicilioRepository.save(domicilio);
+            }
+        });
 
     }
 }

@@ -53,7 +53,7 @@ public class AuthService {
 				.apellido(request.getPersona_apellido())
 				.email(request.getEmail())
 				.telefono(request.getPersona_telefono())
-				.deuda(0)
+				.saldo(0)
 				.build();
 		PersonaDTOResponse nuevaPersonaDto = personaService.save(nuevaPersona);
 		

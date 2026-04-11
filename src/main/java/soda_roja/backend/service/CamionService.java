@@ -48,31 +48,25 @@ public class CamionService {
     }
 
     public CamionDTOResponse save(CamionDTORequest entidad) {
-        List<Domicilio> domicilios = entidad.getDomiciliosId().stream()
-                .map(this::findDomicilioOrThrow)
-                .toList();
+
 
         Camion camion = Camion.builder()
                 .patente(entidad.getPatente())
                 .modelo(entidad.getModelo())
                 .marca(entidad.getMarca())
                 .kilometraje(entidad.getKilometraje())
-                .domicilios(domicilios)
                 .build();
         Camion saved = repository.save(camion);
         return mapToDTO(saved);
     }
 
     public CamionDTOResponse update(Long id, CamionDTORequest entidad) {
-        List<Domicilio> Domicilios = entidad.getDomiciliosId().stream()
-                .map(this::findDomicilioOrThrow)
-                .toList();
+
         Camion existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Camion no encontrado con id: " + id));
         existing.setPatente(entidad.getPatente());
         existing.setModelo(entidad.getModelo());
         existing.setMarca(entidad.getMarca());
-        existing.setDomicilios(Domicilios);
         existing.setKilometraje(entidad.getKilometraje());
 
 

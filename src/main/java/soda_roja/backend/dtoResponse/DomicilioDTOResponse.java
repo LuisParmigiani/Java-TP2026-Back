@@ -19,5 +19,7 @@ public class DomicilioDTOResponse {
     private ZonaDTOResponse zona;
     private boolean[] dia;
     private List<VentaDTOResponse> ventas;
+    private List<ProductoDomicilioDTOResponse> productosDomicilio;
+    private Boolean activo;
 }
 

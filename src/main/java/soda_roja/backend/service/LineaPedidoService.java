@@ -42,13 +42,11 @@ public class LineaPedidoService {
 
     public LineaPedidoDTOResponse save(LineaPedidoDTORequest entidad) {
         ProductoZona productoZona = findProductoZonaOrThrow(entidad.getProductoZonaId());
-        Venta venta = findVentaOrThrow(entidad.getVentaId());
 
         LineaPedido lineaPedido = LineaPedido.builder()
                 .cantidad(entidad.getCantidad())
                 .subtotal(entidad.getSubtotal())
                 .productoZona(productoZona)
-                .venta(venta)
                 .build();
 
         LineaPedido saved = repository.save(lineaPedido);
@@ -57,15 +55,13 @@ public class LineaPedidoService {
 
     public LineaPedidoDTOResponse update(Long id, LineaPedidoDTORequest entidad) {
         ProductoZona productoZona = findProductoZonaOrThrow(entidad.getProductoZonaId());
-        Venta venta = findVentaOrThrow(entidad.getVentaId());
-        
+
         LineaPedido existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("LineaPedido no encontrado con id: " + id));
 
         existing.setCantidad(entidad.getCantidad());
         existing.setSubtotal(entidad.getSubtotal());
         existing.setProductoZona(productoZona);
-        existing.setVenta(venta);
 
         return mapToDTO(repository.save(existing));
     }

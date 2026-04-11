@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.Date;
@@ -32,5 +33,9 @@ public class VentaDTORequest {
     private Long idDomicilio;
     @Schema(example = "[1, 2, 3]", description = "Lista de identificadores de las líneas de pedido asociadas a esta venta")
     private List<Long> lineasPedidoIds;
+    @Schema(example = "Pendiente", description = "Estado de la venta")
+    @NotNull(message = "El estado de la venta no puede ser nulo")
+    @Pattern(regexp = "Pendiente|En proceso|Completada|Cancelada", message = "El estado debe ser uno de los siguientes: Pendiente, En proceso, Completada, Cancelada")
+    private String estado;
 
 }

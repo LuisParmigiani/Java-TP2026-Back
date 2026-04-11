@@ -29,7 +29,5 @@ public class LineaPedidoDTORequest {
     @Schema(example = "1", description = "ID de ProductoZona")
     private Long productoZonaId;
     
-    @NotNull(message = "El id de la venta no puede ser nulo")
-    @Schema(example = "1", description = "ID de la venta a la que pertenece esta línea de pedido")
-    private Long ventaId;
+
 }

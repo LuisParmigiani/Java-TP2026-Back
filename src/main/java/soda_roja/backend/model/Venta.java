@@ -33,8 +33,8 @@ public class Venta {
     @ManyToOne
     @JoinColumn(name = "domicilio_id", nullable = false)
     private Domicilio domicilio;
-
-
-    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "venta",cascade = CascadeType.ALL)
     private List<LineaPedido> lineasPedido;
+    @Column(name = "estado", nullable = false)
+    private String estado;
 }

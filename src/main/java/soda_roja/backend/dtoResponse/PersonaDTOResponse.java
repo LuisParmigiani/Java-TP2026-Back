@@ -19,7 +19,7 @@ public class PersonaDTOResponse {
     private String apellido;
     private String email;
     private String telefono;
-    private float deuda;
+    private float saldo;
     private List<PagoDTOResponse> pagos;
     private List<DomicilioDTOResponse> domicilios;
 

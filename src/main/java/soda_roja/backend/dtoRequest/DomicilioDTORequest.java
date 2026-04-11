@@ -41,10 +41,11 @@ public class DomicilioDTORequest {
     @Schema(description = "El ID del camión asignado al domicilio (opcional)", example = "1")
     private Long camionId;
 
-    @Schema(
-            example = "[1, 2, 3]",
-            description = "Lista de IDs de ProductoPersonaDomicilio asociados al domicilio. Puede ser nula o vacía."
-    )
-    @Size(max = 100, message = "La lista de IDs de ProductoPersonaDomicilio no puede contener más de 100 elementos")
-    private List<@Positive(message = "Cada ID debe ser un número entero positivo") Long> productoPersonaDomicilioIds;
+
+
+    @Schema(description = "Indica si el domicilio está activo o no", example = "true")
+    @NotNull(message = "El estado de actividad del domicilio no puede estar vacío")
+    private Boolean activo;
+
+
 }

@@ -48,7 +48,7 @@ public class Domicilio {
     @JoinColumn(name = "camionId")
     private Camion camion;
 
-    @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL)
     private List<Venta> ventas;
     //Le avisa a Lombok que el valor por defecto de dia es un array de booleanos con 7 posiciones,
     //cada una representando un día de la semana (0: domingo, 1: lunes, ..., 6: sábado). Esto es útil para indicar en qué días se realizan los domicilios.
@@ -58,4 +58,6 @@ public class Domicilio {
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoDomicilio> productoDomicilio;
+
+    private Boolean activo;
 }
