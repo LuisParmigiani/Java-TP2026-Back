@@ -130,7 +130,7 @@ public class DataSeeder implements CommandLineRunner {
 
             Usuario usuario = new Usuario();
             usuario.setNombreUsuario(faker.name().username() + i);
-            usuario.setContrasena(passwordEncoder.encode("usuario" + i + "123")); // random password
+            usuario.setContrasena(passwordEncoder.encode("123456")); // random password
             usuario.setNivelAcceso("Usuario");
             usuario.setEmail(email);
             usuario.setPersona(persona);
@@ -156,7 +156,7 @@ public class DataSeeder implements CommandLineRunner {
 
             Usuario usuario = new Usuario();
             usuario.setNombreUsuario(faker.name().username() + "emp" + i);
-            usuario.setContrasena(passwordEncoder.encode("empleado" + i + "123")); // random password
+            usuario.setContrasena(passwordEncoder.encode("123456")); // random password
             usuario.setNivelAcceso("Empleado");
             usuario.setEmail(email);
             usuario.setPersona(persona);

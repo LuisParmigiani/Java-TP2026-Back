@@ -22,6 +22,9 @@ public class UsuarioService {
     @Autowired
     private PersonaRepository personaRepository;
     
+    @Autowired
+    private PersonaService personaService;
+    
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
@@ -87,7 +90,7 @@ public class UsuarioService {
                 .nombreUsuario(usuario.getNombreUsuario())
                 .email(usuario.getEmail())
                 .nivelAcceso(usuario.getNivelAcceso())
-                .persona(new PersonaService().mapToDTO(usuario.getPersona()))
+                .persona(personaService.mapToDTO(usuario.getPersona()))
                 .build();
     }
     
