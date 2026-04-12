@@ -37,6 +37,12 @@ public class VentaService {
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
     }
 
+    public List<VentaDTOResponse> getByUserId(Long userId) {
+        return repository.findByDomicilioPersonaUsuarioId(userId).stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
     public VentaDTOResponse save(VentaDTORequest entidad) {
         Domicilio domicilio = findDomicilioOrThrow(entidad.getIdDomicilio());
         List<LineaPedido> lineasPedido = entidad.getLineasPedidoIds().stream()

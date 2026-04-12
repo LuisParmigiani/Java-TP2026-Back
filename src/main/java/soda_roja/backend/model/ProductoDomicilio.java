@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "productoPersonaDomicilio")
+@Table(name = "productoDomicilio")
 @Schema(description = "Tabla intermedia entre Producto y PersonaDomicilio")
 public class ProductoDomicilio {
     @Id

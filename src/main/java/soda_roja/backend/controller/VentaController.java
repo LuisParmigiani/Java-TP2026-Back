@@ -27,6 +27,10 @@ public class VentaController {
         return ResponseEntity.ok(service.getById(id));
     }
 
+    @GetMapping("/ByUserId/{id}")
+    public ResponseEntity<List<VentaDTOResponse>> getByUserId(@PathVariable long id) {
+        return ResponseEntity.ok(service.getByUserId(id));
+    }
     @PostMapping
     public ResponseEntity<VentaDTOResponse> create(@Valid @RequestBody VentaDTORequest entidad) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));

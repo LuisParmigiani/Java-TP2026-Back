@@ -21,5 +21,6 @@ public class DomicilioDTOResponse {
     private List<VentaDTOResponse> ventas;
     private List<ProductoDomicilioDTOResponse> productosDomicilio;
     private Boolean activo;
+    private Long personaId;
 }
 

@@ -44,7 +44,7 @@ public class Persona {
     @Column(name = "telefono", nullable = false, unique = true)
     private String telefono;
 
-    @Column(name = "deuda", nullable = true)
+    @Column(name = "saldo", nullable = true)
     private float saldo;
     @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
     @JsonIgnore

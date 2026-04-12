@@ -42,7 +42,6 @@ public class DomicilioDTORequest {
     private Long camionId;
 
 
-
     @Schema(description = "Indica si el domicilio está activo o no", example = "true")
     @NotNull(message = "El estado de actividad del domicilio no puede estar vacío")
     private Boolean activo;

@@ -120,6 +120,7 @@ public class DomicilioService {
                 .calle(domicilio.getCalle())
                 .numero(domicilio.getNumero())
                 .casa(domicilio.getCasa())
+                .personaId(domicilio.getPersona() != null ? domicilio.getPersona().getId() : null)
                 .zona(domicilio.getZona() != null ? new ZonaService().mapToDTO(domicilio.getZona()) : null)
                 .productosDomicilio(domicilio.getProductoDomicilio() != null
                         ? domicilio.getProductoDomicilio().stream().map(productoDomicilio -> new ProductoDomicilioService().mapToDTO(productoDomicilio)).toList()
