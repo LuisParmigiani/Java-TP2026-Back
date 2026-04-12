@@ -34,6 +34,10 @@ public class Producto {
 	
 	@Column(nullable = false)
 	private int stock;
+	@Column(length = 250)
+	private String imagenUrl;
+	@Column(nullable = false)
+	private boolean activo; // Indica si el producto está activo o inactivo
 
 	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonManagedReference

@@ -64,6 +64,8 @@ public class ProductoService {
                 .detalle(producto.getDetalle())
                 .precio(producto.getPrecio())
                 .stock(producto.getStock())
+                .imagenUrl(producto.getImagenUrl())
+                .activo(producto.isActivo())
                 .build();
     }
 }

@@ -25,6 +25,12 @@ public class ProductoDTOResponse {
     @Schema(example = "20", description = "Cantidad disponible en stock")
     private int stock;
     
+    @Schema(example = "https://example.com/images/gaseosa-cola-2l.jpg", description = "URL de la imagen del producto")
+    private String imagenUrl;
+    
+    @Schema(example = "true", description = "Indica si el producto está activo o inactivo")
+    private boolean activo; // Indica si el producto está activo o inactivo
+    
     
     
 }

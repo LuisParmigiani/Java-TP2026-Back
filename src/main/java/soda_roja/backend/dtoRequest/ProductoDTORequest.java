@@ -33,5 +33,15 @@ public class ProductoDTORequest {
 	@Schema(example = "20", description = "Cantidad disponible en stock")
 	private int stock;
 	
+	@NotBlank(message = "La URL de la imagen no puede estar vacía")
+	@Size(max = 250, message = "La URL de la imagen no puede tener más de 250 caracteres")
+	@Schema(example = "https://example.com/images/gaseosa-cola-2l"
+			+ "jpg", description = "URL de la imagen del producto")
+	
+	private String imagenUrl;
+	
+	@Schema(example = "true", description = "Indica si el producto está activo o inactivo")
+	private boolean activo; // Indica si el producto está activo o inactivo
+	
 	
 }
