@@ -46,6 +46,8 @@ public class ProductoService {
         existing.setDetalle(entidad.getDetalle());
         existing.setPrecio(entidad.getPrecio());
         existing.setStock(entidad.getStock());
+        existing.setImagenUrl(entidad.getImagenUrl());
+        existing.setActivo(entidad.isActivo());
 
         return mapToDTO(repository.save(existing));
     }

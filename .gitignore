@@ -28,6 +28,10 @@ out/
 *.zip
 *.tar.gz
 *.rar
+#Las imágenes dentro de uploads de dos formas diferentes
+uploads/*
+*.jpg
+
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
