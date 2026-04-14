@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import soda_roja.backend.dtoRequestPut.CamionDTORequestPut;
 import soda_roja.backend.model.Camion;
 import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.repository.CamionRepository;
@@ -60,7 +61,7 @@ public class CamionService {
         return mapToDTO(saved);
     }
 
-    public CamionDTOResponse update(Long id, CamionDTORequest entidad) {
+    public CamionDTOResponse update(Long id, CamionDTORequestPut entidad) {
 
         Camion existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Camion no encontrado con id: " + id));

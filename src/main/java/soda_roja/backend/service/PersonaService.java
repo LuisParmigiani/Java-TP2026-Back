@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.PersonaDTORequest;
+import soda_roja.backend.dtoRequestPut.PersonaDTORequestPut;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.model.Domicilio;
@@ -51,7 +52,7 @@ public class PersonaService {
         return mapToDTO(repository.save(persona));
     }
 
-    public PersonaDTOResponse update(Long id, PersonaDTORequest entidad) {
+    public PersonaDTOResponse update(Long id, PersonaDTORequestPut entidad) {
 
         Persona existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));

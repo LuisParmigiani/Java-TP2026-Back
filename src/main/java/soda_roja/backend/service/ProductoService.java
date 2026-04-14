@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.ProductoDTORequest;
+import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
 import soda_roja.backend.dtoResponse.ProductoDTOResponse;
 import soda_roja.backend.repository.ProductoRepository;
 import soda_roja.backend.model.Producto;
@@ -39,7 +40,7 @@ public class ProductoService {
     }
 
         
-    public ProductoDTOResponse update(Long id, ProductoDTORequest entidad) {
+    public ProductoDTOResponse update(Long id, ProductoDTORequestPut entidad) {
         Producto existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
         existing.setNombre(entidad.getNombre());

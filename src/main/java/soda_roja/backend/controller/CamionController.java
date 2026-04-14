@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import soda_roja.backend.dtoRequestPut.CamionDTORequestPut;
 import soda_roja.backend.service.CamionService;
 import soda_roja.backend.dtoRequest.CamionDTORequest;
 import soda_roja.backend.dtoResponse.CamionDTOResponse;
@@ -39,7 +40,7 @@ public class CamionController {
 
     // PUT - actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<CamionDTOResponse> update(@PathVariable long id, @Valid @RequestBody CamionDTORequest entidad) {
+    public ResponseEntity<CamionDTOResponse> update(@PathVariable long id, @Valid @RequestBody CamionDTORequestPut entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

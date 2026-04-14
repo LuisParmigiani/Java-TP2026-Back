@@ -3,6 +3,7 @@ package soda_roja.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
+import soda_roja.backend.dtoRequestPut.ProductoZonaDTORequestPut;
 import soda_roja.backend.model.ProductoZona;
 import soda_roja.backend.model.Producto;
 import soda_roja.backend.model.Zona;
@@ -55,7 +56,7 @@ public class ProductoZonaService {
         return mapToDTO(saved);
     }
 
-    public ProductoZonaDTOResponse update(Long id, ProductoZonaDTORequest entidad) {
+    public ProductoZonaDTOResponse update(Long id, ProductoZonaDTORequestPut entidad) {
         Producto producto = findProductoOrThrow(entidad.getProductoId());
         Zona zona = findZonaOrThrow(entidad.getZonaId());
 

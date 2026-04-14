@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.VentaDTORequest;
+import soda_roja.backend.dtoRequestPut.VentaDTORequestPut;
 import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.service.VentaService;
 import jakarta.validation.Valid;
@@ -37,7 +38,7 @@ public class VentaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VentaDTOResponse> update(@PathVariable long id, @Valid @RequestBody VentaDTORequest entidad) {
+    public ResponseEntity<VentaDTOResponse> update(@PathVariable long id, @Valid @RequestBody VentaDTORequestPut entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

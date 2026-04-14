@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.VentaDTORequest;
+import soda_roja.backend.dtoRequestPut.VentaDTORequestPut;
 import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.LineaPedidoRepository;
@@ -65,7 +66,7 @@ public class VentaService {
         return mapToDTO(repository.save(venta));
     }
 
-    public VentaDTOResponse update(Long id, VentaDTORequest entidad) {
+    public VentaDTOResponse update(Long id, VentaDTORequestPut entidad) {
         Venta existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
 

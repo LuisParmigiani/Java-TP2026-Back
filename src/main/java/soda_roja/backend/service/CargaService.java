@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.CargaDTORequest;
+import soda_roja.backend.dtoRequestPut.CargaDTORequestPut;
 import soda_roja.backend.dtoResponse.CargaDTOResponse;
 import soda_roja.backend.model.Camion;
 import soda_roja.backend.model.Carga;
@@ -50,7 +51,7 @@ public class CargaService {
         return mapToDTO(repository.save(carga));
     }
 
-    public CargaDTOResponse update(Long id, CargaDTORequest entidad) {
+    public CargaDTOResponse update(Long id, CargaDTORequestPut entidad) {
         Usuario usuario = usuarioRepository.findById(entidad.getIdUsuario())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + entidad.getIdUsuario()));
         

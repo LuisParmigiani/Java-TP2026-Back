@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import soda_roja.backend.dtoRequest.ProductoZonaDTORequest;
+import soda_roja.backend.dtoRequestPut.ProductoZonaDTORequestPut;
 import soda_roja.backend.dtoResponse.ProductoZonaDTOResponse;
 import soda_roja.backend.service.ProductoZonaService;
 
@@ -42,7 +43,7 @@ public class ProductoZonaController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar una asociación ProductoZona")
-    public ResponseEntity<ProductoZonaDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoZonaDTORequest request) {
+    public ResponseEntity<ProductoZonaDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoZonaDTORequestPut request) {
         return ResponseEntity.ok(service.update(id, request));
     }
 

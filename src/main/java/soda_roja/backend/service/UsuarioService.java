@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
+import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.model.Persona;
 import soda_roja.backend.model.Usuario;
@@ -56,7 +57,7 @@ public class UsuarioService {
         return mapToDTO(repository.save(usuario));
     }
 
-    public UsuarioDTOResponse update(Long id, UsuarioDTORequest entidad) {
+    public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad) {
         Persona persona = findPersonaOrThrow(entidad.getPersonaId());
 
         Usuario existing = repository.findById(id)

@@ -1,9 +1,11 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
+import soda_roja.backend.dtoRequestPut.DomicilioDTORequestPut;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.model.Zona;
@@ -15,6 +17,7 @@ import soda_roja.backend.repository.ZonaRepository;
 import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.CamionRepository;
 import soda_roja.backend.repository.ProductoDomicilioRepository;
+import soda_roja.backend.specification.DomicilioSpecification;
 
 import java.util.List;
 
@@ -36,6 +39,12 @@ public class DomicilioService {
     @Autowired
     private ProductoDomicilioRepository productoDomicilioRepository;
 
+    @Autowired
+    private ZonaService zonaService;
+
+    @Autowired
+    private ProductoDomicilioService productoDomicilioService;
+
     public List<DomicilioDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
     }
@@ -45,6 +54,43 @@ public class DomicilioService {
                 .map(this::mapToDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
     }
+
+
+    public List<DomicilioDTOResponse> getByUserId(Long id, String activo, Integer dias) {
+        List<Domicilio> resultados;
+        Boolean activeBoolean = null;
+        System.out.println(id.toString() +activo
+                );
+        if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null) {
+            resultados = repository.findDomicilioByPersonaUsuarioId(id);
+
+        } else {
+            if (activo != null && !activo.isBlank() ) {
+                if (activo.equalsIgnoreCase("true") || activo.equalsIgnoreCase("false")) {
+                    activeBoolean = Boolean.parseBoolean(activo);
+                } else {
+                    if(activo.equalsIgnoreCase("Activas")){
+                        activeBoolean = true;
+                    } else if (activo.equals( "Inactivas")) {
+                        activeBoolean = false;
+                    }else {
+                    throw new IllegalArgumentException("El parámetro 'activo' debe ser 'true' o 'false'");
+                    }
+                }
+            }
+
+            DomicilioSpecification.DomicilioFiltrosDTO filtros =
+                    new DomicilioSpecification.DomicilioFiltrosDTO(id, activeBoolean, dias);
+
+            resultados = repository.findAll(DomicilioSpecification.filtrar(filtros));
+        }
+
+        return resultados.stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+
 
     public DomicilioDTOResponse save(DomicilioDTORequest dto) {
         Zona zona = findZonaOrThrow(dto.getZonaId());
@@ -67,7 +113,7 @@ public class DomicilioService {
         return mapToDTO(repository.save(domicilio));
     }
 
-    public DomicilioDTOResponse update(Long id, DomicilioDTORequest entidad) {
+    public DomicilioDTOResponse update(Long id, DomicilioDTORequestPut entidad) {
         Zona zona = findZonaOrThrow(entidad.getZonaId());
         Persona persona = findPersonaOrThrow(entidad.getPersonaId());
         Camion camion = entidad.getCamionId() != null
@@ -87,7 +133,6 @@ public class DomicilioService {
         existing.setDia(entidad.getDia());
         return mapToDTO(repository.save(existing));
     }
-
     public void delete(Long id) {
         Domicilio domicilio = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));

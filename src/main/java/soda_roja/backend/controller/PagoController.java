@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import soda_roja.backend.dtoRequestPut.PagoDTORequestPut;
 import soda_roja.backend.service.PagoService;
 import soda_roja.backend.dtoRequest.PagoDTORequest;
 import soda_roja.backend.dtoResponse.PagoDTOResponse;
@@ -33,7 +34,7 @@ public class PagoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PagoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody PagoDTORequest entidad) {
+    public ResponseEntity<PagoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody PagoDTORequestPut entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import soda_roja.backend.dtoRequestPut.DomicilioDTORequestPut;
 import soda_roja.backend.service.DomicilioService;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
@@ -27,13 +28,22 @@ public class DomicilioController {
         return ResponseEntity.ok(service.getById(id));
     }
 
+    @GetMapping("/usuario/{id}")
+    public ResponseEntity<List<DomicilioDTOResponse>> getByUserId(
+            @PathVariable Long id
+            , @RequestParam(required = false) String estado
+            , @RequestParam(required = false) Integer dias
+    ){
+        return ResponseEntity.ok(service.getByUserId(id, estado, dias));
+    }
+
     @PostMapping
     public ResponseEntity<DomicilioDTOResponse> create(@Valid @RequestBody DomicilioDTORequest entidad) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody DomicilioDTORequest entidad) {
+    public ResponseEntity<DomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody DomicilioDTORequestPut entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

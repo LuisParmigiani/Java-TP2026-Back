@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.GastoDTORequest;
+import soda_roja.backend.dtoRequestPut.GastoDTORequestPut;
 import soda_roja.backend.dtoResponse.GastoDTOResponse;
 import soda_roja.backend.service.GastoService;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class GastoController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<GastoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody GastoDTORequest entidad) {
+	public ResponseEntity<GastoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody GastoDTORequestPut entidad) {
 		return ResponseEntity.ok(service.update(id, entidad));
 	}
 
