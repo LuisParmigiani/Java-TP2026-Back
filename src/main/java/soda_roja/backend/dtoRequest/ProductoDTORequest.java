@@ -26,18 +26,16 @@ public class ProductoDTORequest {
 	@NotNull(message = "El precio no puede ser nulo")
 	@Min(value = 0, message = "El precio no puede ser negativo")
 	@Schema(example = "2500.0", description = "Precio del producto")
-	private double precio;
+	private Double precio;
 	
 	@NotNull(message = "El stock no puede ser nulo")
 	@Min(value = 0, message = "El stock no puede ser negativo")
 	@Schema(example = "20", description = "Cantidad disponible en stock")
-	private int stock;
+	private Integer stock;
 	
-	@NotBlank(message = "La URL de la imagen no puede estar vacía")
-	@Size(max = 250, message = "La URL de la imagen no puede tener más de 250 caracteres")
+	@Size(max = 500, message = "La URL de la imagen no puede tener más de 250 caracteres")
 	@Schema(example = "https://example.com/images/gaseosa-cola-2l"
 			+ "jpg", description = "URL de la imagen del producto")
-	
 	private String imagenUrl;
 	
 	@Schema(example = "true", description = "Indica si el producto está activo o inactivo")

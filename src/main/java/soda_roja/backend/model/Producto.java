@@ -30,11 +30,11 @@ public class Producto {
 	private String detalle;
 	
 	@Column(nullable = false)
-	private double precio;
+	private Double precio;
 	
 	@Column(nullable = false)
-	private int stock;
-	@Column(length = 250)
+	private Integer stock;
+	@Column(length = 500)
 	private String imagenUrl;
 	@Column(nullable = false)
 	private boolean activo; // Indica si el producto está activo o inactivo

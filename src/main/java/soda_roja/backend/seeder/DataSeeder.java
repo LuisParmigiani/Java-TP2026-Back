@@ -59,7 +59,7 @@ public class DataSeeder implements CommandLineRunner {
         Producto producto1 = new Producto();
         producto1.setNombre("Soda");
         producto1.setDetalle("Agua carbonatada con sabor a limón");
-        producto1.setPrecio(1500);
+        producto1.setPrecio(1000.0);
         producto1.setStock(100);
         producto1.setImagenUrl("./../../assets/producto.jpeg");
         producto1.setActivo(true);
@@ -67,7 +67,7 @@ public class DataSeeder implements CommandLineRunner {
         Producto producto2 = new Producto();
         producto2.setNombre("Agua Mineral");
         producto2.setDetalle("Agua con gas sin sabor");
-        producto2.setPrecio(1200);
+        producto2.setPrecio(1200.0);
         producto2.setStock(100);
         producto2.setImagenUrl("./../../assets/producto.jpeg");
         producto2.setActivo(true);
@@ -75,7 +75,7 @@ public class DataSeeder implements CommandLineRunner {
         Producto producto3 = new Producto();
         producto3.setNombre("Cajon de soda");
         producto3.setDetalle("Caja con 6 botellas de soda");
-        producto3.setPrecio(8000);
+        producto3.setPrecio(8000.0);
         producto3.setStock(100);
         producto3.setImagenUrl("./../../assets/producto.jpeg");
         producto3.setActivo(true);
@@ -83,7 +83,7 @@ public class DataSeeder implements CommandLineRunner {
         Producto producto4 = new Producto();
         producto4.setNombre("Cajon de agua mineral");
         producto4.setDetalle("Caja con 6 botellas de agua mineral");
-        producto4.setPrecio(6000);
+        producto4.setPrecio(6000.0);
         producto4.setStock(100);
         producto4.setImagenUrl("./../../assets/producto.jpeg");
         producto4.setActivo(true);
