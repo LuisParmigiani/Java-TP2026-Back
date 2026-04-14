@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import soda_roja.backend.dtoRequest.ProductoDomicilioDTORequest;
+import soda_roja.backend.dtoRequestPut.ProductoDomicilioDTORequestPut;
 import soda_roja.backend.dtoResponse.ProductoDomicilioDTOResponse;
 import soda_roja.backend.service.ProductoDomicilioService;
 
@@ -42,7 +43,7 @@ public class ProductoDomicilioController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar una asociación ProductoPersonaDomicilio")
-    public ResponseEntity<ProductoDomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoDomicilioDTORequest request) {
+    public ResponseEntity<ProductoDomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoDomicilioDTORequestPut request) {
         return ResponseEntity.ok(service.update(id, request));
     }
 

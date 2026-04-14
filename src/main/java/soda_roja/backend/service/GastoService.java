@@ -1,5 +1,6 @@
 package soda_roja.backend.service;
 
+import soda_roja.backend.dtoRequestPut.GastoDTORequestPut;
 import soda_roja.backend.model.Camion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class GastoService {
 		return mapToDTO(saved);
 	}
 
-	public GastoDTOResponse update(Long id, GastoDTORequest entidad) {
+	public GastoDTOResponse update(Long id, GastoDTORequestPut entidad) {
 		Camion camion = entidad.getCamion_id() != null 
 		        ? findCamionOrThrow(entidad.getCamion_id()) 
 		        : null;	

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.LineaPedidoDTORequest;
+import soda_roja.backend.dtoRequestPut.LineaPedidoDTORequestPut;
 import soda_roja.backend.dtoResponse.LineaPedidoDTOResponse;
 import soda_roja.backend.service.LineaPedidoService;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class LineaPedidoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LineaPedidoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody LineaPedidoDTORequest entidad) {
+    public ResponseEntity<LineaPedidoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody LineaPedidoDTORequestPut entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

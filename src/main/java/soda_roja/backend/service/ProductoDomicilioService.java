@@ -3,6 +3,7 @@ package soda_roja.backend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
+import soda_roja.backend.dtoRequestPut.ProductoDomicilioDTORequestPut;
 import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.model.ProductoDomicilio;
 import soda_roja.backend.model.Producto;
@@ -54,7 +55,7 @@ public class ProductoDomicilioService {
         return mapToDTO(saved);
     }
 
-    public ProductoDomicilioDTOResponse update(Long id, ProductoDomicilioDTORequest entidad) {
+    public ProductoDomicilioDTOResponse update(Long id, ProductoDomicilioDTORequestPut entidad) {
         Producto producto = productoRepository.findById(entidad.getProductoId())
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + entidad.getProductoId()));
 

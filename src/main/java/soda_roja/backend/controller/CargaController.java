@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.CargaDTORequest;
+import soda_roja.backend.dtoRequestPut.CargaDTORequestPut;
 import soda_roja.backend.dtoResponse.CargaDTOResponse;
 import soda_roja.backend.service.CargaService;
 import jakarta.validation.Valid;
@@ -34,7 +35,7 @@ public class CargaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CargaDTOResponse> update(@PathVariable long id, @Valid @RequestBody CargaDTORequest entidad) {
+    public ResponseEntity<CargaDTOResponse> update(@PathVariable long id, @Valid @RequestBody CargaDTORequestPut entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
 

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
+import soda_roja.backend.dtoRequestPut.LineaPedidoDTORequestPut;
 import soda_roja.backend.model.LineaPedido;
 import soda_roja.backend.model.ProductoZona;
 import soda_roja.backend.repository.LineaPedidoRepository;
@@ -53,7 +54,7 @@ public class LineaPedidoService {
         return mapToDTO(saved);
     }
 
-    public LineaPedidoDTOResponse update(Long id, LineaPedidoDTORequest entidad) {
+    public LineaPedidoDTOResponse update(Long id, LineaPedidoDTORequestPut entidad) {
         ProductoZona productoZona = findProductoZonaOrThrow(entidad.getProductoZonaId());
 
         LineaPedido existing = repository.findById(id)

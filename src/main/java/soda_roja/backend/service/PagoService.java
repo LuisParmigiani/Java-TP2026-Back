@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.PagoDTORequest;
+import soda_roja.backend.dtoRequestPut.PagoDTORequestPut;
 import soda_roja.backend.dtoResponse.PagoDTOResponse;
 import soda_roja.backend.model.Pago;
 import soda_roja.backend.model.Persona;
@@ -43,7 +44,7 @@ public class PagoService {
         return mapToDTO(repository.save(pago));
     }
 
-    public PagoDTOResponse update(Long id, PagoDTORequest entidad) {
+    public PagoDTOResponse update(Long id, PagoDTORequestPut entidad) {
         Persona persona = findPersonaOrThrow(entidad.getPersonaId());
 
         Pago existing = repository.findById(id)

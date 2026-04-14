@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.ZonaDTORequest;
+import soda_roja.backend.dtoRequestPut.ZonaDTORequestPut;
 import soda_roja.backend.dtoResponse.ZonaDTOResponse;
 import soda_roja.backend.model.Zona;
 import soda_roja.backend.repository.ZonaRepository;
@@ -34,7 +35,7 @@ public class ZonaService {
         return mapToDTO(repository.save(zona));
     }
 
-    public ZonaDTOResponse update(Long id, ZonaDTORequest entidad) {
+    public ZonaDTOResponse update(Long id, ZonaDTORequestPut entidad) {
         Zona zona = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
         zona.setDetalle(entidad.getDetalle());
