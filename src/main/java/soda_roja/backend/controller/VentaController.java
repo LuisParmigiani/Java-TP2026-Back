@@ -3,9 +3,11 @@ package soda_roja.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.VentaDTORequest;
 import soda_roja.backend.dtoRequestPut.VentaDTORequestPut;
+import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.service.VentaService;
 import jakarta.validation.Valid;
@@ -26,6 +28,10 @@ public class VentaController {
     @GetMapping("/{id}")
     public ResponseEntity<VentaDTOResponse> getById(@PathVariable long id) {
         return ResponseEntity.ok(service.getById(id));
+    }
+    @GetMapping("/token/ByUserId")
+    public ResponseEntity<List<VentaDTOResponse>> getByUserId(@AuthenticationPrincipal String userId) {
+        return ResponseEntity.ok(service.getByUserId(Long.parseLong(userId)));
     }
 
     @GetMapping("/ByUserId/{id}")

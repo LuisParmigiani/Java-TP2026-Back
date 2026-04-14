@@ -58,9 +58,8 @@ public class DomicilioService {
 
     public List<DomicilioDTOResponse> getByUserId(Long id, String activo, Integer dias) {
         List<Domicilio> resultados;
+
         Boolean activeBoolean = null;
-        System.out.println(id.toString() +activo
-                );
         if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null) {
             resultados = repository.findDomicilioByPersonaUsuarioId(id);
 

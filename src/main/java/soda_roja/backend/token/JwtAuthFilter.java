@@ -1,4 +1,4 @@
-package soda_roja.backend.token; 
+package soda_roja.backend.token;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken; // Auth token class
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,19 +41,19 @@ public class JwtAuthFilter extends OncePerRequestFilter { // Custom filter exten
                 //dejando la clave en null (este contenedor es estandar en Spring)
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(id, null,
-                        		//crea una lista super eficiente y liviana INMUTABLE (pueden ser muchos roles en Spring pero nosotros solo 1 pusimos)
-                        		//que dentro tiene un objeto que usa la interfaz de Spring para roles (que simplemente es un String pero que cumple con la interfaz)
-                        		//el prefijo ROLE_ es un estandar de Spring para reconocer que es un rol, no es necesario pero es buena práctica
-                        		//si se lo sacamos, en vez de usar hasRole(Administrador) ponemos hasAuthority(Administrador) porque el prefijo ROLE_ ya no estaría.
+                                //crea una lista super eficiente y liviana INMUTABLE (pueden ser muchos roles en Spring pero nosotros solo 1 pusimos)
+                                //que dentro tiene un objeto que usa la interfaz de Spring para roles (que simplemente es un String pero que cumple con la interfaz)
+                                //el prefijo ROLE_ es un estandar de Spring para reconocer que es un rol, no es necesario pero es buena práctica
+                                //si se lo sacamos, en vez de usar hasRole(Administrador) ponemos hasAuthority(Administrador) porque el prefijo ROLE_ ya no estaría.
                                 Collections.singletonList(new SimpleGrantedAuthority(rol)));
-          
+
                 SecurityContextHolder.getContext().setAuthentication(authentication); //se crea y se muere con cada request.
                 // el contexto consultado en cada request por Spring Security Config para validar el acceso a los endpoints
             } catch (JwtException e) {
                 // Token inválido
             }
         }
-        
+
         //si no hay token o es inválido, simplemente no se setea nada en el contexto de seguridad y se sigue con la cadena de filtros
 
         filterChain.doFilter(request, response);

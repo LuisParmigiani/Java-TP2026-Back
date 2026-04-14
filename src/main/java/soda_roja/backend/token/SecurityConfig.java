@@ -32,7 +32,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
+
 
     @Bean //En Spring, un Bean es un objeto que es instanciado, configurado y administrado por el contenedor central
     //de Spring (conocido como IoC container o contexto de aplicación). No hace falta usar new manualmente.
@@ -47,10 +47,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
                 //.requestMatchers(HttpMethod.GET, "/api/usuario").hasAuthority("Administrador") //si no hay contexto, devuelve 401
-                //.requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/usuario/**").permitAll() //descomentar si lo necesitan para algo
-                
-               /* SINTAXIS 
+
+               /* SINTAXIS
                 * .requestMatchers(método, "endpoint").
                 * permitAll()
                 * hasAuthority("Administrador/Usuario/Empleado") -> requiere autenticación y que el rol del token sea el indicado (si no hay token o el rol no coincide, devuelve 403)
