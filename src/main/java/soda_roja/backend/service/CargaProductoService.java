@@ -53,19 +53,27 @@ public class CargaProductoService {
     }
 
     public CargaProductoDTOResponse update(Long id, CargaProductoDTORequestPut entidad) {
-        Carga carga = cargaRepository.findById(entidad.getIdCarga())
-                .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada con id: " + entidad.getIdCarga()));
-
-        Producto producto = productoRepository.findById(entidad.getIdProducto())
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + entidad.getIdProducto()));
-
         CargaProducto existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("CargaProducto no encontrado con id: " + id));
 
-        existing.setCantLleno(entidad.getCantLleno());
-        existing.setCantVacio(entidad.getCantVacio());
-        existing.setCarga(carga);
-        existing.setProducto(producto);
+        if(entidad.getIdCarga() != null) {
+            Carga carga = cargaRepository.findById(entidad.getIdCarga())
+                    .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada con id: " + entidad.getIdCarga()));
+            existing.setCarga(carga);
+        }
+
+        if(entidad.getIdProducto() != null) {
+            Producto producto = productoRepository.findById(entidad.getIdProducto())
+                    .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + entidad.getIdProducto()));
+            existing.setProducto(producto);
+        }
+
+        if(entidad.getCantLleno() != null) {
+            existing.setCantLleno(entidad.getCantLleno());
+        }
+        if(entidad.getCantVacio() != null) {
+            existing.setCantVacio(entidad.getCantVacio());
+        }
 
         return mapToDTO(repository.save(existing));
     }

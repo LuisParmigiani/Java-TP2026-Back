@@ -69,23 +69,32 @@ public class VentaService {
     public VentaDTOResponse update(Long id, VentaDTORequestPut entidad) {
         Venta existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
+        if( entidad.getIdDomicilio() != null) {
+            Domicilio domicilio = findDomicilioOrThrow(entidad.getIdDomicilio());
+            existing.setDomicilio(domicilio);
+        }
+        if(entidad.getLineasPedidoIds() != null) {
+            List<LineaPedido> lineasPedido = entidad.getLineasPedidoIds().stream()
+                    .map(this::findLineaPedidoOrThrow)
+                    .toList();
+            if (lineasPedido.isEmpty()) {
+			    throw new IllegalArgumentException("Una venta debe tener al menos una linea de pedido");
+		    }
+            lineasPedido.forEach(lp -> lp.setVenta(existing));
+        }
 
-        Domicilio domicilio = findDomicilioOrThrow(entidad.getIdDomicilio());
-        List<LineaPedido> lineasPedido = entidad.getLineasPedidoIds().stream()
-                .map(this::findLineaPedidoOrThrow)
-                .toList();
-        
-        if (lineasPedido.isEmpty()) {
-			throw new IllegalArgumentException("Una venta debe tener al menos una linea de pedido");
-		}
-
-
-        existing.setTotal(entidad.getTotal());
-        existing.setFecha(entidad.getFecha());
-        existing.setDomicilio(domicilio);
-        existing.setEstado(entidad.getEstado());
-        existing.setPagado(entidad.isPagado());
-        lineasPedido.forEach(lp -> lp.setVenta(existing));
+        if (entidad.getTotal() != null) {
+            existing.setTotal(entidad.getTotal());
+        }
+        if(entidad.getFecha() != null) {
+            existing.setFecha(entidad.getFecha());
+        }
+        if(entidad.getEstado() != null) {
+            existing.setEstado(entidad.getEstado());
+        }
+        if(entidad.getPagado() != null) {
+            existing.setPagado(entidad.getPagado());
+        }
 
         return mapToDTO(repository.save(existing));
     }

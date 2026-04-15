@@ -73,7 +73,7 @@ public class DomicilioService {
                     } else if (activo.equals( "Inactivas")) {
                         activeBoolean = false;
                     }else {
-                    throw new IllegalArgumentException("El parámetro 'activo' debe ser 'true' o 'false'");
+                    throw new IllegalArgumentException("El parámetro 'activo' debe ser 'true' o 'false'" + activo);
                     }
                 }
             }
@@ -113,23 +113,40 @@ public class DomicilioService {
     }
 
     public DomicilioDTOResponse update(Long id, DomicilioDTORequestPut entidad) {
-        Zona zona = findZonaOrThrow(entidad.getZonaId());
-        Persona persona = findPersonaOrThrow(entidad.getPersonaId());
-        Camion camion = entidad.getCamionId() != null
-                ? findCamionOrThrow(entidad.getCamionId())
-                : null;
-
-
         Domicilio existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
-        existing.setCalle(entidad.getCalle());
-        existing.setNumero(entidad.getNumero());
-        existing.setActivo(entidad.getActivo());
-        existing.setCasa(entidad.getCasa());
-        existing.setZona(zona);
-        existing.setPersona(persona);
-        existing.setCamion(camion);
-        existing.setDia(entidad.getDia());
+
+        if(entidad.getZonaId() != null) {
+            Zona zona = findZonaOrThrow(entidad.getZonaId());
+            existing.setZona(zona);
+        }
+
+        if(entidad.getPersonaId() != null) {
+            Persona persona = findPersonaOrThrow(entidad.getPersonaId());
+            existing.setPersona(persona);
+        }
+
+        if(entidad.getCamionId() != null) {
+            Camion camion = findCamionOrThrow(entidad.getCamionId());
+            existing.setCamion(camion);
+        }
+
+        if(entidad.getCalle() != null) {
+            existing.setCalle(entidad.getCalle());
+        }
+        if(entidad.getNumero() != null) {
+            existing.setNumero(entidad.getNumero());
+        }
+        if(entidad.getActivo() != null) {
+            existing.setActivo(entidad.getActivo());
+        }
+        if(entidad.getCasa() != null) {
+            existing.setCasa(entidad.getCasa());
+        }
+        if(entidad.getDia() != null) {
+            existing.setDia(entidad.getDia());
+        }
+
         return mapToDTO(repository.save(existing));
     }
     public void delete(Long id) {
@@ -165,9 +182,9 @@ public class DomicilioService {
                 .numero(domicilio.getNumero())
                 .casa(domicilio.getCasa())
                 .personaId(domicilio.getPersona() != null ? domicilio.getPersona().getId() : null)
-                .zona(domicilio.getZona() != null ? new ZonaService().mapToDTO(domicilio.getZona()) : null)
+                .zona(domicilio.getZona() != null ? zonaService.mapToDTO(domicilio.getZona()) : null)
                 .productosDomicilio(domicilio.getProductoDomicilio() != null
-                        ? domicilio.getProductoDomicilio().stream().map(productoDomicilio -> new ProductoDomicilioService().mapToDTO(productoDomicilio)).toList()
+                        ? domicilio.getProductoDomicilio().stream().map(productoDomicilio -> productoDomicilioService.mapToDTO(productoDomicilio)).toList()
                         : List.of())
                 .dia(domicilio.getDia())
                 .activo(domicilio.getActivo())

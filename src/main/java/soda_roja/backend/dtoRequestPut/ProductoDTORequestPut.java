@@ -23,11 +23,11 @@ public class ProductoDTORequestPut {
 	
 	@Min(value = 0, message = "El precio no puede ser negativo")
 	@Schema(example = "2500.0", description = "Precio del producto")
-	private double precio;
+	private Double precio;
 	
 	@Min(value = 0, message = "El stock no puede ser negativo")
 	@Schema(example = "20", description = "Cantidad disponible en stock")
-	private int stock;
+	private Integer stock;
 	
 	@Size(max = 250, message = "La URL de la imagen no puede tener más de 250 caracteres")
 	@Schema(example = "https://example.com/images/gaseosa-cola-2l"
@@ -36,7 +36,7 @@ public class ProductoDTORequestPut {
 	private String imagenUrl;
 	
 	@Schema(example = "true", description = "Indica si el producto está activo o inactivo")
-	private boolean activo; // Indica si el producto está activo o inactivo
+	private Boolean activo; // Indica si el producto está activo o inactivo
 	
 	
 }

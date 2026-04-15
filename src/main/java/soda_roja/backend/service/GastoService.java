@@ -45,15 +45,23 @@ public class GastoService {
 	}
 
 	public GastoDTOResponse update(Long id, GastoDTORequestPut entidad) {
-		Camion camion = entidad.getCamion_id() != null 
-		        ? findCamionOrThrow(entidad.getCamion_id()) 
-		        : null;	
 		Gasto existing = repository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Gasto no encontrado con id: " + id));
-		existing.setDetalle(entidad.getDetalle());
-		existing.setMonto(entidad.getMonto());
-		existing.setFecha(entidad.getFecha());
-		existing.setCamion(camion);
+
+		if(entidad.getDetalle() != null) {
+			existing.setDetalle(entidad.getDetalle());
+		}
+		if(entidad.getMonto() != null) {
+			existing.setMonto(entidad.getMonto());
+		}
+		if(entidad.getFecha() != null) {
+			existing.setFecha(entidad.getFecha());
+		}
+		if(entidad.getCamion_id() != null) {
+			Camion camion = findCamionOrThrow(entidad.getCamion_id());
+			existing.setCamion(camion);
+		}
+
 		return mapToDTO(repository.save(existing));
 	}
 

@@ -25,6 +25,8 @@ public class PersonaService {
 
     @Autowired
     private DomicilioRepository domicilioRepository;
+    @Autowired
+    private DomicilioService domicilioService;
 
     public List<PersonaDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
@@ -53,17 +55,30 @@ public class PersonaService {
     }
 
     public PersonaDTOResponse update(Long id, PersonaDTORequestPut entidad) {
-
         Persona existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
 
-        existing.setTipoDoc(entidad.getTipoDoc());
-        existing.setNroDocumento(entidad.getNroDocumento());
-        existing.setNombre(entidad.getNombre());
-        existing.setApellido(entidad.getApellido());
-        existing.setEmail(entidad.getEmail());
-        existing.setTelefono(entidad.getTelefono());
-        existing.setSaldo(entidad.getSaldo());
+        if(entidad.getTipoDoc() != null) {
+            existing.setTipoDoc(entidad.getTipoDoc());
+        }
+        if(entidad.getNroDocumento() != null) {
+            existing.setNroDocumento(entidad.getNroDocumento());
+        }
+        if(entidad.getNombre() != null) {
+            existing.setNombre(entidad.getNombre());
+        }
+        if(entidad.getApellido() != null) {
+            existing.setApellido(entidad.getApellido());
+        }
+        if(entidad.getEmail() != null) {
+            existing.setEmail(entidad.getEmail());
+        }
+        if(entidad.getTelefono() != null) {
+            existing.setTelefono(entidad.getTelefono());
+        }
+        if(entidad.getSaldo() != null) {
+            existing.setSaldo(entidad.getSaldo());
+        }
 
         return mapToDTO(repository.save(existing));
     }
@@ -90,7 +105,7 @@ public class PersonaService {
                 .telefono(persona.getTelefono())
                 .saldo(persona.getSaldo())
                 .domicilios(persona.getDomicilios() != null
-                        ? persona.getDomicilios().stream().map(this::mapDomicilioToDTO).toList()
+                        ? persona.getDomicilios().stream().map(domicilioService::mapToDTO).toList()
                         : List.of())
                 .pagos(persona.getPagos() != null
                         ? persona.getPagos().stream().map(pagoService::mapToDTO).toList()
@@ -98,7 +113,5 @@ public class PersonaService {
                 .build();
     }
 
-    private DomicilioDTOResponse mapDomicilioToDTO(Domicilio domicilio) {
-        return new DomicilioService().mapToDTO(domicilio);
-    }
+
 }

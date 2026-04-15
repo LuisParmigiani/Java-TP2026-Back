@@ -15,7 +15,7 @@ public class GastoDTORequestPut {
 	 private String detalle;
     @Positive(message = "El monto debe ser un número positivo") // Valida que el
     @Schema(example = "5000.00", description = "Monto del gasto")
-	 private double monto;
+	 private Double monto;
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d"
     		+ "{2}$", message = "La fecha debe tener el formato YYYY-MM-DD") // Valida el formato de la fecha
     @Schema(example = "2024-06-15", description = "Fecha del gasto")

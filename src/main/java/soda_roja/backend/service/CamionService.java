@@ -37,6 +37,8 @@ public class CamionService {
     private GastoService gastoService;
     @Autowired
     private DomicilioRepository DomicilioRepository;
+    @Autowired
+    private DomicilioService domicilioService;
 
     public List<CamionDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
@@ -65,12 +67,18 @@ public class CamionService {
 
         Camion existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Camion no encontrado con id: " + id));
-        existing.setPatente(entidad.getPatente());
-        existing.setModelo(entidad.getModelo());
-        existing.setMarca(entidad.getMarca());
-        existing.setKilometraje(entidad.getKilometraje());
-
-
+        if(entidad.getPatente() != null) {
+            existing.setPatente(entidad.getPatente());
+        }
+        if(entidad.getModelo() != null) {
+            existing.setModelo(entidad.getModelo());
+        }
+        if(entidad.getMarca() != null) {
+            existing.setMarca(entidad.getMarca());
+        }
+        if(entidad.getKilometraje() != null) {
+            existing.setKilometraje(entidad.getKilometraje());
+        }
 
         return mapToDTO(repository.save(existing));
     }
@@ -94,7 +102,7 @@ public class CamionService {
                 .gastos(camion.getGastos() != null ? camion.getGastos().stream().map(gasto -> gastoService.mapToDTO(gasto)).toList() : null)
                 .Domicilios(camion.getDomicilios() != null
                         ? camion.getDomicilios().stream()
-                        .map(Domicilio -> new DomicilioService().mapToDTO(Domicilio))
+                        .map(Domicilio -> domicilioService.mapToDTO(Domicilio))
                         .toList()
                         : List.of())
                 .build();

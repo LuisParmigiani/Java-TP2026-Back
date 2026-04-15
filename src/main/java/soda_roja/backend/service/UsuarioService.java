@@ -58,16 +58,26 @@ public class UsuarioService {
     }
 
     public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad) {
-        Persona persona = findPersonaOrThrow(entidad.getPersonaId());
-
         Usuario existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
 
-        existing.setNombreUsuario(entidad.getNombreUsuario());
-        existing.setContrasena(passwordEncoder.encode(entidad.getContrasena()));
-        existing.setNivelAcceso(entidad.getNivelAcceso());
-        existing.setEmail(entidad.getEmail());
-        existing.setPersona(persona);
+        if(entidad.getPersonaId() != null) {
+            Persona persona = findPersonaOrThrow(entidad.getPersonaId());
+            existing.setPersona(persona);
+        }
+
+        if(entidad.getNombreUsuario() != null) {
+            existing.setNombreUsuario(entidad.getNombreUsuario());
+        }
+        if(entidad.getContrasena() != null) {
+            existing.setContrasena(passwordEncoder.encode(entidad.getContrasena()));
+        }
+        if(entidad.getNivelAcceso() != null) {
+            existing.setNivelAcceso(entidad.getNivelAcceso());
+        }
+        if(entidad.getEmail() != null) {
+            existing.setEmail(entidad.getEmail());
+        }
 
         return mapToDTO(repository.save(existing));
     }

@@ -56,19 +56,27 @@ public class ProductoDomicilioService {
     }
 
     public ProductoDomicilioDTOResponse update(Long id, ProductoDomicilioDTORequestPut entidad) {
-        Producto producto = productoRepository.findById(entidad.getProductoId())
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + entidad.getProductoId()));
-
-        Domicilio Domicilio = DomicilioRepository.findById(entidad.getDomicilioId())
-                .orElseThrow(() -> new EntityNotFoundException("PersonaDomicilio no encontrado con id: " + entidad.getDomicilioId()));
-
         ProductoDomicilio existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductoPersonaDomicilio no encontrado con id: " + id));
 
-        existing.setProducto(producto);
-        existing.setDomicilio(Domicilio);
-        existing.setCantVaciosActuales(entidad.getCantVaciosActuales());
-        existing.setAproxSemanal(entidad.getAproxSemanal());
+        if(entidad.getProductoId() != null) {
+            Producto producto = productoRepository.findById(entidad.getProductoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + entidad.getProductoId()));
+            existing.setProducto(producto);
+        }
+
+        if(entidad.getDomicilioId() != null) {
+            Domicilio Domicilio = DomicilioRepository.findById(entidad.getDomicilioId())
+                    .orElseThrow(() -> new EntityNotFoundException("PersonaDomicilio no encontrado con id: " + entidad.getDomicilioId()));
+            existing.setDomicilio(Domicilio);
+        }
+
+        if(entidad.getCantVaciosActuales() != null) {
+            existing.setCantVaciosActuales(entidad.getCantVaciosActuales());
+        }
+        if(entidad.getAproxSemanal() != null) {
+            existing.setAproxSemanal(entidad.getAproxSemanal());
+        }
 
         return mapToDTO(repository.save(existing));
     }

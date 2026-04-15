@@ -57,14 +57,18 @@ public class ProductoZonaService {
     }
 
     public ProductoZonaDTOResponse update(Long id, ProductoZonaDTORequestPut entidad) {
-        Producto producto = findProductoOrThrow(entidad.getProductoId());
-        Zona zona = findZonaOrThrow(entidad.getZonaId());
-
         ProductoZona existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + id));
 
-        existing.setProducto(producto);
-        existing.setZona(zona);
+        if(entidad.getProductoId() != null) {
+            Producto producto = findProductoOrThrow(entidad.getProductoId());
+            existing.setProducto(producto);
+        }
+
+        if(entidad.getZonaId() != null) {
+            Zona zona = findZonaOrThrow(entidad.getZonaId());
+            existing.setZona(zona);
+        }
 
         return mapToDTO(repository.save(existing));
     }

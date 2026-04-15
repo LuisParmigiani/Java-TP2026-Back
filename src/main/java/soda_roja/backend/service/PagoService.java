@@ -45,15 +45,23 @@ public class PagoService {
     }
 
     public PagoDTOResponse update(Long id, PagoDTORequestPut entidad) {
-        Persona persona = findPersonaOrThrow(entidad.getPersonaId());
-
         Pago existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pago no encontrado con id: " + id));
 
-        existing.setMetodoPago(entidad.getMetodoPago());
-        existing.setMonto(entidad.getMonto());
-        existing.setFecha(entidad.getFecha());
-        existing.setPersona(persona);
+        if(entidad.getPersonaId() != null) {
+            Persona persona = findPersonaOrThrow(entidad.getPersonaId());
+            existing.setPersona(persona);
+        }
+
+        if(entidad.getMetodoPago() != null) {
+            existing.setMetodoPago(entidad.getMetodoPago());
+        }
+        if(entidad.getMonto() != null) {
+            existing.setMonto(entidad.getMonto());
+        }
+        if(entidad.getFecha() != null) {
+            existing.setFecha(entidad.getFecha());
+        }
 
         return mapToDTO(repository.save(existing));
     }

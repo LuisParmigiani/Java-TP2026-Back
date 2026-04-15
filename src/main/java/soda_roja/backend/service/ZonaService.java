@@ -38,8 +38,14 @@ public class ZonaService {
     public ZonaDTOResponse update(Long id, ZonaDTORequestPut entidad) {
         Zona zona = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
-        zona.setDetalle(entidad.getDetalle());
-        zona.setNombre(entidad.getNombre());
+
+        if(entidad.getNombre() != null) {
+            zona.setNombre(entidad.getNombre());
+        }
+        if(entidad.getDetalle() != null) {
+            zona.setDetalle(entidad.getDetalle());
+        }
+
         return mapToDTO(repository.save(zona));
     }
 

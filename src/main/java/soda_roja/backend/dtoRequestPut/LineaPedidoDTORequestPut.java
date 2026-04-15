@@ -17,11 +17,11 @@ import lombok.NoArgsConstructor;
 public class LineaPedidoDTORequestPut {
 	 @Min(value = 1, message = "La cantidad debe ser al menos 1")
      @Schema(example = "5", description = "Cantidad de productos")
-     private int cantidad;
+     private Integer cantidad;
 
     @Min(value = 0, message = "El subtotal debe ser mayor o igual a 0")
     @Schema(example = "150.50", description = "Subtotal de la línea")
-    private float subtotal;
+    private Float subtotal;
 
     @Schema(example = "1", description = "ID de ProductoZona")
     private Long productoZonaId;

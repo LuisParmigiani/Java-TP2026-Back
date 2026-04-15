@@ -43,12 +43,25 @@ public class ProductoService {
     public ProductoDTOResponse update(Long id, ProductoDTORequestPut entidad) {
         Producto existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
-        existing.setNombre(entidad.getNombre());
-        existing.setDetalle(entidad.getDetalle());
-        existing.setPrecio(entidad.getPrecio());
-        existing.setStock(entidad.getStock());
-        existing.setImagenUrl(entidad.getImagenUrl());
-        existing.setActivo(entidad.isActivo());
+
+        if(entidad.getNombre() != null) {
+            existing.setNombre(entidad.getNombre());
+        }
+        if(entidad.getDetalle() != null) {
+            existing.setDetalle(entidad.getDetalle());
+        }
+        if(entidad.getPrecio() != null) {
+            existing.setPrecio(entidad.getPrecio());
+        }
+        if(entidad.getStock() != null) {
+            existing.setStock(entidad.getStock());
+        }
+        if(entidad.getImagenUrl() != null) {
+            existing.setImagenUrl(entidad.getImagenUrl());
+        }
+        if(entidad.getActivo() != null) {
+            existing.setActivo(entidad.getActivo());
+        }
 
         return mapToDTO(repository.save(existing));
     }

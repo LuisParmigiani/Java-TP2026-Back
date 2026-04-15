@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class PagoDTORequestPut {
     @Min(value = 0, message = "El monto debe ser mayor o igual a 0")
-    private float monto;
+    private Float monto;
     @FutureOrPresent(message = "La fecha no puede ser en el pasado")
     @Schema(description = "Fecha del pago en formato ISO 8601", example = "2029-06-01T14:30:00")
     private Date fecha;

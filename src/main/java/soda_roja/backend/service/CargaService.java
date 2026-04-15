@@ -25,6 +25,12 @@ public class CargaService {
     @Autowired
     private CamionRepository camionRepository;
 
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private CamionService camionService;
+
     public List<CargaDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
     }
@@ -52,20 +58,25 @@ public class CargaService {
     }
 
     public CargaDTOResponse update(Long id, CargaDTORequestPut entidad) {
-        Usuario usuario = usuarioRepository.findById(entidad.getIdUsuario())
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + entidad.getIdUsuario()));
-        
-        Camion camion = camionRepository.findById(entidad.getIdCamion())
-                .orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + entidad.getIdCamion()));
-        
         Carga existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada con id: " + id));
-        
-        existing.setTipo(entidad.getTipo());
-        existing.setFechaHora(entidad.getFechaHora());
-        existing.setUsuario(usuario);
-        existing.setCamion(camion);
+        if (entidad.getIdUsuario() != null) {
+            Usuario usuario = usuarioRepository.findById(entidad.getIdUsuario())
+                    .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + entidad.getIdUsuario()));
+            existing.setUsuario(usuario);
 
+        }
+        if( entidad.getIdCamion() != null) {
+            Camion camion = camionRepository.findById(entidad.getIdCamion())
+                    .orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + entidad.getIdCamion()));
+               existing.setCamion(camion);
+        }
+        if(entidad.getTipo() != null) {
+            existing.setTipo(entidad.getTipo());
+        }
+        if (entidad.getFechaHora() != null) {
+            existing.setFechaHora(entidad.getFechaHora());
+        }
         return mapToDTO(repository.save(existing));
     }
 
@@ -80,8 +91,8 @@ public class CargaService {
                 .id(carga.getId())
                 .tipo(carga.getTipo())
                 .fechaHora(carga.getFechaHora())
-                .usuario(new UsuarioService().mapToDTO(carga.getUsuario()))
-                .camion(new CamionService().mapToDTO(carga.getCamion()))
+                .usuario(usuarioService.mapToDTO(carga.getUsuario()))
+                .camion(camionService.mapToDTO(carga.getCamion()))
                 .build();
     }
 }

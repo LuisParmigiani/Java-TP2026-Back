@@ -38,7 +38,7 @@ public class PersonaDTORequestPut {
 
     private String telefono;
     @Schema(example = "0.0" , description = "El saldo de la persona, que se actualiza con cada pago realizado. No puede ser negativo.")
-    private float saldo;
+    private Float saldo;
 
 
 

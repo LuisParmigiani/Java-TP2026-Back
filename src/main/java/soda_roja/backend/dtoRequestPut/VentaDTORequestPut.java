@@ -23,9 +23,9 @@ public class VentaDTORequestPut {
     private Date fecha;
     @Min(value = 0, message = "El total debe ser mayor o igual a cero")
     @Schema(example = "150.75", description = "Total de la venta")
-    private double total;
+    private Double total;
     @Schema(example = "true", description = "Indica si la venta ha sido pagada")
-    private boolean pagado;
+    private Boolean pagado;
     @Schema(example = "1", description = "Identificador del domicilio de la persona asociado a esta venta")
     private Long idDomicilio;
     @Schema(example = "[1, 2, 3]", description = "Lista de identificadores de las líneas de pedido asociadas a esta venta")
