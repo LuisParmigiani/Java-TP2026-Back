@@ -3,6 +3,7 @@ package soda_roja.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
 import soda_roja.backend.service.ProductoService;
@@ -28,6 +29,29 @@ public class ProductoController {
         return ResponseEntity.ok(service.getById(id));
     }
 
+    @GetMapping("/customer/active")
+    public ResponseEntity<List<ProductoDTOResponse>> getActive(
+            @AuthenticationPrincipal String userId,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String direction
+    ) {
+
+        return ResponseEntity.ok(service.getActive(userId, sort, search, minPrice, maxPrice,direction));
+    }
+    @GetMapping("/active")
+    public ResponseEntity<List<ProductoDTOResponse>> getActive(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String direction
+    ) {
+
+        return ResponseEntity.ok(service.getActive(null, sort, search, minPrice, maxPrice,direction));
+    }
     @PostMapping
     public ResponseEntity<ProductoDTOResponse> create(@Valid @RequestBody ProductoDTORequest entidad) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));

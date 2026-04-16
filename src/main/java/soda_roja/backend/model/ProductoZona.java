@@ -34,4 +34,10 @@ public class ProductoZona {
     @OneToMany(mappedBy = "productoZona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<LineaPedido> lineaPedidos;
+
+    @OneToMany(mappedBy = "productoZona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<PedidoSemanal> pedidoSemanales;
+
+
 }

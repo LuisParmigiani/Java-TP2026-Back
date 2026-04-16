@@ -33,6 +33,9 @@ public class ProductoZonaService {
     @Autowired
     private ZonaService zonaService;
 
+    @Autowired
+    private PedidoSemanalService pedidoSemanalService;
+
     public List<ProductoZonaDTOResponse> getAll() {
         return repository.findAll().stream().map(this::mapToDTO).toList();
     }
@@ -94,6 +97,7 @@ public class ProductoZonaService {
                 .id(productoZona.getId())
                 .producto(productoZona.getProducto() != null ? productoService.mapToDTO(productoZona.getProducto()) : null)
                 .zona(productoZona.getZona() != null ? zonaService.mapToDTO(productoZona.getZona()) : null)
+                .pedidoSemanal(productoZona.getPedidoSemanales() != null ? productoZona.getPedidoSemanales().stream().map(pedidoSemanalService::mapToDTO).toList() : null)
                 .build();
     }
 }

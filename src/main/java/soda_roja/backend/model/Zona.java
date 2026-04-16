@@ -39,4 +39,7 @@ public class Zona {
     @JsonManagedReference
 
     private List<Domicilio> domicilio;
+    @Builder.Default
+    @Column(name = "dia", nullable = false)
+    private boolean[] dia = new boolean[7];
 }

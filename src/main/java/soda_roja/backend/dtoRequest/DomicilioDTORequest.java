@@ -47,4 +47,6 @@ public class DomicilioDTORequest {
     private Boolean activo;
 
 
+
+
 }

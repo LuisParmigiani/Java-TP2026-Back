@@ -2,6 +2,7 @@ package soda_roja.backend.model;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -60,4 +61,9 @@ public class Domicilio {
     private List<ProductoDomicilio> productoDomicilio;
 
     private Boolean activo;
+
+    @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<PedidoSemanal> pedidoSemanal;
+
 }

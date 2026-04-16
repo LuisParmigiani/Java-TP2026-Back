@@ -23,8 +23,7 @@ public class ProductoDomicilio {
     @Column(name = "cantVaciosActuales", nullable = false)
     private Integer cantVaciosActuales;
 
-    @Column(name = "aproxSemanal", nullable = false)
-    private Integer aproxSemanal;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DomicilioId", nullable = false)

@@ -44,6 +44,8 @@ public class DataSeeder implements CommandLineRunner {
     private PagoRepository pagoRepository;
     @Autowired
     private LineaPedidoRepository lineaPedidoRepository;
+    @Autowired
+    private PedidoSemanalRepository pedidoSemanalRepository;
 
 
     private final Faker faker = new Faker(new Locale("es")); // datos en español
@@ -88,7 +90,19 @@ public class DataSeeder implements CommandLineRunner {
         producto4.setImagenUrl("./../../assets/producto.jpeg");
         producto4.setActivo(true);
         productos.add(producto4);
-            productoRepository.saveAll(productos);
+        for(int i =0 ; i < 100; i++){
+            Producto producto = new Producto();
+            producto.setNombre(faker.commerce().productName() + i);
+            producto.setDetalle(faker.lorem().sentence());
+            producto.setPrecio(Double.valueOf(faker.number().numberBetween(500, 5000)));
+            producto.setStock(faker.number().numberBetween(50, 200));
+            producto.setImagenUrl("./../../assets/producto.jpeg");
+            producto.setActivo(faker.bool().bool());
+            productos.add(producto);
+        }
+
+        productoRepository.saveAll(productos);
+
 
 
         List<Zona> zonas = new ArrayList<>();
@@ -97,6 +111,8 @@ public class DataSeeder implements CommandLineRunner {
             Zona zona = new Zona();
             zona.setNombre(faker.address().cityName()+ i );
             zona.setDetalle(faker.address().streetAddress());
+            zona.setDia(new boolean[]{faker.bool().bool(), faker.bool().bool(), faker.bool().bool(),
+                    faker.bool().bool(), faker.bool().bool(), faker.bool().bool(), faker.bool().bool()});
             zonas.add(zona);
 
         }
@@ -322,7 +338,6 @@ public class DataSeeder implements CommandLineRunner {
             if (domicilio.getProductoDomicilio() != null) {
                 for (int i = 0; i < faker.number().numberBetween(1, 5); i++) {
                     ProductoDomicilio productoDomicilio = new ProductoDomicilio();
-                    productoDomicilio.setAproxSemanal(faker.number().numberBetween(1, 10));
                     productoDomicilio.setDomicilio(domicilio);
                     productoDomicilio.setProducto(productos.get(faker.number().numberBetween(0, productos.size())));
                     productoDomicilio.setCantVaciosActuales(faker.number().numberBetween(1, 10));
@@ -331,6 +346,18 @@ public class DataSeeder implements CommandLineRunner {
                 domicilioRepository.save(domicilio);
             }
         });
+        List<PedidoSemanal> pedidosSemanales = new ArrayList<>();
+        for (int i = 0; i< domicilios.size(); i++)
+        {
+            for(int j = 0 ;j < faker.number().numberBetween(1, 5) ; j++) {
+                PedidoSemanal pedidoSemanal = new PedidoSemanal();
+                pedidoSemanal.setDomicilio(domicilios.get(i));
+                pedidoSemanal.setProductoZona(productoZonas.get(faker.number().numberBetween(0, productoZonas.size())));
+                pedidoSemanal.setCantidad(faker.number().numberBetween(1, 10));
+                pedidosSemanales.add(pedidoSemanal);
+            }
+        }
+        pedidoSemanalRepository.saveAll(pedidosSemanales);
 
     }
 }

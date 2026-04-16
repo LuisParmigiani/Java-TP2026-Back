@@ -48,7 +48,6 @@ public class ProductoDomicilioService {
                 .producto(producto)
                 .domicilio(domicilio)
                 .cantVaciosActuales(entidad.getCantVaciosActuales())
-                .aproxSemanal(entidad.getAproxSemanal())
                 .build();
 
         ProductoDomicilio saved = repository.save(productoDomicilio);
@@ -74,9 +73,7 @@ public class ProductoDomicilioService {
         if(entidad.getCantVaciosActuales() != null) {
             existing.setCantVaciosActuales(entidad.getCantVaciosActuales());
         }
-        if(entidad.getAproxSemanal() != null) {
-            existing.setAproxSemanal(entidad.getAproxSemanal());
-        }
+
 
         return mapToDTO(repository.save(existing));
     }
@@ -94,7 +91,6 @@ public class ProductoDomicilioService {
                 .nombreProducto(productoDomicilio.getProducto() != null ? productoDomicilio.getProducto().getNombre() : null)
                 .DomicilioId(productoDomicilio.getDomicilio() != null ? productoDomicilio.getDomicilio().getId() : null)
                 .cantVaciosActuales(productoDomicilio.getCantVaciosActuales())
-                .aproxSemanal(productoDomicilio.getAproxSemanal())
                 .build();
     }
 }

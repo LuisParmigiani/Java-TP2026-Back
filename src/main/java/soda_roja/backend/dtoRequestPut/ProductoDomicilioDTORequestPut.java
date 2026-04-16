@@ -26,7 +26,5 @@ public class ProductoDomicilioDTORequestPut {
     @Schema(description = "Cantidad de vacíos actuales", example = "5")
     private Integer cantVaciosActuales;
     
-    @Positive(message = "La aproximación semanal debe ser positiva")
-    @Schema(description = "Aproximación semanal de consumo de ese producto", example = "2")
-    private Integer aproxSemanal;
+
 }

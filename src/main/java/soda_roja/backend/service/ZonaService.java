@@ -31,6 +31,7 @@ public class ZonaService {
         Zona zona = Zona.builder()
                 .nombre(entidad.getNombre())
                 .detalle(entidad.getDetalle())
+                .dia(entidad.getDia())
                 .build();
         return mapToDTO(repository.save(zona));
     }
@@ -45,6 +46,9 @@ public class ZonaService {
         if(entidad.getDetalle() != null) {
             zona.setDetalle(entidad.getDetalle());
         }
+        if (entidad.getDia() != null) {
+            zona.setDia(entidad.getDia());
+        }
 
         return mapToDTO(repository.save(zona));
     }
@@ -58,6 +62,7 @@ public class ZonaService {
     public ZonaDTOResponse mapToDTO(Zona zona) {
         return ZonaDTOResponse.builder()
                 .id(zona.getId())
+                .dia(zona.getDia())
                 .nombre(zona.getNombre())
                 .detalle(zona.getDetalle())
                 .build();

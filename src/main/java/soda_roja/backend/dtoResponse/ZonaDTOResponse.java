@@ -9,17 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ZonaDTOResponse {
-    
-    @Schema(example = "1", description = "Identificador único")
     private Long id;
-    
-    @Schema(example = "Fisherton", description = "Nombre de la zona")
     private String nombre;
-    
-    @Schema(example = "Zona de Rosario", description = "Detalle de la zona")
     private String detalle;
+    private boolean[] dia;
 
-    
 }
 
 
