@@ -34,6 +34,9 @@ public class CamionDTORequest {
 	@Min(value = 0, message = "El kilometraje no puede ser negativo") // Valida que el valor sea mayor o igual a 0
 	@Schema(example = "20", description = "Kilometraje del camión")
 	private Integer kilometraje;
+	@NotNull(message = "El estado no puede ser nulo") // Valida que el campo no sea nulo
+	@Schema(example = "true", description = "Indica si el camión está activo o inactivo")
+	private Boolean estado;
 
 
 

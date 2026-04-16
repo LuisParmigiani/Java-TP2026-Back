@@ -23,6 +23,9 @@ public class CamionDTOResponse {
 	
 	private int kilometraje;
 	
+	
+	private Boolean estado;
+	
 	private List<GastoDTOResponse> gastos;
 
     private List<DomicilioDTOResponse> Domicilios;
