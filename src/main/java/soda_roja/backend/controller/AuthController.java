@@ -7,10 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import soda_roja.backend.dtoRequest.LoginDTORequest;
 import soda_roja.backend.dtoRequest.RegisterDTORequest;
 import soda_roja.backend.dtoResponse.LoginDTOResponse;
 import soda_roja.backend.dtoResponse.RegisterDTOResponse;
+import soda_roja.backend.dtoResponse.VerifyTokenDTOResponse;
 import soda_roja.backend.service.AuthService;
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +32,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
            return ResponseEntity.status(401)
-        		   .body(new LoginDTOResponse(false, null, null, null, e.getMessage()));
+        		   .body(new LoginDTOResponse(false, null, e.getMessage()));
         }
     }
 
@@ -41,5 +44,11 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(500).body(new RegisterDTOResponse(false, e.getMessage()));
         }
+    }
+    
+    @PostMapping("/verify-token")
+    public ResponseEntity<VerifyTokenDTOResponse> verifyToken(@RequestHeader("Authorization") String token) {
+        boolean isValid = authService.verifyToken(token);
+        return ResponseEntity.ok(new VerifyTokenDTOResponse(isValid));
     }
 }

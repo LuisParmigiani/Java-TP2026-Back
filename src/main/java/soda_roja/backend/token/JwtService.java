@@ -21,14 +21,10 @@ public class JwtService {
     @Value("${jwt.expiration}") // Inyecta el valor de jwt.expiration desde application.properties
     private long expirationMs;
 
-    public String generateToken(UserDetails userDetails) { //User Details es una interfaz que se usa de identificación
-    	//un usuario autenticado, dura en memoria lo mismo que la petición y AuthFilter lo guarda en un contexto para que lo lea Config.
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("rol", userDetails.getAuthorities().iterator().next().getAuthority()); //pone en un claim el rol que vino de la interfaz usada en auth
-        //los claims son un Map de Clave-Valor pero así los llama JWT
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername()) //Se pone como subject el id para poder acceder más rápido con GetSubject
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername()) //extrae el id
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -44,7 +40,7 @@ public class JwtService {
         final Claims claims = Jwts.parserBuilder() // Crea un parser de JWT
                 .setSigningKey(getSigningKey()) // Establece la clave de firma
                 .build() // Construye el parser
-                .parseClaimsJws(token) // Parsea el token JWT
+                .parseClaimsJws(token) // Parsea el token JWT y valida firma
                 .getBody(); // Obtiene el cuerpo (claims)
         return claimsResolver.apply(claims); // Aplica la función para extraer el claim deseado
     }
@@ -52,5 +48,17 @@ public class JwtService {
     private Key getSigningKey() { // Obtiene la clave de firma a partir del secret
         byte[] keyBytes = Decoders.BASE64.decode(secretKey); // Decodifica el secret en base64
         return Keys.hmacShaKeyFor(keyBytes); // Genera la clave HMAC-SHA a partir de los bytes
+    }
+    
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token); // Valida firma y vencimiento automáticamente
+            return true; 
+        } catch (JwtException | IllegalArgumentException e) {
+            return false; // Retorna false si el token expiró, fue adulterado o está vacío
+        }
     }
 }

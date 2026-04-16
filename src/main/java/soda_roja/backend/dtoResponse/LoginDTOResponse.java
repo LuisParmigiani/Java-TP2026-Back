@@ -8,7 +8,5 @@ import lombok.Data;
 public class LoginDTOResponse {
     private boolean success;
     private String token;
-    private Long userId;
-    private String role;
     private String error; // Optional, for error messages
 }

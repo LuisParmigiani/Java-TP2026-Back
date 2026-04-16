@@ -1,5 +1,7 @@
 package soda_roja.backend.service;
 
+import java.util.HashMap;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +30,7 @@ public class AuthService {
         Usuario usuario = usuarioService.getByEmail(request.getEmail());
 
         if (usuario == null || !usuarioService.verifyPassword(request.getContrasena(), usuario.getContrasena())) {
-            return new LoginDTOResponse(false, null, null, null, "Credenciales inválidas");
+            throw new RuntimeException( "Credenciales inválidas");
         }
 
         UserDetails userDetails = User.builder()
@@ -36,9 +38,18 @@ public class AuthService {
                 .authorities(new SimpleGrantedAuthority(usuario.getNivelAcceso()))
                 .build();
 
-        String token = jwtService.generateToken(userDetails);
+        // Add your custom claims here
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("userId", usuario.getId());
+        claims.put("email", usuario.getEmail());
+        claims.put("role", usuario.getNivelAcceso());
+        // If 'name' is in Persona instead of Usuario, you might need to fetch Persona here
+        claims.put("username", usuario.getNombreUsuario()); 
 
-        return new LoginDTOResponse(true, token, usuario.getId(), usuario.getNivelAcceso(), null);
+        // Pass the extra claims to the JwtService
+        String token = jwtService.generateToken(claims, userDetails);
+
+        return new LoginDTOResponse(true, token, null);
     }
     
     @Transactional
@@ -71,5 +82,13 @@ public class AuthService {
     } catch (Exception e) {
         return new RegisterDTOResponse(false, e.getMessage());
     }
+	}
+    
+    public boolean verifyToken(String token) {
+		if (token != null && token.startsWith("Bearer ")) {
+			String jwt = token.substring(7);
+			return jwtService.validateToken(jwt);
+		}
+		return false;
 	}
 }
