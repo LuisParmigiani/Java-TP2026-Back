@@ -79,9 +79,19 @@ public class CamionService {
         if(entidad.getKilometraje() != null) {
             existing.setKilometraje(entidad.getKilometraje());
         }
+        if(entidad.getEstado() != null) {
+			existing.setEstado(entidad.getEstado());
+		}
 
         return mapToDTO(repository.save(existing));
     }
+    
+    public CamionDTOResponse disable (Long id) {
+		Camion existing = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
+		existing.setEstado(false);
+		return mapToDTO(repository.save(existing));	
+		}
 
     public void delete(Long id) {
     	Camion existing = repository.findById(id)
@@ -99,6 +109,7 @@ public class CamionService {
                 .modelo(camion.getModelo())
                 .marca(camion.getMarca())
                 .kilometraje(camion.getKilometraje())
+                .estado(camion.getEstado())
                 .gastos(camion.getGastos() != null ? camion.getGastos().stream().map(gasto -> gastoService.mapToDTO(gasto)).toList() : null)
                 .Domicilios(camion.getDomicilios() != null
                         ? camion.getDomicilios().stream()

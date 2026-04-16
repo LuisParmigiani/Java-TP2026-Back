@@ -199,9 +199,10 @@ public class DataSeeder implements CommandLineRunner {
         List<Camion> camiones = new ArrayList<>();
         for (int i = 0; i < 250; i+=25) {
             Camion camion = new Camion();
-            camion.setPatente(faker.bothify("??###??"));
+            camion.setPatente(faker.bothify("??###??").toUpperCase());
             camion.setModelo(faker.name().name());
             camion.setMarca(faker.name().name());
+            camion.setEstado(faker.bool().bool());	
             camion.setKilometraje(faker.number().numberBetween(0, 200000));
             camiones.add(camion);
         }

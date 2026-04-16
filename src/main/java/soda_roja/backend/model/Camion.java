@@ -40,6 +40,9 @@ public class Camion {
 	@Column(nullable = false) // Especifica que la columna no puede ser nula en la base de datos
 	private int kilometraje;
 	
+	@Column(nullable = false)
+	private Boolean estado = true; // Por defecto, el camion está disponible
+	
 	
     @OneToMany(mappedBy = "camion", cascade = CascadeType.ALL, orphanRemoval = true,fetch =  FetchType.EAGER)
     // orphanRemoval: Es para el manejo de entidades huerfanas es decir si uno borra un domicilio de la lista de zona se elimina el domicilio de la base de datos.

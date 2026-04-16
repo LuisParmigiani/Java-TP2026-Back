@@ -43,7 +43,15 @@ public class CamionController {
     public ResponseEntity<CamionDTOResponse> update(@PathVariable long id, @Valid @RequestBody CamionDTORequestPut entidad) {
         return ResponseEntity.ok(service.update(id, entidad));
     }
+    
+    // Patch - actualizar parcialmente
+    @PatchMapping("/{id}/disable")
+    public ResponseEntity<CamionDTOResponse> disable(@PathVariable long id) {
+    			return ResponseEntity.ok(service.disable(id));
+    			
+    }
 
+    
     // DELETE - eliminar
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable long id) {
