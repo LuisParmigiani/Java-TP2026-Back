@@ -25,31 +25,48 @@ public class ProductoZonaController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las asociaciones ProductoZona")
-    public ResponseEntity<List<ProductoZonaDTOResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<ProductoZonaDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAll(populate));
     }
+
 
     @GetMapping("/{id}")
+
     @Operation(summary = "Obtener una asociación ProductoZona por ID")
-    public ResponseEntity<ProductoZonaDTOResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<ProductoZonaDTOResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getById(id, populate));
     }
+
 
     @PostMapping
+
     @Operation(summary = "Crear una nueva asociación ProductoZona")
-    public ResponseEntity<ProductoZonaDTOResponse> save(@Valid @RequestBody ProductoZonaDTORequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request));
+    public ResponseEntity<ProductoZonaDTOResponse> save(
+            @Valid @RequestBody ProductoZonaDTORequest request,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request, populate));
     }
+
 
     @PutMapping("/{id}")
+
     @Operation(summary = "Actualizar una asociación ProductoZona")
-    public ResponseEntity<ProductoZonaDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoZonaDTORequestPut request) {
-        return ResponseEntity.ok(service.update(id, request));
+    public ResponseEntity<ProductoZonaDTOResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductoZonaDTORequestPut request,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.update(id, request, populate));
     }
 
+
     @DeleteMapping("/{id}")
+
     @Operation(summary = "Eliminar una asociación ProductoZona")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

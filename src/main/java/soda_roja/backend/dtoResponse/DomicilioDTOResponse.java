@@ -1,6 +1,7 @@
 package soda_roja.backend.dtoResponse;
 
 import lombok.*;
+import soda_roja.backend.model.Persona;
 
 
 import java.util.List;
@@ -16,11 +17,20 @@ public class DomicilioDTOResponse {
     private String calle;
     private String numero;
     private String casa; // es el número de la casa o del departamento dentro de un conjunto de hogares
-    private ZonaDTOResponse zona;
     private boolean[] dia;
+    private ZonaDTOResponse zona;
     private List<VentaDTOResponse> ventas;
     private List<ProductoDomicilioDTOResponse> productosDomicilio;
+    private CamionDTOResponse camion;
+    private PersonaDTOResponse persona;
     private Boolean activo;
+    private List<PedidoSemanalDTOResponse> pedidosSemanales;
+    private List<Long> ventaIds;
+    private List<Long> productoDomicilioIds;
+    private List<Long> pedidoSemanalIds;
+    private Long zonaId;
+    private Long camionId;
     private Long personaId;
+
 }
 

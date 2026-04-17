@@ -19,18 +19,20 @@ public class GastoService {
 	private CamionRepository camionRepository;
 	@Autowired
 	private GastoRepository repository;
+	@Autowired
+	private MapToDTO mapToDTOMapper;
 
-	public List<GastoDTOResponse> getAll() {
-		return repository.findAll().stream().map(this::mapToDTO).toList();
+	public List<GastoDTOResponse> getAll(String[] populate) {
+		return repository.findAll().stream().map(g -> mapToDTO(g, populate)).toList();
 	}
 
-	public GastoDTOResponse getById(Long id) {
+	public GastoDTOResponse getById(Long id,String[] populate) {
 		return repository.findById(id)
-				.map(this::mapToDTO)
+				.map(g -> mapToDTO(g, populate))
 				.orElseThrow(() -> new EntityNotFoundException("Gasto no encontrado con id: " + id));
 	}
 
-	public GastoDTOResponse save(GastoDTORequest entidad) {
+	public GastoDTOResponse save(GastoDTORequest entidad,String[] populate) {
 		Camion camion = entidad.getCamion_id() != null 
 		        ? findCamionOrThrow(entidad.getCamion_id()) 
 		        : null;	
@@ -41,10 +43,10 @@ public class GastoService {
 				.camion(camion)
 				.build();
 		Gasto saved = repository.save(gasto);
-		return mapToDTO(saved);
+		return mapToDTO(saved, populate);
 	}
 
-	public GastoDTOResponse update(Long id, GastoDTORequestPut entidad) {
+	public GastoDTOResponse update(Long id, GastoDTORequestPut entidad,String[] populate) {
 		Gasto existing = repository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Gasto no encontrado con id: " + id));
 
@@ -62,10 +64,10 @@ public class GastoService {
 			existing.setCamion(camion);
 		}
 
-		return mapToDTO(repository.save(existing));
+		return mapToDTO(repository.save(existing), populate);
 	}
 
-	public void delete(Long id) {
+	public void delete(Long id ) {
 		Gasto gasto = repository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Gasto no encontrado con id: " + id));
 		repository.delete(gasto);
@@ -76,13 +78,8 @@ public class GastoService {
 				.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
 	}
 
-	public GastoDTOResponse mapToDTO(Gasto gasto) {
-		return GastoDTOResponse.builder()
-				.id(gasto.getId())
-				.detalle(gasto.getDetalle())
-				.monto(gasto.getMonto())
-				.fecha(gasto.getFecha())
-				.camionId(gasto.getCamion() != null ? gasto.getCamion().getId() : null)
-				.build();
+	private GastoDTOResponse mapToDTO(Gasto gasto, String[] populate) {
+		return mapToDTOMapper.mapToDTO(gasto, populate);
 	}
+
 }

@@ -25,26 +25,28 @@ public class UsuarioService {
     
     @Autowired
     private PersonaService personaService;
+    @Autowired
+    private MapToDTO mapToDTOMapper;
     
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    public List<UsuarioDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<UsuarioDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(u -> mapToDTO(u, populate)).toList();
     }
 
-    public UsuarioDTOResponse getById(Long id) {
+    public UsuarioDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(u -> mapToDTO(u, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
     }
-    
-    public Usuario getByEmail(String email) {
+
+    public Usuario getByEmail(String email,String[] populate) {
 		return repository.findByEmail(email)
 				.orElse(null);
 	}
 
-    public UsuarioDTOResponse save(UsuarioDTORequest entidad) {
+    public UsuarioDTOResponse save(UsuarioDTORequest entidad,String[] populate) {
         Persona persona = findPersonaOrThrow(entidad.getPersonaId());
 
         Usuario usuario = Usuario.builder()
@@ -54,10 +56,10 @@ public class UsuarioService {
                 .email(entidad.getEmail())
                 .persona(persona)
                 .build();
-        return mapToDTO(repository.save(usuario));
+        return mapToDTO(repository.save(usuario), populate);
     }
 
-    public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad) {
+    public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad,String[] populate) {
         Usuario existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
 
@@ -79,7 +81,7 @@ public class UsuarioService {
             existing.setEmail(entidad.getEmail());
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     public void delete(Long id) {
@@ -93,19 +95,11 @@ public class UsuarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
     }
     
-
-
-    public UsuarioDTOResponse mapToDTO(Usuario usuario) {
-        return UsuarioDTOResponse.builder()
-                .id(usuario.getId())
-                .nombreUsuario(usuario.getNombreUsuario())
-                .email(usuario.getEmail())
-                .nivelAcceso(usuario.getNivelAcceso())
-                .persona(personaService.mapToDTO(usuario.getPersona()))
-                .build();
-    }
-    
     public boolean verifyPassword(String rawPassword, String hashedPassword) {
         return passwordEncoder.matches(rawPassword, hashedPassword);
+    }
+
+    private UsuarioDTOResponse mapToDTO(Usuario usuario, String[] populate) {
+        return mapToDTOMapper.mapToDTO(usuario, populate);
     }
 }

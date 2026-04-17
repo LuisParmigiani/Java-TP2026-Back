@@ -25,19 +25,20 @@ public class ProductoDomicilioService {
     private ProductoRepository productoRepository;
     @Autowired
     private DomicilioRepository DomicilioRepository;
+    @Autowired
+    private MapToDTO mapToDTOMapper;
 
-
-    public List<ProductoDomicilioDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<ProductoDomicilioDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
     }
 
-    public ProductoDomicilioDTOResponse getById(Long id) {
+    public ProductoDomicilioDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(p -> mapToDTO(p, populate))
                 .orElseThrow(() -> new EntityNotFoundException("ProductoPersonaDomicilio no encontrado con id: " + id));
     }
 
-    public ProductoDomicilioDTOResponse save(ProductoDomicilioDTORequest entidad) {
+    public ProductoDomicilioDTOResponse save(ProductoDomicilioDTORequest entidad,String[] populate) {
         Producto producto = productoRepository.findById(entidad.getProductoId())
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + entidad.getProductoId()));
 
@@ -51,10 +52,10 @@ public class ProductoDomicilioService {
                 .build();
 
         ProductoDomicilio saved = repository.save(productoDomicilio);
-        return mapToDTO(saved);
+        return mapToDTO(saved, populate);
     }
 
-    public ProductoDomicilioDTOResponse update(Long id, ProductoDomicilioDTORequestPut entidad) {
+    public ProductoDomicilioDTOResponse update(Long id, ProductoDomicilioDTORequestPut entidad,String[] populate) {
         ProductoDomicilio existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductoPersonaDomicilio no encontrado con id: " + id));
 
@@ -75,7 +76,7 @@ public class ProductoDomicilioService {
         }
 
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     public void delete(Long id) {
@@ -84,13 +85,8 @@ public class ProductoDomicilioService {
         repository.delete(existing);
     }
 
-    public ProductoDomicilioDTOResponse mapToDTO(ProductoDomicilio productoDomicilio) {
-        return ProductoDomicilioDTOResponse.builder()
-                .id(productoDomicilio.getId())
-                .productoId(productoDomicilio.getProducto() != null ? productoDomicilio.getProducto().getId() : null)
-                .nombreProducto(productoDomicilio.getProducto() != null ? productoDomicilio.getProducto().getNombre() : null)
-                .DomicilioId(productoDomicilio.getDomicilio() != null ? productoDomicilio.getDomicilio().getId() : null)
-                .cantVaciosActuales(productoDomicilio.getCantVaciosActuales())
-                .build();
+    private ProductoDomicilioDTOResponse mapToDTO(ProductoDomicilio productoDomicilio, String[] populate) {
+        return mapToDTOMapper.mapToDTO(productoDomicilio, populate);
     }
+
 }

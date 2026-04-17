@@ -19,6 +19,7 @@ public class GastoDTOResponse {
     
 	 private String fecha;
 	 
-	 private Long camionId;
+	private CamionDTOResponse camion;
 
+	private Long camionId;
 }

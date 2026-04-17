@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import soda_roja.backend.model.Venta;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +19,7 @@ public class LineaPedidoDTOResponse {
     private int cantidad;
     private float subtotal;
     private ProductoZonaDTOResponse productoZona;
+    private VentaDTOResponse venta;
+    private Long productoZonaId;
+    private Long ventaId;
 }

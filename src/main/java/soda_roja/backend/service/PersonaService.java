@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.PersonaDTORequest;
 import soda_roja.backend.dtoRequestPut.PersonaDTORequestPut;
-import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.model.Persona;
@@ -21,24 +20,21 @@ public class PersonaService {
     private PersonaRepository repository;
 
     @Autowired
-    private PagoService pagoService;
-
-    @Autowired
     private DomicilioRepository domicilioRepository;
     @Autowired
-    private DomicilioService domicilioService;
+    private MapToDTO mapToDTOMapper;
 
-    public List<PersonaDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<PersonaDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
     }
 
-    public PersonaDTOResponse getById(Long id) {
+    public PersonaDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(p -> mapToDTO(p, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
     }
 
-    public PersonaDTOResponse save(PersonaDTORequest entidad) {
+    public PersonaDTOResponse save(PersonaDTORequest entidad,String[] populate) {
 
 
         Persona persona = Persona.builder()
@@ -51,10 +47,10 @@ public class PersonaService {
                 .saldo(entidad.getSaldo())
                 .build();
 
-        return mapToDTO(repository.save(persona));
+        return mapToDTO(repository.save(persona), populate);
     }
 
-    public PersonaDTOResponse update(Long id, PersonaDTORequestPut entidad) {
+    public PersonaDTOResponse update(Long id, PersonaDTORequestPut entidad,String[] populate) {
         Persona existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
 
@@ -80,7 +76,7 @@ public class PersonaService {
             existing.setSaldo(entidad.getSaldo());
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     public void delete(Long id) {
@@ -94,23 +90,8 @@ public class PersonaService {
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
     }
 
-    public PersonaDTOResponse mapToDTO(Persona persona) {
-        return PersonaDTOResponse.builder()
-                .id(persona.getId())
-                .tipoDoc(persona.getTipoDoc())
-                .nroDocumento(persona.getNroDocumento())
-                .nombre(persona.getNombre())
-                .apellido(persona.getApellido())
-                .email(persona.getEmail())
-                .telefono(persona.getTelefono())
-                .saldo(persona.getSaldo())
-                .domicilios(persona.getDomicilios() != null
-                        ? persona.getDomicilios().stream().map(domicilioService::mapToDTO).toList()
-                        : List.of())
-                .pagos(persona.getPagos() != null
-                        ? persona.getPagos().stream().map(pagoService::mapToDTO).toList()
-                        : List.of())
-                .build();
+    private PersonaDTOResponse mapToDTO(Persona persona, String[] populate) {
+        return mapToDTOMapper.mapToDTO(persona, populate);
     }
 
 

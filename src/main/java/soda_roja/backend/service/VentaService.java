@@ -26,25 +26,25 @@ public class VentaService {
     private LineaPedidoRepository lineaPedidoRepository;
 
     @Autowired
-    private LineaPedidoService lineaPedidoService;
+    private MapToDTO mapToDTOMapper;
 
-    public List<VentaDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<VentaDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(v -> mapToDTO(v, populate)).toList();
     }
 
-    public VentaDTOResponse getById(Long id) {
+    public VentaDTOResponse getById(Long id, String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(venta -> mapToDTOMapper.mapToDTO(venta, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
     }
 
-    public List<VentaDTOResponse> getByUserId(Long userId) {
+    public List<VentaDTOResponse> getByUserId(Long userId, String[] populate) {
         return repository.findByDomicilioPersonaUsuarioId(userId).stream()
-                .map(this::mapToDTO)
+                .map(v -> mapToDTO(v, populate))
                 .toList();
     }
 
-    public VentaDTOResponse save(VentaDTORequest entidad) {
+    public VentaDTOResponse save(VentaDTORequest entidad, String[] populate) {
         Domicilio domicilio = findDomicilioOrThrow(entidad.getIdDomicilio());
         List<LineaPedido> lineasPedido = entidad.getLineasPedidoIds().stream()
                 .map(this::findLineaPedidoOrThrow)
@@ -63,10 +63,10 @@ public class VentaService {
                 .build();
 
         lineasPedido.forEach(lp -> lp.setVenta(venta));
-        return mapToDTO(repository.save(venta));
+        return mapToDTO(repository.save(venta), populate);
     }
 
-    public VentaDTOResponse update(Long id, VentaDTORequestPut entidad) {
+    public VentaDTOResponse update(Long id, VentaDTORequestPut entidad, String[] populate) {
         Venta existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
         if( entidad.getIdDomicilio() != null) {
@@ -96,7 +96,7 @@ public class VentaService {
             existing.setPagado(entidad.getPagado());
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     public void delete(Long id) {
@@ -115,15 +115,8 @@ public class VentaService {
                 .orElseThrow(() -> new EntityNotFoundException("LineaPedido no encontrado con id: " + id));
     }
 
-    public VentaDTOResponse mapToDTO(Venta venta) {
-        return VentaDTOResponse.builder()
-                .id(venta.getId())
-                .fecha(venta.getFecha())
-                .total(venta.getTotal())
-                .estado(venta.getEstado())
-                .pagado(venta.isPagado())
-                .idDomicilio(venta.getDomicilio().getId())
-                .lineasPedido(venta.getLineasPedido().stream().map(lineaPedidoService::mapToDTO).toList())
-                .build();
+    private VentaDTOResponse mapToDTO(Venta venta, String[] populate) {
+        return mapToDTOMapper.mapToDTO(venta, populate);
     }
+
 }

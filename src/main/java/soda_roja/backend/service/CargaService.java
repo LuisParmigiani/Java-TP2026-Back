@@ -26,22 +26,19 @@ public class CargaService {
     private CamionRepository camionRepository;
 
     @Autowired
-    private UsuarioService usuarioService;
+    private MapToDTO mapToDTOMapper;
 
-    @Autowired
-    private CamionService camionService;
-
-    public List<CargaDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<CargaDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(c -> mapToDTO(c, populate)).toList();
     }
 
-    public CargaDTOResponse getById(Long id) {
+    public CargaDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(c -> mapToDTO(c, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada con id: " + id));
     }
 
-    public CargaDTOResponse save(CargaDTORequest entidad) {
+    public CargaDTOResponse save(CargaDTORequest entidad,String[] populate) {
         Usuario usuario = usuarioRepository.findById(entidad.getIdUsuario())
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + entidad.getIdUsuario()));
         
@@ -54,10 +51,10 @@ public class CargaService {
                 .usuario(usuario)
                 .camion(camion)
                 .build();
-        return mapToDTO(repository.save(carga));
+        return mapToDTO(repository.save(carga), populate);
     }
 
-    public CargaDTOResponse update(Long id, CargaDTORequestPut entidad) {
+    public CargaDTOResponse update(Long id, CargaDTORequestPut entidad,String[] populate) {
         Carga existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada con id: " + id));
         if (entidad.getIdUsuario() != null) {
@@ -69,7 +66,7 @@ public class CargaService {
         if( entidad.getIdCamion() != null) {
             Camion camion = camionRepository.findById(entidad.getIdCamion())
                     .orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + entidad.getIdCamion()));
-               existing.setCamion(camion);
+                existing.setCamion(camion);
         }
         if(entidad.getTipo() != null) {
             existing.setTipo(entidad.getTipo());
@@ -77,7 +74,7 @@ public class CargaService {
         if (entidad.getFechaHora() != null) {
             existing.setFechaHora(entidad.getFechaHora());
         }
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     public void delete(Long id) {
@@ -86,13 +83,8 @@ public class CargaService {
         repository.delete(existing);
     }
 
-    public CargaDTOResponse mapToDTO(Carga carga) {
-        return CargaDTOResponse.builder()
-                .id(carga.getId())
-                .tipo(carga.getTipo())
-                .fechaHora(carga.getFechaHora())
-                .usuario(usuarioService.mapToDTO(carga.getUsuario()))
-                .camion(camionService.mapToDTO(carga.getCamion()))
-                .build();
+    private CargaDTOResponse mapToDTO(Carga carga, String[] populate) {
+        return mapToDTOMapper.mapToDTO(carga, populate);
     }
+
 }

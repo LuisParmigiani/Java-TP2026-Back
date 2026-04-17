@@ -25,31 +25,48 @@ public class ProductoDomicilioController {
 
     @GetMapping
     @Operation(summary = "Obtener todas las asociaciones ProductoPersonaDomicilio")
-    public ResponseEntity<List<ProductoDomicilioDTOResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<ProductoDomicilioDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAll(populate));
     }
+
 
     @GetMapping("/{id}")
+
     @Operation(summary = "Obtener una asociación ProductoPersonaDomicilio por ID")
-    public ResponseEntity<ProductoDomicilioDTOResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<ProductoDomicilioDTOResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getById(id,populate));
     }
+
 
     @PostMapping
+
     @Operation(summary = "Crear una nueva asociación ProductoPersonaDomicilio")
-    public ResponseEntity<ProductoDomicilioDTOResponse> save(@Valid @RequestBody ProductoDomicilioDTORequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request));
+    public ResponseEntity<ProductoDomicilioDTOResponse> save(
+            @Valid @RequestBody ProductoDomicilioDTORequest request,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(request,populate));
     }
+
 
     @PutMapping("/{id}")
+
     @Operation(summary = "Actualizar una asociación ProductoPersonaDomicilio")
-    public ResponseEntity<ProductoDomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoDomicilioDTORequestPut request) {
-        return ResponseEntity.ok(service.update(id, request));
+    public ResponseEntity<ProductoDomicilioDTOResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductoDomicilioDTORequestPut request,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.update(id, request,populate));
     }
 
+
     @DeleteMapping("/{id}")
+
     @Operation(summary = "Eliminar una asociación ProductoPersonaDomicilio")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

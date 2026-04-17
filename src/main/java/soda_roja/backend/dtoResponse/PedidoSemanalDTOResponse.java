@@ -13,4 +13,7 @@ public class PedidoSemanalDTOResponse {
     private Long id;
     private int cantidad;
     private DomicilioDTOResponse domicilio;
+    private ProductoZonaDTOResponse productoZona;
+    private Long domicilioId;
+    private Long productoZonaId;
 }

@@ -14,43 +14,64 @@ import soda_roja.backend.service.UsuarioService;
 import jakarta.validation.Valid;
 import java.util.List;
 
+
 @RestController
+
 @RequestMapping("/api/usuario")
 public class UsuarioController {
+
 
     @Autowired
     private UsuarioService service;
 
+
     @GetMapping
-    public ResponseEntity<List<UsuarioDTOResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<UsuarioDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAll( populate));
     }
 
 
+
     @GetMapping("/me")
-    public ResponseEntity<?> getMe(@AuthenticationPrincipal String userId) {
-        UsuarioDTOResponse usuario = service.getById(Long.parseLong(userId));
+    public ResponseEntity<?> getMe(
+            @AuthenticationPrincipal String userId,
+            @RequestParam(required = false) String[] populate) {
+        UsuarioDTOResponse usuario = service.getById(Long.parseLong(userId),populate);
         return ResponseEntity.ok((usuario));
     }
 
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioDTOResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<UsuarioDTOResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getById(id, populate));
     }
+
 
     @PostMapping
-    public ResponseEntity<UsuarioDTOResponse> create(@Valid @RequestBody UsuarioDTORequest entidad) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));
+    public ResponseEntity<UsuarioDTOResponse> create(
+            @Valid @RequestBody UsuarioDTORequest entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, populate));
     }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody UsuarioDTORequestPut entidad) {
-        return ResponseEntity.ok(service.update(id, entidad));
+    public ResponseEntity<UsuarioDTOResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody UsuarioDTORequestPut entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.update(id, entidad, populate));
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id
+          ) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

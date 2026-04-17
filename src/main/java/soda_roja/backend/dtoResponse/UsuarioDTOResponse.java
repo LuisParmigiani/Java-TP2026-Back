@@ -1,6 +1,7 @@
 package soda_roja.backend.dtoResponse;
 
 import lombok.*;
+import java.util.List;
 
 
 @Data //getters, setters, toString, equals y hashCode
@@ -15,5 +16,7 @@ public class UsuarioDTOResponse {
     private String nivelAcceso;
     private String email;
     private PersonaDTOResponse persona;
-    
+    private List<CargaDTOResponse> cargas;
+    private List<Long> cargaIds;
+    private Long personaId;
 }

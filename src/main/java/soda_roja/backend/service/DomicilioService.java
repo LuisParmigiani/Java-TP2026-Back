@@ -1,7 +1,6 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
@@ -40,24 +39,22 @@ public class DomicilioService {
     @Autowired
     private ProductoDomicilioRepository productoDomicilioRepository;
 
-    @Autowired
-    private ZonaService zonaService;
 
     @Autowired
-    private ProductoDomicilioService productoDomicilioService;
+    private MapToDTO mapToDTOMapper;
 
-    public List<DomicilioDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<DomicilioDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(d -> mapToDTO(d, populate)).toList();
     }
 
-    public DomicilioDTOResponse getById(Long id) {
+    public DomicilioDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(d -> mapToDTO(d, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
     }
 
 
-    public List<DomicilioDTOResponse> getByUserId(Long id, String activo, Integer dias) {
+    public List<DomicilioDTOResponse> getByUserId(Long id, String activo, Integer dias, String[] populate) {
         List<Domicilio> resultados;
 
         Boolean activeBoolean = null;
@@ -86,13 +83,13 @@ public class DomicilioService {
         }
 
         return resultados.stream()
-                .map(this::mapToDTO)
+                .map(d -> mapToDTO(d, populate))
                 .toList();
     }
 
 
 
-    public DomicilioDTOResponse save(DomicilioDTORequest dto) {
+    public DomicilioDTOResponse save(DomicilioDTORequest dto,String[] populate) {
         Zona zona = findZonaOrThrow(dto.getZonaId());
         Persona persona = findPersonaOrThrow(dto.getPersonaId());
 
@@ -110,10 +107,10 @@ public class DomicilioService {
                 .camion(camion)
                 .dia(dto.getDia())
                 .build();
-        return mapToDTO(repository.save(domicilio));
+        return mapToDTO(repository.save(domicilio), populate);
     }
 
-    public DomicilioDTOResponse update(Long id, DomicilioDTORequestPut entidad) {
+    public DomicilioDTOResponse update(Long id, DomicilioDTORequestPut entidad,String[] populate) {
         Domicilio existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
 
@@ -148,7 +145,7 @@ public class DomicilioService {
             existing.setDia(entidad.getDia());
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
     public void delete(Long id) {
         Domicilio domicilio = repository.findById(id)
@@ -176,19 +173,8 @@ public class DomicilioService {
                 .orElseThrow(() -> new EntityNotFoundException("ProductoPersonaDomicilio no encontrado con id: " + id));
     }
 
-    public DomicilioDTOResponse mapToDTO(Domicilio domicilio) {
-        return DomicilioDTOResponse.builder()
-                .id(domicilio.getId())
-                .calle(domicilio.getCalle())
-                .numero(domicilio.getNumero())
-                .casa(domicilio.getCasa())
-                .personaId(domicilio.getPersona() != null ? domicilio.getPersona().getId() : null)
-                .zona(domicilio.getZona() != null ? zonaService.mapToDTO(domicilio.getZona()) : null)
-                .productosDomicilio(domicilio.getProductoDomicilio() != null
-                        ? domicilio.getProductoDomicilio().stream().map(productoDomicilio -> productoDomicilioService.mapToDTO(productoDomicilio)).toList()
-                        : List.of())
-                .dia(domicilio.getDia())
-                .activo(domicilio.getActivo())
-                .build();
+    private DomicilioDTOResponse mapToDTO(Domicilio domicilio, String[] populate) {
+        return mapToDTOMapper.mapToDTO(domicilio, populate);
     }
+
 }
