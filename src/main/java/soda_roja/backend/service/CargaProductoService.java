@@ -24,18 +24,20 @@ public class CargaProductoService {
     private CargaRepository cargaRepository;
     @Autowired
     private ProductoRepository productoRepository;
+    @Autowired
+    private MapToDTO  mapToDTOMapper;
 
-    public List<CargaProductoDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<CargaProductoDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(cargaProducto -> mapToDTOMapper.mapToDTO(cargaProducto, null)).toList();
     }
 
-    public CargaProductoDTOResponse getById(Long id) {
+    public CargaProductoDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(cargaProducto -> mapToDTOMapper.mapToDTO(cargaProducto, null))
                 .orElseThrow(() -> new EntityNotFoundException("CargaProducto no encontrado con id: " + id));
     }
 
-    public CargaProductoDTOResponse save(CargaProductoDTORequest entidad) {
+    public CargaProductoDTOResponse save(CargaProductoDTORequest entidad,String[] populate) {
         Carga carga = cargaRepository.findById(entidad.getIdCarga())
                 .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada con id: " + entidad.getIdCarga()));
 
@@ -49,10 +51,10 @@ public class CargaProductoService {
                 .producto(producto)
                 .build();
 
-        return mapToDTO(repository.save(cargaProducto));
+        return mapToDTOMapper.mapToDTO(repository.save(cargaProducto), null);
     }
 
-    public CargaProductoDTOResponse update(Long id, CargaProductoDTORequestPut entidad) {
+    public CargaProductoDTOResponse update(Long id, CargaProductoDTORequestPut entidad,String[] populate) {
         CargaProducto existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("CargaProducto no encontrado con id: " + id));
 
@@ -75,7 +77,7 @@ public class CargaProductoService {
             existing.setCantVacio(entidad.getCantVacio());
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTOMapper.mapToDTO(repository.save(existing), null);
     }
 
     public void delete(Long id) {
@@ -84,13 +86,6 @@ public class CargaProductoService {
         repository.delete(existing);
     }
 
-    public CargaProductoDTOResponse mapToDTO(CargaProducto cargaProducto) {
-        return CargaProductoDTOResponse.builder()
-                .id(cargaProducto.getId())
-                .cantLleno(cargaProducto.getCantLleno())
-                .cantVacio(cargaProducto.getCantVacio())
-                .idCarga(cargaProducto.getCarga().getId())
-                .idProducto(cargaProducto.getProducto().getId())
-                .build();
-    }
+
+
 }

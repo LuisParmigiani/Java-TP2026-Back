@@ -12,44 +12,66 @@ import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 
+
 @RestController
+
 @RequestMapping("/api/domicilio")
 public class DomicilioController {
+
 
     @Autowired
     private DomicilioService service;
 
     @GetMapping
-    public ResponseEntity<List<DomicilioDTOResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<DomicilioDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAll(populate));
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<DomicilioDTOResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<DomicilioDTOResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getById(id,populate));
     }
+
 
     @GetMapping("token/usuario")
     public ResponseEntity<List<DomicilioDTOResponse>> getByUserId(
-            @AuthenticationPrincipal String userId
-            , @RequestParam(required = false) String estado
-            , @RequestParam(required = false) Integer dias
+            @AuthenticationPrincipal String userId,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Integer dias,
+            @RequestParam(required = false) String[] populate
     ){
-        return ResponseEntity.ok(service.getByUserId(Long.parseLong(userId), estado, dias));
+        return ResponseEntity.ok(service.getByUserId(Long.parseLong(userId), estado, dias,populate));
     }
+
 
     @PostMapping
-    public ResponseEntity<DomicilioDTOResponse> create(@Valid @RequestBody DomicilioDTORequest entidad) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));
+    public ResponseEntity<DomicilioDTOResponse> create(
+            @Valid
+            @RequestBody DomicilioDTORequest entidad
+            ,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
     }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<DomicilioDTOResponse> update(@PathVariable Long id, @Valid @RequestBody DomicilioDTORequestPut entidad) {
-        return ResponseEntity.ok(service.update(id, entidad));
+    public ResponseEntity<DomicilioDTOResponse> update(
+            @PathVariable Long id,
+            @Valid
+            @RequestBody DomicilioDTORequestPut entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.update(id, entidad,populate));
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id
+    ) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

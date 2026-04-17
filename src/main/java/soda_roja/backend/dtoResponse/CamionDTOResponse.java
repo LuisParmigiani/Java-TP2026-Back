@@ -30,4 +30,12 @@ public class CamionDTOResponse {
 
     private List<DomicilioDTOResponse> Domicilios;
 
+    private List<CargaDTOResponse> cargas;
+
+    private List<Long> gastoIds;
+
+    private List<Long> domiciliosIds;
+
+    private List<Long> cargasIds;
+
 }

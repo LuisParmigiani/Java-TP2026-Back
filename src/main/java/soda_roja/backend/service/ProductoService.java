@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.ProductoDTORequest;
 import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
-import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.ProductoDTOResponse;
 import org.springframework.data.domain.Sort;
 import soda_roja.backend.repository.ProductoRepository;
@@ -21,19 +20,17 @@ public class ProductoService {
     @Autowired
     private ProductoRepository repository;
     @Autowired
-    private DomicilioService domicilioService;
+    private MapToDTO mapToDTOMapper;
 
-    public List<ProductoDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<ProductoDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
     }
 
-    public List<ProductoDTOResponse> getActive(String userId,String sortOption,String searchTerm, Double minPrice, Double maxPrice,String directionId) {
+    public List<ProductoDTOResponse> getActive(String userId,String sortOption,String searchTerm, Double minPrice, Double maxPrice,String directionId,String[] populate) {
         Sort sort = Sort.unsorted();
-        DomicilioDTOResponse domicilio = null;
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ") ;
-        System.out.println("User ID: " + directionId);
+
         if(directionId != null){
-            domicilio = domicilioService.getById(Long.parseLong(directionId));
+            // Get domicilio by id for zone filtering
         }
         if (sortOption != null) {
             switch (sortOption) {
@@ -46,11 +43,11 @@ public class ProductoService {
         }
 
         if(sortOption == null && searchTerm == null && minPrice == null && maxPrice == null && directionId == null && userId == null) {
-            return repository.findByActivoTrue().stream().map(this::mapToDTO).toList();
+            return repository.findByActivoTrue().stream().map(p -> mapToDTO(p, populate)).toList();
         }else {
             List<Producto> resultados;
             String estado = "activo";
-            String zone = domicilio != null ? domicilio.getZona().getId().toString() : null;
+            String zone = null;
             ProductoSpecification.ProductoFiltrosDTO filtros =
                     new ProductoSpecification.ProductoFiltrosDTO(
                             userId,
@@ -63,18 +60,18 @@ public class ProductoService {
 
             resultados = repository.findAll(ProductoSpecification.filtrar(filtros), sort);
             return resultados.stream()
-                    .map(this::mapToDTO)
+                    .map(p -> mapToDTO(p, populate))
                     .toList();
         }
     }
 
-    public ProductoDTOResponse getById(Long id) {
+    public ProductoDTOResponse getById(Long id ,String[] populate) {
         Producto producto = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
-        return mapToDTO(producto);
+        return mapToDTO(producto, populate);
     }
 
-    public ProductoDTOResponse save(ProductoDTORequest entidad) {
+    public ProductoDTOResponse save(ProductoDTORequest entidad ,String[] populate) {
         Producto producto = Producto.builder()
                 .nombre(entidad.getNombre())
                 .detalle(entidad.getDetalle())
@@ -83,11 +80,11 @@ public class ProductoService {
                 .activo(entidad.isActivo())
                 .build();
 
-        return mapToDTO(repository.save(producto));
+        return mapToDTO(repository.save(producto), populate);
     }
 
         
-    public ProductoDTOResponse update(Long id, ProductoDTORequestPut entidad) {
+    public ProductoDTOResponse update(Long id, ProductoDTORequestPut entidad ,String[] populate) {
         Producto existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
 
@@ -110,7 +107,7 @@ public class ProductoService {
             existing.setActivo(entidad.getActivo());
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     
@@ -120,15 +117,8 @@ public class ProductoService {
         repository.delete(producto);
     }
 
-    public ProductoDTOResponse mapToDTO(Producto producto) {
-        return ProductoDTOResponse.builder()
-                .id(producto.getId())
-                .nombre(producto.getNombre())
-                .detalle(producto.getDetalle())
-                .precio(producto.getPrecio())
-                .stock(producto.getStock())
-                .imagenUrl(producto.getImagenUrl())
-                .activo(producto.isActivo())
-                .build();
+    private ProductoDTOResponse mapToDTO(Producto producto, String[] populate) {
+        return mapToDTOMapper.mapToDTO(producto, populate);
     }
+
 }

@@ -25,7 +25,7 @@ public class AuthService {
     private final PersonaService personaService;
 
     public LoginDTOResponse login(LoginDTORequest request) {
-        Usuario usuario = usuarioService.getByEmail(request.getEmail());
+        Usuario usuario = usuarioService.getByEmail(request.getEmail(),null);
 
         if (usuario == null || !usuarioService.verifyPassword(request.getContrasena(), usuario.getContrasena())) {
             return new LoginDTOResponse(false, null, null, null, "Credenciales inválidas");
@@ -44,7 +44,7 @@ public class AuthService {
     @Transactional
     public RegisterDTOResponse register(RegisterDTORequest request) {
 		try {
-    	if (usuarioService.getByEmail(request.getEmail()) != null) {
+    	if (usuarioService.getByEmail(request.getEmail(),null) != null) {
 			return new RegisterDTOResponse(false, "El email ya está registrado");
         }
 		PersonaDTORequest nuevaPersona = PersonaDTORequest.builder()
@@ -56,7 +56,7 @@ public class AuthService {
 				.telefono(request.getPersona_telefono())
 				.saldo(0)
 				.build();
-		PersonaDTOResponse nuevaPersonaDto = personaService.save(nuevaPersona);
+		PersonaDTOResponse nuevaPersonaDto = personaService.save(nuevaPersona, null);
 		
 		UsuarioDTORequest nuevoUsuario = UsuarioDTORequest.builder()
 				 .nombreUsuario(request.getUsuario_nombre())
@@ -65,7 +65,7 @@ public class AuthService {
 				 .nivelAcceso("Usuario")
 				 .personaId(nuevaPersonaDto.getId())
 				 .build();
-		usuarioService.save(nuevoUsuario);
+		usuarioService.save(nuevoUsuario, null);
 		
 		return new RegisterDTOResponse(true, null);
     } catch (Exception e) {

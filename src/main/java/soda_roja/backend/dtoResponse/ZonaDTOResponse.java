@@ -3,6 +3,8 @@ package soda_roja.backend.dtoResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
+import java.util.List;
+
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -13,7 +15,10 @@ public class ZonaDTOResponse {
     private String nombre;
     private String detalle;
     private boolean[] dia;
-
+    private List<ProductoZonaDTOResponse> productoZonas;
+    private List<DomicilioDTOResponse> domicilios;
+    private List<Long> domicilioIds;
+    private List<Long> productoZonaIds;
 }
 
 

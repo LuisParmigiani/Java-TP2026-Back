@@ -22,5 +22,9 @@ public class PersonaDTOResponse {
     private float saldo;
     private List<PagoDTOResponse> pagos;
     private List<DomicilioDTOResponse> domicilios;
+    private UsuarioDTOResponse usuario;
+    private Long usuarioId;
+    private List<Long> pagosIds;
+    private List<Long> domicilioIds;
 
 }

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,6 +17,8 @@ public class ProductoDomicilioDTOResponse {
     private Long id;
     private Long productoId;
     private String nombreProducto;
-    private Long DomicilioId;
+    private ProductoDTOResponse producto;
+    private DomicilioDTOResponse domicilio;
     private Integer cantVaciosActuales;
+    private Long domicilioId;
 }

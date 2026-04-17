@@ -1,8 +1,8 @@
 package soda_roja.backend.dtoResponse;
 
 import lombok.*;
-
 import java.util.Date;
+import java.util.List;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -10,8 +10,11 @@ import java.util.Date;
 @Builder
 public class CargaDTOResponse {
     private Long id;
-    private String tipo;;
+    private String tipo;
     private Date fechaHora;
     private UsuarioDTOResponse usuario;
     private CamionDTOResponse camion;
+    private List<CargaProductoDTOResponse> cargaProductos;
+    private Long usuarioId;
+    private Long camionId;
 }

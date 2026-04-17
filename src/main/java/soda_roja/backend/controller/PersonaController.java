@@ -19,27 +19,43 @@ public class PersonaController {
     private PersonaService service;
 
     @GetMapping
-    public ResponseEntity<List<PersonaDTOResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<PersonaDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAll(populate));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonaDTOResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<PersonaDTOResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getById(id,populate));
     }
+
 
     @PostMapping
-    public ResponseEntity<PersonaDTOResponse> create(@Valid @RequestBody PersonaDTORequest entidad) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));
+    public ResponseEntity<PersonaDTOResponse> create(
+            @Valid
+            @RequestBody PersonaDTORequest entidad
+            ,@RequestParam(required = false) String[] populate
+    ) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
     }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<PersonaDTOResponse> update(@PathVariable Long id, @Valid @RequestBody PersonaDTORequestPut entidad) {
-        return ResponseEntity.ok(service.update(id, entidad));
+    public ResponseEntity<PersonaDTOResponse> update(
+            @PathVariable Long id,
+            @Valid
+            @RequestBody PersonaDTORequestPut entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.update(id, entidad,populate));
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

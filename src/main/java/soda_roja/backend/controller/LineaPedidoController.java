@@ -12,6 +12,7 @@ import soda_roja.backend.service.LineaPedidoService;
 import jakarta.validation.Valid;
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/lineaPedido")
 public class LineaPedidoController {
@@ -20,27 +21,42 @@ public class LineaPedidoController {
     private LineaPedidoService service;
 
     @GetMapping
-    public ResponseEntity<List<LineaPedidoDTOResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<LineaPedidoDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAll(populate));
     }
+
 
     @GetMapping("/{id}")
-    public ResponseEntity<LineaPedidoDTOResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<LineaPedidoDTOResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getById(id,populate));
     }
+
 
     @PostMapping
-    public ResponseEntity<LineaPedidoDTOResponse> create(@Valid @RequestBody LineaPedidoDTORequest entidad) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));
+    public ResponseEntity<LineaPedidoDTOResponse> create(
+            @Valid
+            @RequestBody LineaPedidoDTORequest entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
     }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<LineaPedidoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody LineaPedidoDTORequestPut entidad) {
-        return ResponseEntity.ok(service.update(id, entidad));
+    public ResponseEntity<LineaPedidoDTOResponse> update(
+            @PathVariable Long id,
+            @Valid
+            @RequestBody LineaPedidoDTORequestPut entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.update(id, entidad,populate));
     }
 
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

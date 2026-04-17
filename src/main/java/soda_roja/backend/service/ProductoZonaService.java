@@ -28,25 +28,19 @@ public class ProductoZonaService {
     private ZonaRepository zonaRepository;
 
     @Autowired
-    private ProductoService productoService;
+    private MapToDTO mapToDTOMapper;
 
-    @Autowired
-    private ZonaService zonaService;
-
-    @Autowired
-    private PedidoSemanalService pedidoSemanalService;
-
-    public List<ProductoZonaDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<ProductoZonaDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(pz -> mapToDTO(pz, populate)).toList();
     }
 
-    public ProductoZonaDTOResponse getById(Long id) {
+    public ProductoZonaDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(pz -> mapToDTO(pz, populate))
                 .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + id));
     }
 
-    public ProductoZonaDTOResponse save(ProductoZonaDTORequest entidad) {
+    public ProductoZonaDTOResponse save(ProductoZonaDTORequest entidad,String[] populate) {
         Producto producto = findProductoOrThrow(entidad.getProductoId());
         Zona zona = findZonaOrThrow(entidad.getZonaId());
 
@@ -56,10 +50,10 @@ public class ProductoZonaService {
                 .build();
 
         ProductoZona saved = repository.save(productoZona);
-        return mapToDTO(saved);
+        return mapToDTO(saved, populate);
     }
 
-    public ProductoZonaDTOResponse update(Long id, ProductoZonaDTORequestPut entidad) {
+    public ProductoZonaDTOResponse update(Long id, ProductoZonaDTORequestPut entidad,String[] populate) {
         ProductoZona existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + id));
 
@@ -73,7 +67,7 @@ public class ProductoZonaService {
             existing.setZona(zona);
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     public void delete(Long id) {
@@ -92,12 +86,8 @@ public class ProductoZonaService {
                 .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
     }
 
-    public ProductoZonaDTOResponse mapToDTO(ProductoZona productoZona) {
-        return ProductoZonaDTOResponse.builder()
-                .id(productoZona.getId())
-                .producto(productoZona.getProducto() != null ? productoService.mapToDTO(productoZona.getProducto()) : null)
-                .zona(productoZona.getZona() != null ? zonaService.mapToDTO(productoZona.getZona()) : null)
-                .pedidoSemanal(productoZona.getPedidoSemanales() != null ? productoZona.getPedidoSemanales().stream().map(pedidoSemanalService::mapToDTO).toList() : null)
-                .build();
+    private ProductoZonaDTOResponse mapToDTO(ProductoZona productoZona, String[] populate) {
+        return mapToDTOMapper.mapToDTO(productoZona, populate);
     }
+
 }

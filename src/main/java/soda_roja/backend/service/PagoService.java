@@ -21,18 +21,20 @@ public class PagoService {
 
     @Autowired
     private PersonaRepository personaRepository;
+    @Autowired
+    private MapToDTO mapToDTOMapper;
 
-    public List<PagoDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<PagoDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
     }
 
-    public PagoDTOResponse getById(Long id) {
+    public PagoDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(p -> mapToDTO(p, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Pago no encontrado con id: " + id));
     }
 
-    public PagoDTOResponse save(PagoDTORequest entidad) {
+    public PagoDTOResponse save(PagoDTORequest entidad,String[] populate) {
         Persona persona = findPersonaOrThrow(entidad.getPersonaId());
 
         Pago pago = Pago.builder()
@@ -41,10 +43,10 @@ public class PagoService {
                 .metodoPago(entidad.getMetodoPago())
                 .persona(persona)
                 .build();
-        return mapToDTO(repository.save(pago));
+        return mapToDTO(repository.save(pago), populate);
     }
 
-    public PagoDTOResponse update(Long id, PagoDTORequestPut entidad) {
+    public PagoDTOResponse update(Long id, PagoDTORequestPut entidad,String[] populate) {
         Pago existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pago no encontrado con id: " + id));
 
@@ -63,7 +65,7 @@ public class PagoService {
             existing.setFecha(entidad.getFecha());
         }
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
 
     public void delete(Long id) {
@@ -77,13 +79,8 @@ public class PagoService {
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
     }
 
-    public PagoDTOResponse mapToDTO(Pago pago) {
-        return PagoDTOResponse.builder()
-                .id(pago.getId())
-                .monto(pago.getMonto())
-                .metodoPago(pago.getMetodoPago())
-                .fecha(pago.getFecha())
-                .personaId(pago.getPersona().getId())
-                .build();
+    private PagoDTOResponse mapToDTO(Pago pago, String[] populate) {
+        return mapToDTOMapper.mapToDTO(pago, populate);
     }
+
 }

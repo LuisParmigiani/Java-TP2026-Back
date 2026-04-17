@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequestPut.CamionDTORequestPut;
 import soda_roja.backend.model.Camion;
-import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.repository.CamionRepository;
-import soda_roja.backend.repository.DomicilioRepository;
 
 import java.util.List;
 
@@ -33,24 +31,21 @@ public class CamionService {
 
     @Autowired
     private CamionRepository repository;
-    @Autowired
-    private GastoService gastoService;
-    @Autowired
-    private DomicilioRepository DomicilioRepository;
-    @Autowired
-    private DomicilioService domicilioService;
 
-    public List<CamionDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    @Autowired
+    private MapToDTO mapToDTOMapper;
+
+    public List<CamionDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(c -> mapToDTO(c, populate)).toList();
     }
 
-    public CamionDTOResponse getById(Long id) {
+    public CamionDTOResponse getById(Long id,String[]populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(c -> mapToDTO(c, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
     }
 
-    public CamionDTOResponse save(CamionDTORequest entidad) {
+    public CamionDTOResponse save(CamionDTORequest entidad,String[]populate) {
 
 
         Camion camion = Camion.builder()
@@ -60,10 +55,10 @@ public class CamionService {
                 .kilometraje(entidad.getKilometraje())
                 .build();
         Camion saved = repository.save(camion);
-        return mapToDTO(saved);
+        return mapToDTO(saved, populate);
     }
 
-    public CamionDTOResponse update(Long id, CamionDTORequestPut entidad) {
+    public CamionDTOResponse update(Long id, CamionDTORequestPut entidad,String[]populate) {
 
         Camion existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Camion no encontrado con id: " + id));
@@ -83,39 +78,23 @@ public class CamionService {
 			existing.setEstado(entidad.getEstado());
 		}
 
-        return mapToDTO(repository.save(existing));
+        return mapToDTO(repository.save(existing), populate);
     }
     
-    public CamionDTOResponse disable (Long id) {
-		Camion existing = repository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
-		existing.setEstado(false);
-		return mapToDTO(repository.save(existing));	
-		}
+    public CamionDTOResponse disable (Long id,String[]populate) {
+        Camion existing = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
+        existing.setEstado(false);
+        return mapToDTO(repository.save(existing), populate);
+    }
 
     public void delete(Long id) {
     	Camion existing = repository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
         repository.delete(existing);
     }
-    private Domicilio findDomicilioOrThrow(Long id) {
-        return DomicilioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
+    private CamionDTOResponse mapToDTO(Camion camion, String[] populate) {
+        return mapToDTOMapper.mapToDTO(camion, populate);
     }
-    public CamionDTOResponse mapToDTO(Camion camion) {
-        return CamionDTOResponse.builder()
-                .id(camion.getId())
-                .patente(camion.getPatente())
-                .modelo(camion.getModelo())
-                .marca(camion.getMarca())
-                .kilometraje(camion.getKilometraje())
-                .estado(camion.getEstado())
-                .gastos(camion.getGastos() != null ? camion.getGastos().stream().map(gasto -> gastoService.mapToDTO(gasto)).toList() : null)
-                .Domicilios(camion.getDomicilios() != null
-                        ? camion.getDomicilios().stream()
-                        .map(Domicilio -> domicilioService.mapToDTO(Domicilio))
-                        .toList()
-                        : List.of())
-                .build();
-    }
+
 }

@@ -16,27 +16,29 @@ public class ZonaService {
 
     @Autowired
     private ZonaRepository repository;
+    @Autowired
+    private MapToDTO mapToDTOMapper;
 
-    public List<ZonaDTOResponse> getAll() {
-        return repository.findAll().stream().map(this::mapToDTO).toList();
+    public List<ZonaDTOResponse> getAll(String[] populate) {
+        return repository.findAll().stream().map(z -> mapToDTO(z, populate)).toList();
     }
 
-    public ZonaDTOResponse getById(Long id) {
+    public ZonaDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
-                .map(this::mapToDTO)
+                .map(z -> mapToDTO(z, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
     }
 
-    public ZonaDTOResponse save(ZonaDTORequest entidad) {
+    public ZonaDTOResponse save(ZonaDTORequest entidad,String[] populate) {
         Zona zona = Zona.builder()
                 .nombre(entidad.getNombre())
                 .detalle(entidad.getDetalle())
                 .dia(entidad.getDia())
                 .build();
-        return mapToDTO(repository.save(zona));
+        return mapToDTO(repository.save(zona), populate);
     }
 
-    public ZonaDTOResponse update(Long id, ZonaDTORequestPut entidad) {
+    public ZonaDTOResponse update(Long id, ZonaDTORequestPut entidad,String[] populate) {
         Zona zona = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
 
@@ -50,7 +52,7 @@ public class ZonaService {
             zona.setDia(entidad.getDia());
         }
 
-        return mapToDTO(repository.save(zona));
+        return mapToDTO(repository.save(zona), populate);
     }
 
     public void delete(Long id) {
@@ -59,12 +61,8 @@ public class ZonaService {
         repository.delete(zona);
     }
 
-    public ZonaDTOResponse mapToDTO(Zona zona) {
-        return ZonaDTOResponse.builder()
-                .id(zona.getId())
-                .dia(zona.getDia())
-                .nombre(zona.getNombre())
-                .detalle(zona.getDetalle())
-                .build();
+    private ZonaDTOResponse mapToDTO(Zona zona, String[] populate) {
+        return mapToDTOMapper.mapToDTO(zona, populate);
     }
+
 }

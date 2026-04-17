@@ -20,18 +20,23 @@ public class ProductoController {
     private ProductoService service;
 
     @GetMapping
-    public ResponseEntity<List<ProductoDTOResponse>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<ProductoDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAll( populate));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductoDTOResponse> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
+    public ResponseEntity<ProductoDTOResponse> getById(
+            @PathVariable Long id,
+            @RequestParam(required = false) String[] populate)
+    {
+        return ResponseEntity.ok(service.getById(id, populate));
     }
 
     @GetMapping("/customer/active")
     public ResponseEntity<List<ProductoDTOResponse>> getActive(
-            @AuthenticationPrincipal String userId,
+            @AuthenticationPrincipal String userId
+            , @RequestParam(required = false) String[] populate,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
@@ -39,7 +44,7 @@ public class ProductoController {
             @RequestParam(required = false) String direction
     ) {
 
-        return ResponseEntity.ok(service.getActive(userId, sort, search, minPrice, maxPrice,direction));
+        return ResponseEntity.ok(service.getActive(userId, sort, search, minPrice, maxPrice,direction, populate));
     }
     @GetMapping("/active")
     public ResponseEntity<List<ProductoDTOResponse>> getActive(
@@ -47,23 +52,30 @@ public class ProductoController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) String direction
+            @RequestParam(required = false) String direction,
+            @RequestParam(required = false) String[] populate
     ) {
 
-        return ResponseEntity.ok(service.getActive(null, sort, search, minPrice, maxPrice,direction));
+        return ResponseEntity.ok(service.getActive(null, sort, search, minPrice, maxPrice,direction, populate));
     }
     @PostMapping
-    public ResponseEntity<ProductoDTOResponse> create(@Valid @RequestBody ProductoDTORequest entidad) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad));
+    public ResponseEntity<ProductoDTOResponse> create(
+            @Valid @RequestBody ProductoDTORequest entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, populate));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoDTOResponse> update(@PathVariable Long id, @Valid @RequestBody ProductoDTORequestPut entidad) {
-        return ResponseEntity.ok(service.update(id, entidad));
+    public ResponseEntity<ProductoDTOResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductoDTORequestPut entidad,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.update(id, entidad, populate));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -64,6 +64,6 @@ public class Domicilio {
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<PedidoSemanal> pedidoSemanal;
+    private List<PedidoSemanal> pedidosSemanal;
 
 }
