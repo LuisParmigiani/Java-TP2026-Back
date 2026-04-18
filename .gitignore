@@ -42,3 +42,5 @@ replay_pid*
 *.DS_Store
 
 src/main/resources/application.properties
+
+target/*
