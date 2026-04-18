@@ -51,10 +51,9 @@ public class Camion {
     private List<Gasto> gastos;
 
 
-	@OneToMany(mappedBy = "camion", cascade = CascadeType.ALL)
-	@JsonManagedReference
-	private List<Domicilio> domicilios;
 	
     @OneToMany(mappedBy = "camion", fetch = FetchType.LAZY)
     private List<Carga> cargas;
+    @OneToMany(mappedBy = "camion", cascade = CascadeType.ALL, orphanRemoval = true,fetch =  FetchType.EAGER)
+    private List<Zona> zonas;
 }

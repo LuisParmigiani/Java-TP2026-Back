@@ -1,13 +1,16 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.ZonaDTORequest;
 import soda_roja.backend.dtoRequestPut.ZonaDTORequestPut;
 import soda_roja.backend.dtoResponse.ZonaDTOResponse;
 import soda_roja.backend.model.Zona;
+import soda_roja.backend.model.Camion;
 import soda_roja.backend.repository.ZonaRepository;
+import soda_roja.backend.repository.CamionRepository;
 
 import java.util.List;
 
@@ -18,6 +21,8 @@ public class ZonaService {
     private ZonaRepository repository;
     @Autowired
     private MapToDTO mapToDTOMapper;
+    @Autowired
+    private CamionRepository camionRepository;
 
     public List<ZonaDTOResponse> getAll(String[] populate) {
         return repository.findAll().stream().map(z -> mapToDTO(z, populate)).toList();
@@ -30,10 +35,13 @@ public class ZonaService {
     }
 
     public ZonaDTOResponse save(ZonaDTORequest entidad,String[] populate) {
+    	Camion camion = camionRepository.findById(entidad.getCamionId())
+				.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + entidad.getCamionId()));
         Zona zona = Zona.builder()
                 .nombre(entidad.getNombre())
                 .detalle(entidad.getDetalle())
                 .dia(entidad.getDia())
+                .camion(camion)
                 .build();
         return mapToDTO(repository.save(zona), populate);
     }
@@ -51,7 +59,11 @@ public class ZonaService {
         if (entidad.getDia() != null) {
             zona.setDia(entidad.getDia());
         }
-
+        if(entidad.getCamionId() != null) {
+			Camion camion = camionRepository.findById(entidad.getCamionId())
+					.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id"));
+			zona.setCamion(camion);
+			}	
         return mapToDTO(repository.save(zona), populate);
     }
 

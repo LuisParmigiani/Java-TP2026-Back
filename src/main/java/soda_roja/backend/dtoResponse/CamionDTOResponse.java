@@ -26,16 +26,20 @@ public class CamionDTOResponse {
 	
 	private Boolean estado;
 	
+	
 	private List<GastoDTOResponse> gastos;
 
-    private List<DomicilioDTOResponse> Domicilios;
 
     private List<CargaDTOResponse> cargas;
+    
+    private List<ZonaDTOResponse> zonas;
 
     private List<Long> gastoIds;
 
-    private List<Long> domiciliosIds;
-
     private List<Long> cargasIds;
+    
+     private List<Long> zonaIds;
+    
+    
 
 }

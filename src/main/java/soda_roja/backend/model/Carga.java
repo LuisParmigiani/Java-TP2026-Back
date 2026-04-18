@@ -35,6 +35,9 @@ public class Carga {
     @ManyToOne()
     @JoinColumn(name = "camionCarga",nullable = false)
     private Camion camion;
+    
+    @OneToMany(mappedBy = "carga", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private java.util.List<CargaProducto> cargasProducto;
 
 
 }

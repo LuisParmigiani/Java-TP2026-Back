@@ -38,8 +38,6 @@ public class DomicilioDTORequest {
     @Schema(description = "El ID de la persona asociada al domicilio", example = "1")
     private Long personaId;
 
-    @Schema(description = "El ID del camión asignado al domicilio (opcional)", example = "1")
-    private Long camionId;
 
 
     @Schema(description = "Indica si el domicilio está activo o no", example = "true")

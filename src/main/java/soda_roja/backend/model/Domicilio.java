@@ -45,9 +45,6 @@ public class Domicilio {
     @JoinColumn(name = "personaId")
     private Persona persona;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "camionId")
-    private Camion camion;
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL)
     private List<Venta> ventas;

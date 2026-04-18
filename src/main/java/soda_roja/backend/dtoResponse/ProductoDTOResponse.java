@@ -19,7 +19,7 @@ public class ProductoDTOResponse {
     private int stock;
     private String imagenUrl;
     private boolean activo; // Indica si el producto está activo o inactivo
-    private List<CargaProductoDTOResponse> cargaProductos;
+    private List<CargaProductoDTOResponse> cargasProducto;
     private List<ProductoZonaDTOResponse> productoZonas;
     private List<ProductoDomicilioDTOResponse>  productosDomicilio;
     private List<Long> productoZonaIds;

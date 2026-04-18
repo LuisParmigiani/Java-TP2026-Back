@@ -45,5 +45,9 @@ public class Producto {
 
 	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	@JsonManagedReference
-	private List<ProductoDomicilio> productosDomicilio;
+	private List<ProductoDomicilio> productosDomicilio; 
+	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@JsonManagedReference
+	private List<CargaProducto> cargasProducto;
+	
 }

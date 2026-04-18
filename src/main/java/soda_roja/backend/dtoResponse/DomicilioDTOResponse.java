@@ -29,7 +29,6 @@ public class DomicilioDTOResponse {
     private List<Long> productoDomicilioIds;
     private List<Long> pedidoSemanalIds;
     private Long zonaId;
-    private Long camionId;
     private Long personaId;
 
 }

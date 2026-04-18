@@ -33,6 +33,7 @@ public class CamionDTORequestPut {
 	
 	@Schema(example = "true", description = "Indica si el camión está activo o inactivo")
 	private Boolean estado;
+	
 
 
 

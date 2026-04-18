@@ -38,4 +38,6 @@ public class CargaProducto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cargaId", nullable = false)
     private Carga carga;
+    
+    
 }

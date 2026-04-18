@@ -42,4 +42,9 @@ public class Zona {
     @Builder.Default
     @Column(name = "dia", nullable = false)
     private boolean[] dia = new boolean[7];
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "camionId", nullable = false)
+    private Camion camion;
+    
 }

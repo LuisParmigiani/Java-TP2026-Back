@@ -93,9 +93,6 @@ public class DomicilioService {
         Zona zona = findZonaOrThrow(dto.getZonaId());
         Persona persona = findPersonaOrThrow(dto.getPersonaId());
 
-        Camion camion = dto.getCamionId() != null
-                ? findCamionOrThrow(dto.getCamionId())
-                : null;
 
         Domicilio domicilio = Domicilio.builder()
                 .calle(dto.getCalle())
@@ -104,7 +101,6 @@ public class DomicilioService {
                 .zona(zona)
                 .activo(dto.getActivo())
                 .persona(persona)
-                .camion(camion)
                 .dia(dto.getDia())
                 .build();
         return mapToDTO(repository.save(domicilio), populate);
@@ -124,10 +120,6 @@ public class DomicilioService {
             existing.setPersona(persona);
         }
 
-        if(entidad.getCamionId() != null) {
-            Camion camion = findCamionOrThrow(entidad.getCamionId());
-            existing.setCamion(camion);
-        }
 
         if(entidad.getCalle() != null) {
             existing.setCalle(entidad.getCalle());

@@ -27,5 +27,9 @@ public class ZonaDTORequest {
     @Size(min = 7, max = 7, message = "El array de días debe tener exactamente 7 elementos")
     @Schema(example = "[true, false, true, false, true, false, true]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana")
     private boolean[] dia;
+    @NotNull(message = "El id del camion no puede ser nulo")
+	@Schema(example = "1", description = "Identificador del camion al que pertenece la zona")
+	private Long camionId;
+	 
 
 }

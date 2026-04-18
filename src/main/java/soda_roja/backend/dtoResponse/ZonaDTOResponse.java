@@ -17,6 +17,8 @@ public class ZonaDTOResponse {
     private boolean[] dia;
     private List<ProductoZonaDTOResponse> productoZonas;
     private List<DomicilioDTOResponse> domicilios;
+    private CamionDTOResponse camion;
+    private Long camionId;
     private List<Long> domicilioIds;
     private List<Long> productoZonaIds;
 }

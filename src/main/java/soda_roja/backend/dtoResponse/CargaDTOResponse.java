@@ -14,7 +14,7 @@ public class CargaDTOResponse {
     private Date fechaHora;
     private UsuarioDTOResponse usuario;
     private CamionDTOResponse camion;
-    private List<CargaProductoDTOResponse> cargaProductos;
+    private List<CargaProductoDTOResponse> cargasProducto;
     private Long usuarioId;
     private Long camionId;
 }
