@@ -6,10 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequestPut.DomicilioDTORequestPut;
+import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
+import soda_roja.backend.model.Usuario;
 import soda_roja.backend.service.DomicilioService;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import jakarta.validation.Valid;
+import soda_roja.backend.service.UsuarioService;
+
 import java.util.List;
 
 
@@ -21,6 +25,8 @@ public class DomicilioController {
 
     @Autowired
     private DomicilioService service;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping
     public ResponseEntity<List<DomicilioDTOResponse>> getAll(
@@ -50,21 +56,23 @@ public class DomicilioController {
 
     @PostMapping
     public ResponseEntity<DomicilioDTOResponse> create(
+            @AuthenticationPrincipal String userId,
             @Valid
-            @RequestBody DomicilioDTORequest entidad
-            ,
+            @RequestBody DomicilioDTORequest entidad,
             @RequestParam(required = false) String[] populate) {
+        UsuarioDTOResponse usuario = usuarioService.getById(Long.parseLong(userId), new String[]{"persona"});
+            entidad.setPersonaId(usuario.getPersona().getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<DomicilioDTOResponse> update(
-            @PathVariable Long id,
+            @AuthenticationPrincipal String userId,
             @Valid
             @RequestBody DomicilioDTORequestPut entidad,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.update(id, entidad,populate));
+        return ResponseEntity.ok(service.update(Long.parseLong(userId), entidad,populate));
     }
 
 

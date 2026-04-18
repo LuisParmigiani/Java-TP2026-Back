@@ -280,12 +280,20 @@ public class DataSeeder implements CommandLineRunner {
 			if (persona.getId() < 60) {
 				for (int i = 0; i < faker.number().numberBetween(1, 3); i++) {
 					Domicilio domicilio = new Domicilio();
+					Zona zona = zonas.get(faker.number().numberBetween(0, zonas.size()));
 					domicilio.setCalle(faker.address().streetName());
-					domicilio.setNumero(faker.address().buildingNumber());
+					domicilio.setNumero(String.valueOf(faker.number().numberBetween(1, 1000)));
 					domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
-					domicilio.setDia(new boolean[] { faker.bool().bool(), faker.bool().bool(), faker.bool().bool(),
-							faker.bool().bool(), faker.bool().bool(), faker.bool().bool(), faker.bool().bool() });
-					domicilio.setZona(zonas.get(faker.number().numberBetween(0, zonas.size())));
+					Integer[] dias = new Integer[7];
+					for (int j=0 ;j<7;j++){
+						if(zona.getDia()[j] == false){
+							dias[j] = 0;
+						}else {
+							dias[j] = faker.options().option(1, 2);
+						}
+					}
+					domicilio.setDia(dias);
+					domicilio.setZona(zona);
 					domicilio.setProductoDomicilio(new ArrayList<>());
 					domicilio.setPersona(persona);
 					domicilio.setActivo(faker.bool().bool());
@@ -293,12 +301,20 @@ public class DataSeeder implements CommandLineRunner {
 				}
 			} else {
 				Domicilio domicilio = new Domicilio();
+				Zona zona = zonas.get(faker.number().numberBetween(0, zonas.size()));
 				domicilio.setCalle(faker.address().streetName());
-				domicilio.setNumero(faker.address().buildingNumber());
+				domicilio.setNumero(String.valueOf(faker.number().numberBetween(1, 1000)));
 				domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
-				domicilio.setDia(new boolean[] { faker.bool().bool(), faker.bool().bool(), faker.bool().bool(),
-						faker.bool().bool(), faker.bool().bool(), faker.bool().bool(), faker.bool().bool() });
-				domicilio.setZona(zonas.get(faker.number().numberBetween(0, zonas.size())));
+				Integer[] dias = new Integer[7];
+				for (int j=0 ;j<7;j++){
+					if(zona.getDia()[j] == false){
+						dias[j] = 0;
+					}else {
+						dias[j] = faker.options().option(1, 2);
+					}
+				}
+				domicilio.setDia(dias);
+				domicilio.setZona(zona);
 				domicilio.setProductoDomicilio(new ArrayList<>());
 				domicilio.setPersona(persona);
 				domicilio.setActivo(Boolean.TRUE);

@@ -52,6 +52,16 @@ public class MapToDTO {
 		} else {
 			builder.idDomicilio(venta.getDomicilio().getId());
 		}
+		if(populate != null && List.of(populate).contains("lineaPedido")){
+			builder.lineasPedido(venta.getLineasPedido() != null
+					? venta.getLineasPedido().stream()
+							.map(lineaPedido -> this.mapToDTO(lineaPedido, removeFromPopulate(populate, "lineaPedido"))).toList()
+					: List.of());
+		} else {
+			builder.lineasPedidoIds(venta.getLineasPedido() != null
+					? venta.getLineasPedido().stream().map(lineaPedido -> lineaPedido.getId()).toList()
+					: List.of());
+		}
 
 		return builder.build();
 	}

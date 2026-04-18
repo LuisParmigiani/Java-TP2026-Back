@@ -19,4 +19,5 @@ public class VentaDTOResponse {
     private String estado;
     private List<LineaPedidoDTOResponse> lineasPedido;
     private DomicilioDTOResponse domicilio;
+    private List<Long> lineasPedidoIds;
 }

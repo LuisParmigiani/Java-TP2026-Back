@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.swing.*;
 import java.util.List;
 
 @Data
@@ -24,7 +26,7 @@ public class DomicilioDTORequestPut {
 
     @Size(min = 7, max = 7, message = "El array de días debe tener exactamente 7 elementos")
     @Schema(example = "[true, false, true, false, true, false, true]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana")
-    private boolean[] dia;
+    private Integer[] dia;
 
     @Schema(description = "El ID de la zona a la que pertenece el domicilio", example = "1")
     private Long zonaId;

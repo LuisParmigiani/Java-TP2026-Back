@@ -49,10 +49,10 @@ public class Domicilio {
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL)
     private List<Venta> ventas;
     //Le avisa a Lombok que el valor por defecto de dia es un array de booleanos con 7 posiciones,
-    //cada una representando un día de la semana (0: domingo, 1: lunes, ..., 6: sábado). Esto es útil para indicar en qué días se realizan los domicilios.
+    //cada una representando un día de la semana ( 0: lunes, ..., 6: sábado, 7: domingo,). Esto es útil para indicar en qué días se realizan los domicilios.
     @Builder.Default
     @Column(name = "dia", nullable = false)
-    private boolean[] dia = new boolean[7];
+    private Integer[] dia = new Integer[7];
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoDomicilio> productoDomicilio;

@@ -27,8 +27,8 @@ public class DomicilioDTORequest {
 
     @NotNull(message = "El array de días no puede estar vacío")
     @Size(min = 7, max = 7, message = "El array de días debe tener exactamente 7 elementos")
-    @Schema(example = "[true, false, true, false, true, false, true]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana")
-    private boolean[] dia;
+    @Schema(example = "[1, 0, 1, 0, 1, 0, 1]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana")
+    private Integer[] dia;
 
     @NotNull(message = "El id de la zona no puede estar vacío")
     @Schema(description = "El ID de la zona a la que pertenece el domicilio", example = "1")
