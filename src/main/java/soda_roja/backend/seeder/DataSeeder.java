@@ -8,7 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.*;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
