@@ -48,7 +48,8 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
                 //.requestMatchers(HttpMethod.GET, "/api/usuario").hasAuthority("Administrador") //si no hay contexto, devuelve 401
 //                .requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/usuario/**").permitAll() //descomentar si lo necesitan para algo
+                .requestMatchers(HttpMethod.GET, "/api/usuario/**").hasAuthority("Usuario") //descomentar si lo necesitan para algo
+                 //descomentar si lo necesitan para algo
 
                /* SINTAXIS
                 * .requestMatchers(método, "endpoint").
