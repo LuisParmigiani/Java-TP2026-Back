@@ -20,14 +20,13 @@ public class LineaPedidoDTORequest {
      @Schema(example = "5", description = "Cantidad de productos")
      private int cantidad;
 
-    @NotNull(message = "El subtotal no puede ser nulo")
     @Min(value = 0, message = "El subtotal debe ser mayor o igual a 0")
     @Schema(example = "150.50", description = "Subtotal de la línea")
-    private float subtotal;
+    private Float subtotal;
 
-    @NotNull(message = "ProductoZona no puede ser nulo")
     @Schema(example = "1", description = "ID de ProductoZona")
     private Long productoZonaId;
-    
+
+    private Long productoId;
 
 }

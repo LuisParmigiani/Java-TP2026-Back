@@ -418,7 +418,7 @@ public class DataSeeder implements CommandLineRunner {
 		 List<Venta> ventas = new ArrayList<>();
 		for (int i = 0; i < 1000; i += 5) {
 			Venta venta = new Venta();
-			venta.setTotal(faker.number().numberBetween(500, 5000));
+			venta.setTotal((double) faker.number().numberBetween(500, 5000));
 			venta.setPagado(faker.bool().bool());
 			venta.setFecha(faker.date().past(30, java.util.concurrent.TimeUnit.DAYS));
 			venta.setDomicilio(domicilios.get(faker.number().numberBetween(0, domicilios.size())));

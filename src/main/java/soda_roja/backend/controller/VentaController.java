@@ -35,8 +35,12 @@ public class VentaController {
     @GetMapping("/token/ByUserId")
     public ResponseEntity<List<VentaDTOResponse>> getByUserId(
             @AuthenticationPrincipal String userId,
-            @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.getByUserId(Long.parseLong(userId), populate));
+            @RequestParam(required = false) String[] populate,
+            @RequestParam(required = false) String orderBy,
+            @RequestParam(required = false) String state
+    ) {
+        Long id = Long.parseLong(userId);
+        return ResponseEntity.ok(service.getByUserId(id, populate, orderBy, state));
     }
 
 
@@ -44,7 +48,7 @@ public class VentaController {
     public ResponseEntity<List<VentaDTOResponse>> getByUserId(
             @PathVariable long id,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.getByUserId(id, populate));
+        return ResponseEntity.ok(service.getByUserId(id, populate, null, null));
     }
 
     @PostMapping
@@ -52,6 +56,7 @@ public class VentaController {
             @Valid @RequestBody VentaDTORequest entidad,
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, populate));
+
     }
 
 

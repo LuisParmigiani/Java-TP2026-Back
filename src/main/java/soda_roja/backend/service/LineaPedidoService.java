@@ -9,10 +9,8 @@ import soda_roja.backend.model.LineaPedido;
 import soda_roja.backend.model.ProductoZona;
 import soda_roja.backend.repository.LineaPedidoRepository;
 import soda_roja.backend.repository.ProductoZonaRepository;
-import soda_roja.backend.repository.VentaRepository;
 import soda_roja.backend.dtoRequest.LineaPedidoDTORequest;
 import soda_roja.backend.dtoResponse.LineaPedidoDTOResponse;
-import soda_roja.backend.model.Venta;
 
 import java.util.List;
 
@@ -21,9 +19,6 @@ public class LineaPedidoService {
 
     @Autowired
     private LineaPedidoRepository repository;
-    
-    @Autowired
-    private VentaRepository ventaRepository;
 
     @Autowired
     private ProductoZonaRepository productoZonaRepository;
@@ -42,11 +37,16 @@ public class LineaPedidoService {
     }
 
     public LineaPedidoDTOResponse save(LineaPedidoDTORequest entidad,String[] populate) {
-        ProductoZona productoZona = findProductoZonaOrThrow(entidad.getProductoZonaId());
+        ProductoZona productoZona;
 
+        productoZona = findProductoZonaOrThrow(entidad.getProductoZonaId());
+
+        Double precio = productoZona.getProducto().getPrecio();
+
+        float subTotal = (float) (precio * entidad.getCantidad());
         LineaPedido lineaPedido = LineaPedido.builder()
                 .cantidad(entidad.getCantidad())
-                .subtotal(entidad.getSubtotal())
+                .subtotal(subTotal)
                 .productoZona(productoZona)
                 .build();
 
@@ -65,9 +65,9 @@ public class LineaPedidoService {
 
         if(entidad.getCantidad() != null) {
             existing.setCantidad(entidad.getCantidad());
-        }
-        if(entidad.getSubtotal() != null) {
-            existing.setSubtotal(entidad.getSubtotal());
+            Double precio = existing.getProductoZona().getProducto().getPrecio();
+            float subTotal = (float) (precio * entidad.getCantidad());
+            existing.setSubtotal(subTotal);
         }
 
         return mapToDTO(repository.save(existing), populate);
@@ -79,10 +79,6 @@ public class LineaPedidoService {
         repository.delete(lineaPedido);
     }
 
-    private Venta findVentaOrThrow(Long id) {
-        return ventaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
-    }
 
     private ProductoZona findProductoZonaOrThrow(Long id) {
         return productoZonaRepository.findById(id)

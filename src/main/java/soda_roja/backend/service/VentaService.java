@@ -1,6 +1,8 @@
 package soda_roja.backend.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.VentaDTORequest;
@@ -9,9 +11,13 @@ import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.LineaPedidoRepository;
 import soda_roja.backend.repository.DomicilioRepository;
+import soda_roja.backend.repository.ProductoZonaRepository;
 import soda_roja.backend.repository.VentaRepository;
+import soda_roja.backend.specification.VentaSpecification;
 
+import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class VentaService {
@@ -21,6 +27,9 @@ public class VentaService {
 
     @Autowired
     private DomicilioRepository domicilioRepository;
+
+    @Autowired
+    private ProductoZonaRepository productoZonaRepository;
 
     @Autowired
     private LineaPedidoRepository lineaPedidoRepository;
@@ -38,26 +47,75 @@ public class VentaService {
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
     }
 
-    public List<VentaDTOResponse> getByUserId(Long userId, String[] populate) {
-        return repository.findByDomicilioPersonaUsuarioId(userId).stream()
-                .map(v -> mapToDTO(v, populate))
+    public List<VentaDTOResponse> getByUserId(Long userId, String[] populate,String sortOption, String state) {
+
+        if((sortOption == null && state == null) ){
+            return repository.findByDomicilioPersonaUsuarioId(userId).stream()
+                    .map(v -> mapToDTO(v, populate))
+                    .toList();
+        }else if(sortOption != null && state != null){
+            if((sortOption.equals("Mas Recientes") && state.equals("Todos"))){
+                return repository.findByDomicilioPersonaUsuarioId(userId).stream()
+                        .map(v -> mapToDTO(v, populate))
+                        .toList();
+            }
+        }
+
+        // Build sort - handle null sortOption
+        Sort sort = Sort.unsorted();
+        if (sortOption != null) {
+            switch (sortOption) {
+                case "Mas Recientes" -> sort = Sort.by("fecha").descending();
+                case "Mas Antiguos" -> sort = Sort.by("fecha").ascending();
+                case "Menor Precio" -> sort = Sort.by("total").ascending();
+                case "Mayor Precio" -> sort = Sort.by("total").descending();
+                default -> sort = Sort.by("id").descending();
+            }
+        }
+
+        VentaSpecification.VentaFiltrosDTO filtros = new VentaSpecification.VentaFiltrosDTO(state,userId);
+        List<Venta> resultados = (sort.isUnsorted())
+                ? repository.findAll(VentaSpecification.filtrar(filtros))
+                : repository.findAll(VentaSpecification.filtrar(filtros), sort);
+
+        return resultados.stream()
+                .map(p -> mapToDTO(p, populate))
                 .toList();
     }
-
+    @Transactional
     public VentaDTOResponse save(VentaDTORequest entidad, String[] populate) {
         Domicilio domicilio = findDomicilioOrThrow(entidad.getIdDomicilio());
-        List<LineaPedido> lineasPedido = entidad.getLineasPedidoIds().stream()
-                .map(this::findLineaPedidoOrThrow)
-                .toList();
-        if (lineasPedido.isEmpty()) {
-			throw new IllegalArgumentException("Una venta debe tener al menos una linea de pedido");
-		}
+        List<LineaPedido> lineasPedido = new ArrayList<>();
+        final Double[] total = {0.0};
+       entidad.getLineasPedido().forEach(lp -> {
+           // busco el producto zona
+            ProductoZona productoZona = productoZonaRepository.findByZonaIdAndProductoId(domicilio.getZona().getId(), lp.getProductoId())
+                    .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado"));
+            // calculo el precio
+            Double precio = productoZona.getProducto().getPrecio();
+            float subTotal = (float) (precio * lp.getCantidad());
+            // creo al linea pedido
+            LineaPedido lineaPedidoEntity = LineaPedido.builder()
+                    .cantidad(lp.getCantidad())
+                    .subtotal(subTotal)
+                    .productoZona(productoZona)
+                    .build();
 
+            // guardo la linea pedido
+            LineaPedido savedLineaPedido = lineaPedidoRepository.save(lineaPedidoEntity);
+            // agrego la linea pedido al array
+            lineasPedido.add(savedLineaPedido);
+            //sumo al total
+            total[0] += subTotal;
+        });
+
+
+        Date fechaActual = new Date();
         Venta venta = Venta.builder()
-                .fecha(entidad.getFecha())
-                .total(entidad.getTotal())
-                .estado(entidad.getEstado())
-                .pagado(entidad.isPagado())
+                .fecha(fechaActual)
+                .total(total[0])
+                .estado("Pendiente")
+                .pagado(false)
                 .domicilio(domicilio)
                 .lineasPedido(lineasPedido)
                 .build();

@@ -44,7 +44,10 @@ public class MapToDTO {
 
 	public VentaDTOResponse mapToDTO(Venta venta, String[] populate) {
 		VentaDTOResponse.VentaDTOResponseBuilder builder = VentaDTOResponse.builder().id(venta.getId())
-				.fecha(venta.getFecha()).total(venta.getTotal()).estado(venta.getEstado()).pagado(venta.isPagado())
+				.fecha(venta.getFecha())
+				.total(venta.getTotal())
+				.estado(venta.getEstado())
+				.pagado(venta.getPagado())
 				.lineasPedido(
 						venta.getLineasPedido().stream().map(lineaPedido -> this.mapToDTO(lineaPedido, null)).toList());
 		if (populate != null && List.of(populate).contains("domicilio")) {

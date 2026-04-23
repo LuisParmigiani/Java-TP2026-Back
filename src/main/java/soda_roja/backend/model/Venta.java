@@ -27,9 +27,9 @@ public class Venta {
     @Column(name = "fecha", nullable = false)
     private Date fecha;
     @Column(name = "total", nullable = false)
-    private double total;
+    private Double total;
     @Column(name = "pagado", nullable = false)
-    private boolean pagado;
+    private Boolean pagado;
     @ManyToOne
     @JoinColumn(name = "domicilio_id", nullable = false)
     private Domicilio domicilio;

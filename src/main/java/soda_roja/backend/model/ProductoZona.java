@@ -1,5 +1,6 @@
 package soda_roja.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -25,10 +27,14 @@ public class ProductoZona {
 
     @ManyToOne
     @JoinColumn(name = "zonaId", nullable = false)
+    @JsonBackReference
+    @ToString.Exclude
     private Zona zona;
+
 
     @ManyToOne
     @JoinColumn(name = "productoId", nullable = false)
+    @JsonBackReference
     private Producto producto;
 
     @OneToMany(mappedBy = "productoZona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
