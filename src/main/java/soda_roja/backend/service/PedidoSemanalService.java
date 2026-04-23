@@ -1,5 +1,6 @@
 package soda_roja.backend.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
@@ -68,6 +69,56 @@ public class PedidoSemanalService {
                 existing.setProductoZona(productoZona);
         }
         return mapToDTO(repository.save(existing), populate);
+    }
+    @Transactional
+    public List<PedidoSemanalDTOResponse> saveList(List<PedidoSemanalDTORequest> entidades,String domicilioId,String[] populate) {
+        Domicilio domicilio = domicilioRepository.findById(Long.parseLong(domicilioId))
+                .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + domicilioId));
+
+        // Obtener los IDs de ProductoZona que vienen en la nueva lista
+        List<Long> nuevosProductoZonaIds = entidades.stream()
+                .map(e -> {
+                    ProductoZona pz = productoZonaRepository.findByZonaIdAndProductoId(domicilio.getZona().getId(), e.getProductoId())
+                            .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + e.getProductoZonaId()));
+                    return pz.getId();
+                })
+                .toList();
+
+        // Obtener los pedidos existentes para este domicilio
+        List<PedidoSemanal> pedidosExistentes = repository.findAllByDomicilioId(domicilio.getId());
+
+        // Poner en cantidad 0 los pedidos que no vienen en la nueva lista
+        pedidosExistentes.stream()
+                .filter(p -> !nuevosProductoZonaIds.contains(p.getProductoZona().getId()))
+                .forEach(p -> {
+                    p.setCantidad(0);
+                    repository.save(p);
+                });
+
+        // Guardar o actualizar los pedidos de la nueva lista
+        return entidades.stream().map(e -> {
+            ProductoZona productoZona = productoZonaRepository.findByZonaIdAndProductoId(domicilio.getZona().getId(), e.getProductoId())
+                    .orElseThrow(() -> new EntityNotFoundException("ProductoZona no encontrado con id: " + e.getProductoZonaId()));
+
+            // Buscar si ya existe un pedido con este domicilio y productoZona
+            PedidoSemanal pedidoSemanal = pedidosExistentes.stream()
+                    .filter(p -> p.getProductoZona().getId().equals(productoZona.getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (pedidoSemanal != null) {
+                // Si existe, actualizar la cantidad
+                pedidoSemanal.setCantidad(e.getCantidad());
+            } else {
+                // Si no existe, crear uno nuevo
+                pedidoSemanal = PedidoSemanal.builder()
+                        .domicilio(domicilio)
+                        .productoZona(productoZona)
+                        .cantidad(e.getCantidad())
+                        .build();
+            }
+            return mapToDTO(repository.save(pedidoSemanal), populate);
+        }).toList();
     }
 
     public void delete(Long id) {

@@ -52,7 +52,7 @@ public class Domicilio {
     //cada una representando un día de la semana ( 0: lunes, ..., 6: sábado, 7: domingo,). Esto es útil para indicar en qué días se realizan los domicilios.
     @Builder.Default
     @Column(name = "dia", nullable = false)
-    private Integer[] dia = new Integer[7];
+    private Integer[] dia = new Integer[7]; // 0 va a ser desactivado el 1 activado y el 3 no disponible
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoDomicilio> productoDomicilio;

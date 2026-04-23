@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.ProductoDTORequest;
 import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
+import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.ProductoDTOResponse;
 import org.springframework.data.domain.Sort;
 import soda_roja.backend.repository.ProductoRepository;
@@ -21,6 +22,8 @@ public class ProductoService {
     private ProductoRepository repository;
     @Autowired
     private MapToDTO mapToDTOMapper;
+    @Autowired
+    private DomicilioService domicilioService;
 
     public List<ProductoDTOResponse> getAll(String[] populate) {
         return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
@@ -29,8 +32,9 @@ public class ProductoService {
     public List<ProductoDTOResponse> getActive(String userId,String sortOption,String searchTerm, Double minPrice, Double maxPrice,String directionId,String[] populate) {
         Sort sort = Sort.unsorted();
 
+        DomicilioDTOResponse domicilio = null;
         if(directionId != null){
-            // Get domicilio by id for zone filtering
+            domicilio = domicilioService.getById(Long.parseLong(directionId),null);
         }
         if (sortOption != null) {
             switch (sortOption) {
@@ -47,7 +51,7 @@ public class ProductoService {
         }else {
             List<Producto> resultados;
             String estado = "activo";
-            String zone = null;
+            String zone = domicilio != null ? domicilio.getZonaId().toString() : null;
             ProductoSpecification.ProductoFiltrosDTO filtros =
                     new ProductoSpecification.ProductoFiltrosDTO(
                             userId,

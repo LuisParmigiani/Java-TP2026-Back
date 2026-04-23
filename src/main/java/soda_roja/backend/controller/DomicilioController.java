@@ -60,9 +60,8 @@ public class DomicilioController {
             @Valid
             @RequestBody DomicilioDTORequest entidad,
             @RequestParam(required = false) String[] populate) {
-        UsuarioDTOResponse usuario = usuarioService.getById(Long.parseLong(userId), new String[]{"persona"});
-            entidad.setPersonaId(usuario.getPersona().getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,userId,populate));
     }
 
 

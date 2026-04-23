@@ -17,15 +17,15 @@ public class PedidoSemanalDTORequest
     @NotNull(message = "La cantidad no puede ser nula")
     @Min(value = 0, message = "La cantidad debe ser al menos de 0")
     @Schema(example = "5", description = "Cantidad de productos")
-    private int cantidad;
+    private Integer cantidad;
 
-    @NotNull(message = "El id del domicilio no puede ser nulo")
     @Min(value = 1, message = "El id debe ser mayor que 0")
     @Schema(example = "1", description = "Id del domicilio al que quiere hacer el pedido semanal")
     private Long domicilioId;
 
-    @NotNull(message = "ProductoZona no puede ser nulo")
     @Schema(example = "1", description = "ID de ProductoZona")
     private Long productoZonaId;
+
+    private Long productoId;
 
 }
