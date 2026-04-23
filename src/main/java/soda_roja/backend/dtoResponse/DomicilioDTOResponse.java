@@ -30,6 +30,7 @@ public class DomicilioDTOResponse {
     private List<Long> pedidoSemanalIds;
     private Long zonaId;
     private Long personaId;
+    private Integer habilitado; // 0: Pendiente, 1: Habilitado, 2: Deshabilitado
 
 }
 

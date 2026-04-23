@@ -45,6 +45,8 @@ public class DomicilioDTORequest {
     private Boolean activo;
 
 
+    @Schema(description = "Habilitado o no segun lo que pone el admin para que no pongan una direccion en un lugar que no se entrega. 0: Pendiente, 1: Habilitado, 2: Deshabilitado", example = "1")
+    private Integer habilitado;
 
 
 }

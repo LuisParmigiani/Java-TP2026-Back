@@ -294,7 +294,7 @@ public class MapToDTO {
 	public DomicilioDTOResponse mapToDTO(Domicilio domicilio, String[] populate) {
 		DomicilioDTOResponse.DomicilioDTOResponseBuilder builder = DomicilioDTOResponse.builder().id(domicilio.getId())
 				.calle(domicilio.getCalle()).numero(domicilio.getNumero()).casa(domicilio.getCasa())
-				.dia(domicilio.getDia()).activo(domicilio.getActivo());
+				.dia(domicilio.getDia()).activo(domicilio.getActivo()).habilitado(domicilio.getHabilitado());
 		if (populate != null && List.of(populate).contains("venta")) {
 			builder.ventas(domicilio.getVentas() != null
 					? domicilio.getVentas().stream().map(venta -> this.mapToDTO(venta, removeFromPopulate(populate, "venta"))).toList()

@@ -63,4 +63,7 @@ public class Domicilio {
     @JsonManagedReference
     private List<PedidoSemanal> pedidosSemanal;
 
+
+    private Integer habilitado;
+
 }

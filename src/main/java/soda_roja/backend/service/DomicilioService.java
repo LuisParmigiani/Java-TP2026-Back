@@ -98,6 +98,7 @@ public class DomicilioService {
                 .calle(dto.getCalle())
                 .numero(dto.getNumero())
                 .casa(dto.getCasa())
+                .habilitado(0)
                 .zona(zona)
                 .activo(dto.getActivo())
                 .persona(persona)
@@ -118,6 +119,9 @@ public class DomicilioService {
         if(entidad.getPersonaId() != null) {
             Persona persona = findPersonaOrThrow(entidad.getPersonaId());
             existing.setPersona(persona);
+        }
+        if(entidad.getHabilitado() != null) {
+            existing.setHabilitado(entidad.getHabilitado());
         }
 
 
