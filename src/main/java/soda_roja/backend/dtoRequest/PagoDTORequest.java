@@ -1,10 +1,7 @@
 package soda_roja.backend.dtoRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.Date;
@@ -30,4 +27,9 @@ public class PagoDTORequest {
     @NotNull(message = "El id de la pesona no puede ser nulo")
     @Schema(description = "ID de la persona asociada al pago", example = "1")
     private Long personaId;
+
+    @NotNull
+    @Schema(description = "El estado del pago puede ser Pendiente, Aprobado, Rechazado", example = "Pendiente")
+    @Pattern(regexp = "Pendiente|Aprobado|Rechazado", message = "El estado debe ser uno de los siguientes: Pendiente, Aprobado, Rechazado")
+    private String estado;
 }

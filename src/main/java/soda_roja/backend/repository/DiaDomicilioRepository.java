@@ -10,9 +10,7 @@ import java.util.List;
 
 @Repository
 public interface DiaDomicilioRepository extends JpaRepository<DiaDomicilio, Long> {
-    @Query("SELECT dd FROM DiaDomicilio dd WHERE dd.domicilio.id = :domicilioId AND dd.dia.id = :diaId")
-    List<DiaDomicilio> findByDomicilioIdAndDiaId(@Param("domicilioId") Long domicilioId, @Param("diaId") Long diaId);
+    DiaDomicilio findByDomicilioIdAndDiaId(Long domicilioId, Long diaId);
 
-    @Query("SELECT dd FROM DiaDomicilio dd WHERE dd.domicilio.id = :domicilioId")
-    List<DiaDomicilio> findByDomicilioId(@Param("domicilioId") Long domicilioId);
+    List<DiaDomicilio> findByDomicilioId( Long domicilioId);
 }

@@ -115,7 +115,6 @@ public class VentaService {
                 .fecha(fechaActual)
                 .total(total[0])
                 .estado("Pendiente")
-                .pagado(false)
                 .domicilio(domicilio)
                 .lineasPedido(lineasPedido)
                 .build();
@@ -150,9 +149,7 @@ public class VentaService {
         if(entidad.getEstado() != null) {
             existing.setEstado(entidad.getEstado());
         }
-        if(entidad.getPagado() != null) {
-            existing.setPagado(entidad.getPagado());
-        }
+
 
         return mapToDTO(repository.save(existing), populate);
     }

@@ -30,7 +30,7 @@ public class ProductoSpecification
             if (filtro.userId != null) {
                 Join<Producto, ProductoZona> pz = root.join("productosZona");
                 Join<ProductoZona, Zona> z = pz.join("zona");
-                Join<Zona, Domicilio> d = z.join("domicilio");
+                Join<Zona, Domicilio> d = z.join("domicilios");
                 Join<Domicilio, Persona> p = d.join("persona");
                 Join<Persona, Usuario> u = p.join("usuario");
 

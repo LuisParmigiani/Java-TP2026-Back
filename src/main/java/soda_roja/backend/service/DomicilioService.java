@@ -1,21 +1,20 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
 import soda_roja.backend.dtoRequestPut.DomicilioDTORequestPut;
+import soda_roja.backend.dtoResponse.DiaDomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
-import soda_roja.backend.model.Domicilio;
-import soda_roja.backend.model.Zona;
-import soda_roja.backend.model.Persona;
-import soda_roja.backend.repository.DomicilioRepository;
-import soda_roja.backend.repository.ZonaRepository;
-import soda_roja.backend.repository.PersonaRepository;
+import soda_roja.backend.model.*;
+import soda_roja.backend.repository.*;
 import soda_roja.backend.specification.DomicilioSpecification;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class DomicilioService {
@@ -30,10 +29,15 @@ public class DomicilioService {
     private PersonaRepository personaRepository;
 
     @Autowired
+    private DiaDomicilioRepository diaDomicilioRepository;
+
+    @Autowired
     private UsuarioService usuarioService;
 
     @Autowired
     private MapToDTO mapToDTOMapper;
+    @Autowired
+    private DiaRepository diaRepository;
 
     public List<DomicilioDTOResponse> getAll(String[] populate) {
         return repository.findAll().stream().map(d -> mapToDTO(d, populate)).toList();
@@ -47,12 +51,11 @@ public class DomicilioService {
 
 
 
-    public List<DomicilioDTOResponse> getByUserId(Long id, String activo,String orderBy,String nameSearch, Integer dias, String[] populate) {
-
+    public List<DomicilioDTOResponse> getByUserId(Long id,String orderBy,String nameSearch, String activo, Integer dias, String[] populate) {
         List<Domicilio> resultados;
 
         Boolean activeBoolean = null;
-        if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null ) {
+        if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null && orderBy == null && (nameSearch == null || nameSearch.isBlank())) {
             resultados = repository.findDomicilioByPersonaUsuarioId(id);
 
         } else {
@@ -64,16 +67,23 @@ public class DomicilioService {
                         activeBoolean = true;
                     } else if (activo.equals( "Inactivas")) {
                         activeBoolean = false;
-                    }else {
-                        throw new IllegalArgumentException("El parámetro 'activo' debe ser 'true' o 'false'" + activo);
                     }
                 }
             }
-
+            Sort sort = Sort.unsorted();
+            if(orderBy != null && !orderBy.isBlank()) {
+                switch (orderBy) {
+                    case "Nombre A-Z" -> sort = Sort.by("calle").ascending();
+                    case "Nombre Z-A" -> sort = Sort.by("calle").descending();
+                    case "Número Ascendente" -> sort = Sort.by("numero").ascending();
+                    case "Número Descendente" -> sort = Sort.by("numero").descending();
+                    default -> sort = Sort.by("id").descending(); // Orden por defecto
+                }
+            }
             DomicilioSpecification.DomicilioFiltrosDTO filtros =
                     new DomicilioSpecification.DomicilioFiltrosDTO(id, activeBoolean, dias);
 
-            resultados = repository.findAll(DomicilioSpecification.filtrar(filtros));
+            resultados = repository.findAll(DomicilioSpecification.filtrar(filtros), sort);
         }
 
         return resultados.stream()
@@ -83,11 +93,8 @@ public class DomicilioService {
 
     public DomicilioDTOResponse save(DomicilioDTORequest dto,String userId,String[] populate) {
         UsuarioDTOResponse usuario = usuarioService.getById(Long.parseLong(userId), new String[]{"persona"});
-
         Zona zona = findZonaOrThrow(dto.getZonaId());
-
         Persona persona = findPersonaOrThrow(usuario.getPersona().getId());
-
         Domicilio domicilio = Domicilio.builder()
                 .calle(dto.getCalle())
                 .numero(dto.getNumero())
@@ -95,9 +102,31 @@ public class DomicilioService {
                 .habilitado(0)
                 .zona(zona)
                 .activo(false)
+                .habilitado(0)
                 .persona(persona)
                 .build();
-        return mapToDTO(repository.save(domicilio), populate);
+
+        Domicilio savedDomicilio = repository.save(domicilio);
+
+        List<Long> DiasDisponiblesId = zona.getDiasZona().stream().map(dz -> dz.getDia().getId()).toList();
+        List<DiaDomicilio> diaDomicilio = new ArrayList<>();
+        for(long j =1; j<8;j++){
+            final long diaId = j;
+            DiaDomicilio dd =   DiaDomicilio.builder()
+                    .dia(diaRepository.findById(diaId).orElseThrow(() -> new EntityNotFoundException("Dia no encontrado con id: " + diaId)))
+                    .domicilio(savedDomicilio)
+                    .estado(DiasDisponiblesId.contains(diaId) ? "INACTIVO" : "NODISPONIBLE")
+                    .build();
+            diaDomicilio.add(dd);
+        }
+        diaDomicilioRepository.saveAll(diaDomicilio);
+        savedDomicilio.setDiasDomicilio(diaDomicilio);
+        populate = populate != null ? populate : new String[]{"diaDomicilio"};
+
+
+        DomicilioDTOResponse d2 = mapToDTO(savedDomicilio, populate);
+        System.out.println("Domicilio guardado: " + d2);
+        return d2;
     }
 
     public DomicilioDTOResponse update(Long id, DomicilioDTORequestPut entidad,String[] populate) {
@@ -123,13 +152,25 @@ public class DomicilioService {
             existing.setNumero(entidad.getNumero());
         }
         if(entidad.getActivo() != null) {
+            System.out.println("Valor de activo en DTO: " + entidad.getActivo());
             existing.setActivo(entidad.getActivo());
         }
         if(entidad.getCasa() != null) {
             existing.setCasa(entidad.getCasa());
         }
+        if(entidad.getDiasDomicilio() != null) {
+            entidad.getDiasDomicilio().forEach(dd -> {
+                DiaDomicilio diaDomicilio = diaDomicilioRepository.findByDomicilioIdAndDiaId(id, dd.getDiaId());
+                if (dd.getEstado() != null) {
+                    diaDomicilio.setEstado(dd.getEstado());
+                }
 
-        return mapToDTO(repository.save(existing), populate);
+            });
+        }
+        System.out.println("Valor de activo en existing: " + existing.getActivo());
+        DomicilioDTOResponse dt =  mapToDTO(repository.save(existing), populate);
+        System.out.println("DTO Response: " + dt);
+        return dt;
     }
 
     public void delete(Long id) {

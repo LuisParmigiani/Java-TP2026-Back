@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import soda_roja.backend.dtoRequest.DiaDomicilioDTORequest;
 
 import javax.swing.*;
 import java.util.List;
@@ -42,5 +43,5 @@ public class DomicilioDTORequestPut {
     @Schema(description = "Habilitado o no segun lo que pone el admin para que no pongan una direccion en un lugar que no se entrega. 0: Pendiente, 1: Habilitado, 2: Deshabilitado", example = "1")
     private Integer habilitado;
 
-
+    private List<DiaDomicilioDTORequest> diasDomicilio;
 }

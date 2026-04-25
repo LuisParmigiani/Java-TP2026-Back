@@ -1,5 +1,6 @@
 package soda_roja.backend.dtoResponse;
 
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.Date;
@@ -16,4 +17,5 @@ public class PagoDTOResponse {
     private String metodoPago;
     private PersonaDTOResponse persona;
     private Long personaId;
+    private String estado;
 }

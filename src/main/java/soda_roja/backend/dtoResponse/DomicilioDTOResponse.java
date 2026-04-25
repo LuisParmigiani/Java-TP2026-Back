@@ -17,7 +17,6 @@ public class DomicilioDTOResponse {
     private String calle;
     private String numero;
     private String casa; // es el número de la casa o del departamento dentro de un conjunto de hogares
-    private Integer[] dia;
     private ZonaDTOResponse zona;
     private List<VentaDTOResponse> ventas;
     private List<ProductoDomicilioDTOResponse> productosDomicilio;
@@ -31,6 +30,8 @@ public class DomicilioDTOResponse {
     private Long zonaId;
     private Long personaId;
     private Integer habilitado; // 0: Pendiente, 1: Habilitado, 2: Deshabilitado
+    private List<Long> diasDomicilioIds;
+    private List<DiaDomicilioDTOResponse> diasDomicilio;
 
 }
 

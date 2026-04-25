@@ -42,6 +42,7 @@ public class PagoService {
                 .monto(entidad.getMonto())
                 .metodoPago(entidad.getMetodoPago())
                 .persona(persona)
+                .estado(entidad.getEstado())
                 .build();
         return mapToDTO(repository.save(pago), populate);
     }
@@ -53,6 +54,9 @@ public class PagoService {
         if(entidad.getPersonaId() != null) {
             Persona persona = findPersonaOrThrow(entidad.getPersonaId());
             existing.setPersona(persona);
+        }
+        if(entidad.getEstado() != null) {
+            existing.setEstado(entidad.getEstado());
         }
 
         if(entidad.getMetodoPago() != null) {

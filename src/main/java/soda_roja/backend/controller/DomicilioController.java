@@ -73,7 +73,6 @@ public class DomicilioController {
             @Valid
             @RequestBody DomicilioDTORequestPut entidad,
             @RequestParam(required = false) String[] populate) {
-
         return ResponseEntity.ok(service.update(id, entidad,populate));
     }
 

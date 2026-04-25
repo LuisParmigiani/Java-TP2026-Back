@@ -262,6 +262,7 @@ public class DataSeeder implements CommandLineRunner {
 	                domicilio.setProductoDomicilio(new ArrayList<>());
 	                domicilio.setDiasDomicilio(new ArrayList<>());
 	                domicilio.setPersona(persona);
+					domicilio.setHabilitado(faker.number().numberBetween(0, 2) );
 	                domicilio.setActivo(faker.bool().bool());
 	                domicilios.add(domicilio);
 	            }
@@ -270,6 +271,7 @@ public class DataSeeder implements CommandLineRunner {
 	            Zona zona = zonas.get(faker.number().numberBetween(0, zonas.size()));
 	            domicilio.setCalle(faker.address().streetName());
 	            domicilio.setNumero(String.valueOf(faker.number().numberBetween(1, 1000)));
+				domicilio.setHabilitado(1); // Habilitado por defecto para empleados
 	            domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
 	            domicilio.setZona(zona);
 	            domicilio.setProductoDomicilio(new ArrayList<>());
@@ -337,7 +339,6 @@ public class DataSeeder implements CommandLineRunner {
 		for (int i = 0; i < 1000; i += 5) {
 			Venta venta = new Venta();
 			venta.setTotal((double) faker.number().numberBetween(500, 5000));
-			venta.setPagado(faker.bool().bool());
 			venta.setFecha(faker.date().past(30, java.util.concurrent.TimeUnit.DAYS));
 			venta.setDomicilio(domicilios.get(faker.number().numberBetween(0, domicilios.size())));
 			venta.setEstado(faker.options().option("Pendiente", "En proceso", "Completada", "Cancelada"));
@@ -382,6 +383,7 @@ public class DataSeeder implements CommandLineRunner {
 				Pago pago = new Pago();
 
 				pago.setMonto(faker.number().numberBetween(100, 1000));
+				pago.setEstado(faker.options().option("Pendiente", "Aprobado", "Rechazado"));
 				pago.setFecha(faker.date().past(30, java.util.concurrent.TimeUnit.DAYS));
 				pago.setMetodoPago(faker.options().option("Efectivo", "Tarjeta de crédito", "Transferencia bancaria"));
 				pago.setPersona(personas.get(i));
@@ -430,10 +432,11 @@ public class DataSeeder implements CommandLineRunner {
 				cargaProductos.add(cargaProducto2);
 
 				cargas.add(descargaCarga);
-			}
 		}
-		cargaRepository.saveAll(cargas);
-		return cargas;
+	}
+	cargaRepository.saveAll(cargas);
+	cargaProductoRepository.saveAll(cargaProductos);
+	return cargas;
 	}
 
 	private List<DiaZona> seedDiasZona(List<Zona> zonas, List<Dia> dias) {
@@ -466,20 +469,29 @@ public class DataSeeder implements CommandLineRunner {
 
 	private List<DiaDomicilio> seedDiasDomicilio(List<Domicilio> domicilios, List<Dia> dias, List<DiaZona> diasZona) {
 	    List<DiaDomicilio> diasDomicilio = new ArrayList<>();
+
 	    domicilios.forEach(domicilio -> {
 	        Zona zona = domicilio.getZona();
-	        
-	        diasZona.stream()
+
+	        List<DiaZona> diasZonaPorZona = diasZona.stream()
 	            .filter(dz -> dz.getZona().getId().equals(zona.getId()))
-	            .forEach(dz -> {
-	                DiaDomicilio diaDomicilio = DiaDomicilio.builder()
-	                        .dia(dz.getDia())
-	                        .domicilio(domicilio)
-	                        .estado("ACTIVO")
-	                        .build();
-	                diasDomicilio.add(diaDomicilio);
-	            });
+	            .toList();
+
+	        List<Long> diasActivosIds = diasZonaPorZona.stream()
+	            .map(dz -> dz.getDia().getId())
+	            .toList();
+
+	        dias.forEach(dia -> {
+	            String estado = diasActivosIds.contains(dia.getId()) ? "ACTIVO" : "NODISPONIBLE";
+	            DiaDomicilio diaDomicilio = DiaDomicilio.builder()
+	                .dia(dia)
+	                .domicilio(domicilio)
+	                .estado(estado)
+	                .build();
+	            diasDomicilio.add(diaDomicilio);
+	        });
 	    });
+
 	    diaDomicilioRepository.saveAll(diasDomicilio);
 	    return diasDomicilio;
 	}

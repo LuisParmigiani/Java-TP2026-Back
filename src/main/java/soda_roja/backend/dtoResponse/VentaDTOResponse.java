@@ -14,7 +14,6 @@ public class VentaDTOResponse {
     private long id;
     private Date fecha;
     private double total;
-    private boolean pagado;
     private long idDomicilio;
     private String estado;
     private List<LineaPedidoDTOResponse> lineasPedido;

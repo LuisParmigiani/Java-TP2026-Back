@@ -35,4 +35,6 @@ public class Pago {
     @JsonBackReference
     private Persona persona;
 
+    private String estado;
+
 }

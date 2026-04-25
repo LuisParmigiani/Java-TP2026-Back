@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import soda_roja.backend.model.DiaDomicilio;
+
 import java.util.List;
 
 @Data
@@ -25,10 +27,6 @@ public class DomicilioDTORequest {
     @Schema(description = "El número de casa del domicilio (opcional)", example = "123")
     private String casa;
 
-    @Size(min = 7, max = 7, message = "El array de días debe tener exactamente 7 elementos")
-    @Schema(example = "[1, 0, 1, 0, 1, 0, 1]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana 0 va a ser desactivado el 1 activado y el 3 no disponible")
-    private Integer[] dia;// 0 va a ser desactivado el 1 activado y el 3 no disponible
-
     @Schema(description = "El ID de la zona a la que pertenece el domicilio", example = "1")
     private Long zonaId;
 
@@ -44,5 +42,6 @@ public class DomicilioDTORequest {
     @Schema(description = "Habilitado o no segun lo que pone el admin para que no pongan una direccion en un lugar que no se entrega. 0: Pendiente, 1: Habilitado, 2: Deshabilitado", example = "1")
     private Integer habilitado;
 
+    private List<DiaDomicilioDTORequest> diasDomicilio;
 
 }
