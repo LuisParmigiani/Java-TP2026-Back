@@ -1,5 +1,7 @@
 package soda_roja.backend.dtoRequest;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import jakarta.validation.constraints.NotBlank;
@@ -23,13 +25,10 @@ public class ZonaDTORequest {
     @Schema(example = "Zona de Rosario", description = "Detalle de la zona")
     @Pattern(regexp = "[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{0,200}", message = "El detalle debe tener entre 0 y 200 caracteres")
     private String detalle;
-    @NotNull(message = "El array de días no puede estar vacío")
-    @Size(min = 7, max = 7, message = "El array de días debe tener exactamente 7 elementos")
-    @Schema(example = "[true, false, true, false, true, false, true]", description = "Array de 7 elementos que indica si la persona recibe el pedido en cada día de la semana")
-    private boolean[] dia;
+    
     @NotNull(message = "El id del camion no puede ser nulo")
 	@Schema(example = "1", description = "Identificador del camion al que pertenece la zona")
 	private Long camionId;
-	 
+    
 
 }

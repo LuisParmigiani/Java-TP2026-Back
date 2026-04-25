@@ -12,7 +12,8 @@ import soda_roja.backend.model.Zona;
 import soda_roja.backend.model.Persona;
 import soda_roja.backend.repository.DomicilioRepository;
 import soda_roja.backend.repository.ZonaRepository;
-import soda_roja.backend.repository.PersonaRepository;import soda_roja.backend.specification.DomicilioSpecification;
+import soda_roja.backend.repository.PersonaRepository;
+import soda_roja.backend.specification.DomicilioSpecification;
 
 import java.util.List;
 
@@ -44,7 +45,6 @@ public class DomicilioService {
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
     }
 
-
     public List<DomicilioDTOResponse> getByUserId(Long id, String activo, Integer dias, String[] populate) {
         List<Domicilio> resultados;
 
@@ -62,7 +62,7 @@ public class DomicilioService {
                     } else if (activo.equals( "Inactivas")) {
                         activeBoolean = false;
                     }else {
-                    throw new IllegalArgumentException("El parámetro 'activo' debe ser 'true' o 'false'" + activo);
+                        throw new IllegalArgumentException("El parámetro 'activo' debe ser 'true' o 'false'" + activo);
                     }
                 }
             }
@@ -78,22 +78,12 @@ public class DomicilioService {
                 .toList();
     }
 
-
-
     public DomicilioDTOResponse save(DomicilioDTORequest dto,String userId,String[] populate) {
         UsuarioDTOResponse usuario = usuarioService.getById(Long.parseLong(userId), new String[]{"persona"});
 
         Zona zona = findZonaOrThrow(dto.getZonaId());
 
         Persona persona = findPersonaOrThrow(usuario.getPersona().getId());
-        Integer[] dias = new Integer[7];
-        for(int i = 0 ; i<7; i++){
-            if(zona.getDia()[i]){
-                dias[i] =  0;
-            }else{
-                dias[i] =  3;
-            }
-        }
 
         Domicilio domicilio = Domicilio.builder()
                 .calle(dto.getCalle())
@@ -103,7 +93,6 @@ public class DomicilioService {
                 .zona(zona)
                 .activo(false)
                 .persona(persona)
-                .dia(dias)
                 .build();
         return mapToDTO(repository.save(domicilio), populate);
     }
@@ -125,7 +114,6 @@ public class DomicilioService {
             existing.setHabilitado(entidad.getHabilitado());
         }
 
-
         if(entidad.getCalle() != null) {
             existing.setCalle(entidad.getCalle());
         }
@@ -138,12 +126,10 @@ public class DomicilioService {
         if(entidad.getCasa() != null) {
             existing.setCasa(entidad.getCasa());
         }
-        if(entidad.getDia() != null) {
-            existing.setDia(entidad.getDia());
-        }
 
         return mapToDTO(repository.save(existing), populate);
     }
+
     public void delete(Long id) {
         Domicilio domicilio = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
@@ -160,9 +146,7 @@ public class DomicilioService {
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
     }
 
-
     private DomicilioDTOResponse mapToDTO(Domicilio domicilio, String[] populate) {
         return mapToDTOMapper.mapToDTO(domicilio, populate);
     }
-
 }

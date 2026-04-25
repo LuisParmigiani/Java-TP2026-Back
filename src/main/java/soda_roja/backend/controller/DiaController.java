@@ -4,58 +4,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import soda_roja.backend.dtoRequest.ZonaDTORequest;
-import soda_roja.backend.dtoRequestPut.ZonaDTORequestPut;
-import soda_roja.backend.dtoResponse.ZonaDTOResponse;
-import soda_roja.backend.service.ZonaService;
+import soda_roja.backend.dtoRequestPut.DiaDTORequestPut;
+import soda_roja.backend.service.DiaService;
+import soda_roja.backend.dtoRequest.DiaDTORequest;
+import soda_roja.backend.dtoResponse.DiaDTOResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 
+
 @RestController
-@RequestMapping("/api/zona")
-public class ZonaController {
+@RequestMapping("/api/dia")
+public class DiaController {
 
     @Autowired
-    private ZonaService service;
+    private DiaService service;
 
     @GetMapping
-    public ResponseEntity<List<ZonaDTOResponse>> getAll(
-            @RequestParam(required = false) String[] populate
-    ) {
+    public ResponseEntity<List<DiaDTOResponse>> getAll(
+            @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getAll(populate));
     }
 
+
     @GetMapping("/{id}")
-    public ResponseEntity<ZonaDTOResponse> getById(
+    public ResponseEntity<DiaDTOResponse> getById(
             @PathVariable Long id,
-            @RequestParam(required = false) String[] populate
-    ) {
+            @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getById(id,populate));
     }
 
 
     @PostMapping
-    public ResponseEntity<ZonaDTOResponse> create(
-            @Valid @RequestBody ZonaDTORequest entidad,
-            @RequestParam(required = false) String[] populate
-    ) {
+    public ResponseEntity<DiaDTOResponse> create(
+            @Valid
+            @RequestBody DiaDTORequest entidad,
+            @RequestParam(required = false) String[] populate) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ZonaDTOResponse> update(
+    public ResponseEntity<DiaDTOResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody ZonaDTORequestPut entidad,
-            @RequestParam(required = false) String[] populate
-    ) {
+            @Valid
+            @RequestBody DiaDTORequest entidad,
+            @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.update(id, entidad,populate));
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long id){
+            @PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
