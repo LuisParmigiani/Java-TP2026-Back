@@ -48,9 +48,11 @@ public class DomicilioController {
             @AuthenticationPrincipal String userId,
             @RequestParam(required = false) String estado,
             @RequestParam(required = false) Integer dias,
+            @RequestParam(required = false) String orderBy,
+            @RequestParam(required = false) String nameSearch,
             @RequestParam(required = false) String[] populate
     ){
-        return ResponseEntity.ok(service.getByUserId(Long.parseLong(userId), estado, dias,populate));
+        return ResponseEntity.ok(service.getByUserId(Long.parseLong(userId),orderBy,nameSearch, estado, dias,populate));
     }
 
 
@@ -67,11 +69,12 @@ public class DomicilioController {
 
     @PutMapping("/{id}")
     public ResponseEntity<DomicilioDTOResponse> update(
-            @AuthenticationPrincipal String userId,
+            @PathVariable Long id,
             @Valid
             @RequestBody DomicilioDTORequestPut entidad,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.update(Long.parseLong(userId), entidad,populate));
+
+        return ResponseEntity.ok(service.update(id, entidad,populate));
     }
 
 
