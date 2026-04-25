@@ -102,7 +102,6 @@ public class DomicilioService {
                 .zona(zona)
                 .activo(dto.getActivo())
                 .persona(persona)
-                .dia(dto.getDia())
                 .build();
         return mapToDTO(repository.save(domicilio), populate);
     }
@@ -137,9 +136,6 @@ public class DomicilioService {
         if(entidad.getCasa() != null) {
             existing.setCasa(entidad.getCasa());
         }
-        if(entidad.getDia() != null) {
-            existing.setDia(entidad.getDia());
-        }
 
         return mapToDTO(repository.save(existing), populate);
     }
@@ -164,7 +160,7 @@ public class DomicilioService {
                 .orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + id));
     }
 
-    private ProductoDomicilio findProductoPersonaDomicilioOrThrow(Long id) {
+    private ProductoDomicilio findProductoDomicilioOrThrow(Long id) {
         return productoDomicilioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("ProductoPersonaDomicilio no encontrado con id: " + id));
     }

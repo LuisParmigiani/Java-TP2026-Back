@@ -1,6 +1,7 @@
 package soda_roja.backend.dtoResponse;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+
+
 import lombok.*;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class ZonaDTOResponse {
     private Long id;
     private String nombre;
     private String detalle;
-    private boolean[] dia;
+    private List<DiaZonaDTOResponse> diasZona;
     private List<ProductoZonaDTOResponse> productoZonas;
     private List<DomicilioDTOResponse> domicilios;
     private CamionDTOResponse camion;

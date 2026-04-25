@@ -1,6 +1,7 @@
 package soda_roja.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -16,9 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "zona")
-@Schema(description = "Entidad que representa una zona")
-public class Zona {
+@Table(name = "dia")
+@Schema(description = "Entidad que representa un día de la semana")
+public class Dia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -27,22 +28,10 @@ public class Zona {
     @Column(name = "nombre", nullable = false, unique = true)
     private String nombre;
 
-    @Column(name = "detalle")
-    private String detalle;
-
-    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
-    private List<ProductoZona> productosZona;
-
-    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dia", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<DiaZona> diasZona = new ArrayList<>();
-    
-    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dia", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<Domicilio> domicilios = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "camion_id", nullable = false)
-    private Camion camion;
+    private List<DiaDomicilio> diasDomicilio = new ArrayList<>();
 }

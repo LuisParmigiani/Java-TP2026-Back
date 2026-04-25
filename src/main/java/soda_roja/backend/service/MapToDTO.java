@@ -1,6 +1,7 @@
 package soda_roja.backend.service;
 
 import org.springframework.stereotype.Service;
+
 import soda_roja.backend.dtoResponse.*;
 import soda_roja.backend.model.*;
 import java.util.List;
@@ -9,16 +10,14 @@ import java.util.List;
 public class MapToDTO {
 
 	public ZonaDTOResponse mapToDTO(Zona zona, String[] populate) {
-		ZonaDTOResponse.ZonaDTOResponseBuilder builder = ZonaDTOResponse.builder().id(zona.getId()).dia(zona.getDia())
+		ZonaDTOResponse.ZonaDTOResponseBuilder builder = ZonaDTOResponse.builder().id(zona.getId())
 				.nombre(zona.getNombre()).detalle(zona.getDetalle());
 
 		if (populate != null && List.of(populate).contains("productoZona")) {
 
-			builder.productoZonas(
-					zona.getProductosZona() != null
-							? zona.getProductosZona().stream()
-									.map(productoZona -> this.mapToDTO(productoZona, removeFromPopulate(populate, "productoZona"))).toList()
-							: List.of());
+			builder.productoZonas(zona.getProductosZona() != null ? zona.getProductosZona().stream()
+					.map(productoZona -> this.mapToDTO(productoZona, removeFromPopulate(populate, "productoZona")))
+					.toList() : List.of());
 		} else {
 			builder.productoZonaIds(zona.getProductosZona() != null
 					? zona.getProductosZona().stream().map(productoZona -> productoZona.getId()).toList()
@@ -26,40 +25,46 @@ public class MapToDTO {
 		}
 
 		if (populate != null && List.of(populate).contains("domicilio")) {
-			builder.domicilios(zona.getDomicilio() != null
-					? zona.getDomicilio().stream().map(domicilio -> this.mapToDTO(domicilio, removeFromPopulate(populate, "domicilio"))).toList()
-					: List.of());
+			builder.domicilios(
+					zona.getDomicilios() != null
+							? zona.getDomicilios().stream()
+									.map(domicilio -> this.mapToDTO(domicilio,
+											removeFromPopulate(populate, "domicilio")))
+									.toList()
+							: List.of());
 		} else {
-			builder.domicilioIds(zona.getDomicilio() != null
-					? zona.getDomicilio().stream().map(domicilio -> domicilio.getId()).toList()
+			builder.domicilioIds(zona.getDomicilios() != null
+					? zona.getDomicilios().stream().map(domicilio -> domicilio.getId()).toList()
 					: List.of());
 		}
 		if (populate != null && List.of(populate).contains("camion")) {
-			builder.camion(zona.getCamion() != null ? this.mapToDTO(zona.getCamion(), removeFromPopulate(populate, "camion")) : null);
+			builder.camion(
+					zona.getCamion() != null ? this.mapToDTO(zona.getCamion(), removeFromPopulate(populate, "camion"))
+							: null);
 		} else {
 			builder.camionId(zona.getCamion() != null ? zona.getCamion().getId() : null);
- 		}
+			
+		}
 		return builder.build();
 	}
 
 	public VentaDTOResponse mapToDTO(Venta venta, String[] populate) {
 		VentaDTOResponse.VentaDTOResponseBuilder builder = VentaDTOResponse.builder().id(venta.getId())
-				.fecha(venta.getFecha())
-				.total(venta.getTotal())
-				.estado(venta.getEstado())
-				.pagado(venta.getPagado())
+				.fecha(venta.getFecha()).total(venta.getTotal()).estado(venta.getEstado()).pagado(venta.getPagado())
 				.lineasPedido(
 						venta.getLineasPedido().stream().map(lineaPedido -> this.mapToDTO(lineaPedido, null)).toList());
 		if (populate != null && List.of(populate).contains("domicilio")) {
-			builder.domicilio(venta.getDomicilio() != null ? this.mapToDTO(venta.getDomicilio(), removeFromPopulate(populate, "domicilio")) : null);;
+			builder.domicilio(venta.getDomicilio() != null
+					? this.mapToDTO(venta.getDomicilio(), removeFromPopulate(populate, "domicilio"))
+					: null);
+			;
 		} else {
 			builder.idDomicilio(venta.getDomicilio().getId());
 		}
-		if(populate != null && List.of(populate).contains("lineaPedido")){
-			builder.lineasPedido(venta.getLineasPedido() != null
-					? venta.getLineasPedido().stream()
-							.map(lineaPedido -> this.mapToDTO(lineaPedido, removeFromPopulate(populate, "lineaPedido"))).toList()
-					: List.of());
+		if (populate != null && List.of(populate).contains("lineaPedido")) {
+			builder.lineasPedido(venta.getLineasPedido() != null ? venta.getLineasPedido().stream()
+					.map(lineaPedido -> this.mapToDTO(lineaPedido, removeFromPopulate(populate, "lineaPedido")))
+					.toList() : List.of());
 		} else {
 			builder.lineasPedidoIds(venta.getLineasPedido() != null
 					? venta.getLineasPedido().stream().map(lineaPedido -> lineaPedido.getId()).toList()
@@ -79,9 +84,11 @@ public class MapToDTO {
 			builder.personaId(usuario.getPersona() != null ? usuario.getPersona().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("carga")) {
-			builder.cargas(usuario.getCargas() != null
-					? usuario.getCargas().stream().map(carga -> this.mapToDTO(carga, removeFromPopulate(populate, "carga"))).toList()
-					: null);
+			builder.cargas(
+					usuario.getCargas() != null
+							? usuario.getCargas().stream()
+									.map(carga -> this.mapToDTO(carga, removeFromPopulate(populate, "carga"))).toList()
+							: null);
 		} else {
 			builder.cargaIds(
 					usuario.getCargas() != null ? usuario.getCargas().stream().map(carga -> carga.getId()).toList()
@@ -94,30 +101,36 @@ public class MapToDTO {
 		ProductoZonaDTOResponse.ProductoZonaDTOResponseBuilder builder = ProductoZonaDTOResponse.builder()
 				.id(productoZona.getId());
 		if (populate != null && List.of(populate).contains("producto")) {
-			builder.producto(
-					productoZona.getProducto() != null ? this.mapToDTO(productoZona.getProducto(), removeFromPopulate(populate, "producto")) : null);
+			builder.producto(productoZona.getProducto() != null
+					? this.mapToDTO(productoZona.getProducto(), removeFromPopulate(populate, "producto"))
+					: null);
 		} else {
 			builder.productoId(productoZona.getProducto() != null ? productoZona.getProducto().getId() : null)
 					.productoId(productoZona.getProducto() != null ? productoZona.getProducto().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("zona")) {
-			builder.zona(productoZona.getZona() != null ? this.mapToDTO(productoZona.getZona(), removeFromPopulate(populate, "zona")) : null);
+			builder.zona(productoZona.getZona() != null
+					? this.mapToDTO(productoZona.getZona(), removeFromPopulate(populate, "zona"))
+					: null);
 		} else {
 			builder.zonaId(productoZona.getZona() != null ? productoZona.getZona().getId() : null)
 					.zonaId(productoZona.getZona() != null ? productoZona.getZona().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("lineaPedido")) {
 			builder.lineaPedidos(productoZona.getLineaPedidos() != null ? productoZona.getLineaPedidos().stream()
-					.map(lineaPedido -> this.mapToDTO(lineaPedido, removeFromPopulate(populate, "lineaPedido"))).toList() : null);
+					.map(lineaPedido -> this.mapToDTO(lineaPedido, removeFromPopulate(populate, "lineaPedido")))
+					.toList() : null);
 		} else {
 			builder.lineaPedidosIds(productoZona.getLineaPedidos() != null
 					? productoZona.getLineaPedidos().stream().map(lineaPedido -> lineaPedido.getId()).toList()
 					: null);
 		}
 		if (populate != null && List.of(populate).contains("pedidoSemanal")) {
-			builder.pedidoSemanal(productoZona.getPedidoSemanales() != null
-					? productoZona.getPedidoSemanales().stream().map(p -> this.mapToDTO(p, removeFromPopulate(populate, "pedidoSemanal"))).toList()
-					: null);
+			builder.pedidoSemanal(
+					productoZona.getPedidoSemanales() != null
+							? productoZona.getPedidoSemanales().stream()
+									.map(p -> this.mapToDTO(p, removeFromPopulate(populate, "pedidoSemanal"))).toList()
+							: null);
 		} else {
 			builder.pedidoSemanalIds(productoZona.getPedidoSemanales() != null
 					? productoZona.getPedidoSemanales().stream().map(p -> p.getId()).toList()
@@ -134,7 +147,9 @@ public class MapToDTO {
 			builder.productoZonas(
 					producto.getProductosZona() != null
 							? producto.getProductosZona().stream()
-									.map(productoZona -> this.mapToDTO(productoZona, removeFromPopulate(populate, "productoZona"))).toList()
+									.map(productoZona -> this.mapToDTO(productoZona,
+											removeFromPopulate(populate, "productoZona")))
+									.toList()
 							: List.of());
 		} else {
 			builder.productoZonaIds(producto.getProductosZona() != null
@@ -145,14 +160,18 @@ public class MapToDTO {
 			builder.productosDomicilio(
 					producto.getProductosDomicilio() != null
 							? producto.getProductosDomicilio().stream()
-									.map(productoDomicilio -> this.mapToDTO(productoDomicilio, removeFromPopulate(populate, "productoDomicilio"))).toList()
+									.map(productoDomicilio -> this.mapToDTO(productoDomicilio,
+											removeFromPopulate(populate, "productoDomicilio")))
+									.toList()
 							: List.of());
 		}
 		if (populate != null && List.of(populate).contains("cargaProducto")) {
 			builder.cargasProducto(
 					producto.getCargasProducto() != null
 							? producto.getCargasProducto().stream()
-									.map(cargaProducto -> this.mapToDTO(cargaProducto, removeFromPopulate(populate, "cargaProducto"))).toList()
+									.map(cargaProducto -> this.mapToDTO(cargaProducto,
+											removeFromPopulate(populate, "cargaProducto")))
+									.toList()
 							: List.of());
 		} else {
 			builder.productoDomicilioIds(
@@ -175,17 +194,17 @@ public class MapToDTO {
 		ProductoDomicilioDTOResponse.ProductoDomicilioDTOResponseBuilder builder = ProductoDomicilioDTOResponse
 				.builder().id(productoDomicilio.getId()).cantVaciosActuales(productoDomicilio.getCantVaciosActuales());
 		if (populate != null && List.of(populate).contains("domicilio")) {
-			builder.domicilio(
-					productoDomicilio.getDomicilio() != null ? this.mapToDTO(productoDomicilio.getDomicilio(), removeFromPopulate(populate, "domicilio"))
-							: null);
+			builder.domicilio(productoDomicilio.getDomicilio() != null
+					? this.mapToDTO(productoDomicilio.getDomicilio(), removeFromPopulate(populate, "domicilio"))
+					: null);
 		} else {
 			builder.domicilioId(
 					productoDomicilio.getDomicilio() != null ? productoDomicilio.getDomicilio().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("producto")) {
-			builder.producto(
-					productoDomicilio.getProducto() != null ? this.mapToDTO(productoDomicilio.getProducto(), removeFromPopulate(populate, "producto"))
-							: null);
+			builder.producto(productoDomicilio.getProducto() != null
+					? this.mapToDTO(productoDomicilio.getProducto(), removeFromPopulate(populate, "producto"))
+					: null);
 		} else {
 			builder.productoId(productoDomicilio.getProducto() != null ? productoDomicilio.getProducto().getId() : null)
 					.nombreProducto(
@@ -202,23 +221,31 @@ public class MapToDTO {
 				.apellido(persona.getApellido()).email(persona.getEmail()).telefono(persona.getTelefono())
 				.saldo(persona.getSaldo());
 		if (populate != null && List.of(populate).contains("usuario")) {
-			builder.usuario(persona.getUsuario() != null ? this.mapToDTO(persona.getUsuario(), removeFromPopulate(populate, "usuario")) : null);
+			builder.usuario(persona.getUsuario() != null
+					? this.mapToDTO(persona.getUsuario(), removeFromPopulate(populate, "usuario"))
+					: null);
 		} else {
 			builder.usuarioId(persona.getUsuario() != null ? persona.getUsuario().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("domicilio")) {
-			builder.domicilios(persona.getDomicilios() != null
-					? persona.getDomicilios().stream().map(domicilio -> this.mapToDTO(domicilio, removeFromPopulate(populate, "domicilio"))).toList()
-					: List.of());
+			builder.domicilios(
+					persona.getDomicilios() != null
+							? persona.getDomicilios().stream()
+									.map(domicilio -> this.mapToDTO(domicilio,
+											removeFromPopulate(populate, "domicilio")))
+									.toList()
+							: List.of());
 		} else {
 			builder.domicilioIds(persona.getDomicilios() != null
 					? persona.getDomicilios().stream().map(domicilio -> domicilio.getId()).toList()
 					: List.of());
 		}
 		if (populate != null && List.of(populate).contains("pago")) {
-			builder.pagos(persona.getPagos() != null
-					? persona.getPagos().stream().map(pago -> this.mapToDTO(pago, removeFromPopulate(populate, "pago"))).toList()
-					: List.of());
+			builder.pagos(
+					persona.getPagos() != null
+							? persona.getPagos().stream()
+									.map(pago -> this.mapToDTO(pago, removeFromPopulate(populate, "pago"))).toList()
+							: List.of());
 		} else {
 			builder.pagosIds(persona.getPagos() != null ? persona.getPagos().stream().map(pago -> pago.getId()).toList()
 					: List.of());
@@ -230,16 +257,16 @@ public class MapToDTO {
 		PedidoSemanalDTOResponse.PedidoSemanalDTOResponseBuilder builder = PedidoSemanalDTOResponse.builder()
 				.id(pedidoSemanal.getId()).cantidad(pedidoSemanal.getCantidad());
 		if (populate != null && List.of(populate).contains("domicilio")) {
-			builder.domicilio(
-					pedidoSemanal.getDomicilio() != null ? this.mapToDTO(pedidoSemanal.getDomicilio(), removeFromPopulate(populate, "domicilio"))
-							: null);
+			builder.domicilio(pedidoSemanal.getDomicilio() != null
+					? this.mapToDTO(pedidoSemanal.getDomicilio(), removeFromPopulate(populate, "domicilio"))
+					: null);
 		} else {
 			builder.domicilioId(pedidoSemanal.getDomicilio() != null ? pedidoSemanal.getDomicilio().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("productoZona")) {
-			builder.productoZona(
-					pedidoSemanal.getProductoZona() != null ? this.mapToDTO(pedidoSemanal.getProductoZona(), removeFromPopulate(populate, "productoZona"))
-							: null);
+			builder.productoZona(pedidoSemanal.getProductoZona() != null
+					? this.mapToDTO(pedidoSemanal.getProductoZona(), removeFromPopulate(populate, "productoZona"))
+					: null);
 		} else {
 			builder.productoZonaId(
 					pedidoSemanal.getProductoZona() != null ? pedidoSemanal.getProductoZona().getId() : null);
@@ -252,7 +279,9 @@ public class MapToDTO {
 		PagoDTOResponse.PagoDTOResponseBuilder builder = PagoDTOResponse.builder().id(pago.getId())
 				.monto(pago.getMonto()).metodoPago(pago.getMetodoPago()).fecha(pago.getFecha());
 		if (populate != null && List.of(populate).contains("persona")) {
-			builder.persona(pago.getPersona() != null ? this.mapToDTO(pago.getPersona(), removeFromPopulate(populate, "persona")) : null);
+			builder.persona(pago.getPersona() != null
+					? this.mapToDTO(pago.getPersona(), removeFromPopulate(populate, "persona"))
+					: null);
 		} else {
 			builder.personaId(pago.getPersona() != null ? pago.getPersona().getId() : null);
 		}
@@ -264,14 +293,16 @@ public class MapToDTO {
 		LineaPedidoDTOResponse.LineaPedidoDTOResponseBuilder builder = LineaPedidoDTOResponse.builder()
 				.id(lineaPedido.getId()).cantidad(lineaPedido.getCantidad()).subtotal(lineaPedido.getSubtotal());
 		if (populate != null && List.of(populate).contains("venta")) {
-			builder.venta(lineaPedido.getVenta() != null ? this.mapToDTO(lineaPedido.getVenta(), removeFromPopulate(populate, "venta")) : null);
+			builder.venta(lineaPedido.getVenta() != null
+					? this.mapToDTO(lineaPedido.getVenta(), removeFromPopulate(populate, "venta"))
+					: null);
 		} else {
 			builder.ventaId(lineaPedido.getVenta() != null ? lineaPedido.getVenta().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("productoZona")) {
-			builder.productoZona(
-					lineaPedido.getProductoZona() != null ? this.mapToDTO(lineaPedido.getProductoZona(), removeFromPopulate(populate, "productoZona"))
-							: null);
+			builder.productoZona(lineaPedido.getProductoZona() != null
+					? this.mapToDTO(lineaPedido.getProductoZona(), removeFromPopulate(populate, "productoZona"))
+					: null);
 		} else {
 			builder.productoZonaId(
 					lineaPedido.getProductoZona() != null ? lineaPedido.getProductoZona().getId() : null);
@@ -283,7 +314,9 @@ public class MapToDTO {
 		GastoDTOResponse.GastoDTOResponseBuilder builder = GastoDTOResponse.builder().id(gasto.getId())
 				.detalle(gasto.getDetalle()).monto(gasto.getMonto()).fecha(gasto.getFecha());
 		if (populate != null && List.of(populate).contains("camion")) {
-			builder.camion(gasto.getCamion() != null ? this.mapToDTO(gasto.getCamion(), removeFromPopulate(populate, "camion")) : null);
+			builder.camion(
+					gasto.getCamion() != null ? this.mapToDTO(gasto.getCamion(), removeFromPopulate(populate, "camion"))
+							: null);
 		} else {
 			builder.camionId(gasto.getCamion() != null ? gasto.getCamion().getId() : null);
 
@@ -293,11 +326,11 @@ public class MapToDTO {
 
 	public DomicilioDTOResponse mapToDTO(Domicilio domicilio, String[] populate) {
 		DomicilioDTOResponse.DomicilioDTOResponseBuilder builder = DomicilioDTOResponse.builder().id(domicilio.getId())
-				.calle(domicilio.getCalle()).numero(domicilio.getNumero()).casa(domicilio.getCasa())
-				.dia(domicilio.getDia()).activo(domicilio.getActivo()).habilitado(domicilio.getHabilitado());
+				.calle(domicilio.getCalle()).numero(domicilio.getNumero()).casa(domicilio.getCasa());
 		if (populate != null && List.of(populate).contains("venta")) {
 			builder.ventas(domicilio.getVentas() != null
-					? domicilio.getVentas().stream().map(venta -> this.mapToDTO(venta, removeFromPopulate(populate, "venta"))).toList()
+					? domicilio.getVentas().stream()
+							.map(venta -> this.mapToDTO(venta, removeFromPopulate(populate, "venta"))).toList()
 					: List.of());
 		} else {
 			builder.ventaIds(
@@ -305,30 +338,34 @@ public class MapToDTO {
 							: List.of());
 		}
 		if (populate != null && List.of(populate).contains("zona")) {
-			builder.zona(domicilio.getZona() != null ? this.mapToDTO(domicilio.getZona(), removeFromPopulate(populate, "zona")) : null);
+			builder.zona(domicilio.getZona() != null
+					? this.mapToDTO(domicilio.getZona(), removeFromPopulate(populate, "zona"))
+					: null);
 		} else {
 			builder.zonaId(domicilio.getZona() != null ? domicilio.getZona().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("pedidoSemanal")) {
 			builder.pedidosSemanales(domicilio.getPedidosSemanal() != null ? domicilio.getPedidosSemanal().stream()
-					.map(pedidoSemanal -> this.mapToDTO(pedidoSemanal, removeFromPopulate(populate, "pedidoSemanal"))).toList() : List.of());
+					.map(pedidoSemanal -> this.mapToDTO(pedidoSemanal, removeFromPopulate(populate, "pedidoSemanal")))
+					.toList() : List.of());
 		} else {
 			builder.pedidoSemanalIds(domicilio.getPedidosSemanal() != null
 					? domicilio.getPedidosSemanal().stream().map(pedidoSemanal -> pedidoSemanal.getId()).toList()
 					: List.of());
 		}
 		if (populate != null && List.of(populate).contains("productosDomicilio")) {
-			builder.productosDomicilio(
-					domicilio.getProductoDomicilio() != null
-							? domicilio.getProductoDomicilio().stream()
-									.map(productoDomicilio -> this.mapToDTO(productoDomicilio, removeFromPopulate(populate, "productosDomicilio"))).toList()
-							: List.of());
+			builder.productosDomicilio(domicilio.getProductoDomicilio() != null
+					? domicilio.getProductoDomicilio().stream().map(productoDomicilio -> this
+							.mapToDTO(productoDomicilio, removeFromPopulate(populate, "productosDomicilio"))).toList()
+					: List.of());
 		} else {
 			builder.productoDomicilioIds(domicilio.getProductoDomicilio() != null ? domicilio.getProductoDomicilio()
 					.stream().map(productoDomicilio -> productoDomicilio.getId()).toList() : List.of());
 		}
 		if (populate != null && List.of(populate).contains("persona")) {
-			builder.persona(domicilio.getPersona() != null ? this.mapToDTO(domicilio.getPersona(), removeFromPopulate(populate, "persona")) : null);
+			builder.persona(domicilio.getPersona() != null
+					? this.mapToDTO(domicilio.getPersona(), removeFromPopulate(populate, "persona"))
+					: null);
 		} else {
 			builder.personaId(domicilio.getPersona() != null ? domicilio.getPersona().getId() : null);
 		}
@@ -339,20 +376,22 @@ public class MapToDTO {
 		CargaDTOResponse.CargaDTOResponseBuilder builder = CargaDTOResponse.builder().id(carga.getId())
 				.tipo(carga.getTipo()).fechaHora(carga.getFechaHora());
 		if (populate != null && List.of(populate).contains("usuario")) {
-			builder.usuario(carga.getUsuario() != null ? this.mapToDTO(carga.getUsuario(), removeFromPopulate(populate, "usuario")) : null);
+			builder.usuario(carga.getUsuario() != null
+					? this.mapToDTO(carga.getUsuario(), removeFromPopulate(populate, "usuario"))
+					: null);
 		} else {
 
 			builder.usuarioId(carga.getUsuario() != null ? carga.getUsuario().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("camion")) {
-			builder.camion(carga.getCamion() != null ? this.mapToDTO(carga.getCamion(), removeFromPopulate(populate, "camion")) : null);
+			builder.camion(
+					carga.getCamion() != null ? this.mapToDTO(carga.getCamion(), removeFromPopulate(populate, "camion"))
+							: null);
 		}
 		if (populate != null && List.of(populate).contains("cargasProducto")) {
-			builder.cargasProducto(
-					carga.getCargasProducto() != null
-							? carga.getCargasProducto().stream()
-									.map(cargaProducto -> this.mapToDTO(cargaProducto, removeFromPopulate(populate, "cargaProducto"))).toList()
-							: null);
+			builder.cargasProducto(carga.getCargasProducto() != null ? carga.getCargasProducto().stream()
+					.map(cargaProducto -> this.mapToDTO(cargaProducto, removeFromPopulate(populate, "cargaProducto")))
+					.toList() : null);
 		} else {
 			builder.camionId(carga.getCamion() != null ? carga.getCamion().getId() : null);
 		}
@@ -365,14 +404,17 @@ public class MapToDTO {
 				.id(cargaProducto.getId()).cantLleno(cargaProducto.getCantLleno())
 				.cantVacio(cargaProducto.getCantVacio());
 		if (populate != null && List.of(populate).contains("carga")) {
-			builder.carga(cargaProducto.getCarga() != null ? mapToDTO(cargaProducto.getCarga(), removeFromPopulate(populate, "carga")) : null);
+			builder.carga(cargaProducto.getCarga() != null
+					? mapToDTO(cargaProducto.getCarga(), removeFromPopulate(populate, "carga"))
+					: null);
 		} else {
 			builder.cargaId(cargaProducto.getCarga().getId());
 
 		}
 		if (populate != null && List.of(populate).contains("producto")) {
-			builder.producto(
-					cargaProducto.getProducto() != null ? this.mapToDTO(cargaProducto.getProducto(), removeFromPopulate(populate, "producto")) : null);
+			builder.producto(cargaProducto.getProducto() != null
+					? this.mapToDTO(cargaProducto.getProducto(), removeFromPopulate(populate, "producto"))
+					: null);
 		} else {
 			builder.productoId(cargaProducto.getProducto().getId());
 		}
@@ -384,57 +426,108 @@ public class MapToDTO {
 				.patente(camion.getPatente()).modelo(camion.getModelo()).marca(camion.getMarca())
 				.kilometraje(camion.getKilometraje()).estado(camion.getEstado());
 		if (populate != null && List.of(populate).contains("gasto")) {
-			builder.gastos(camion.getGastos() != null
-					? camion.getGastos().stream().map(gasto -> this.mapToDTO(gasto, removeFromPopulate(populate, "gasto"))).toList()
-					: null);
+			builder.gastos(
+					camion.getGastos() != null
+							? camion.getGastos().stream()
+									.map(gasto -> this.mapToDTO(gasto, removeFromPopulate(populate, "gasto"))).toList()
+							: null);
 		} else {
 			builder.gastoIds(
 					camion.getGastos() != null ? camion.getGastos().stream().map(gasto -> gasto.getId()).toList()
 							: null);
 		}
 		if (populate != null && List.of(populate).contains("carga")) {
-			builder.cargas(camion.getCargas() != null
-					? camion.getCargas().stream().map(carga -> this.mapToDTO(carga, removeFromPopulate(populate, "carga"))).toList()
-					: null);
+			builder.cargas(
+					camion.getCargas() != null
+							? camion.getCargas().stream()
+									.map(carga -> this.mapToDTO(carga, removeFromPopulate(populate, "carga"))).toList()
+							: null);
 		} else {
 			builder.cargasIds(
 					camion.getCargas() != null ? camion.getCargas().stream().map(carga -> carga.getId()).toList()
 							: null);
 		}
 		if (populate != null && List.of(populate).contains("zona")) {
-			builder.zonas(camion.getZonas() != null
-					? camion.getZonas().stream().map(zona -> this.mapToDTO(zona, removeFromPopulate(populate, "zona"))).toList()
-					: null);
+			builder.zonas(
+					camion.getZonas() != null
+							? camion.getZonas().stream()
+									.map(zona -> this.mapToDTO(zona, removeFromPopulate(populate, "zona"))).toList()
+							: null);
 		} else {
 			builder.zonaIds(
-					camion.getZonas() != null ? camion.getZonas().stream().map(zona -> zona.getId()).toList()
-							: null);
+					camion.getZonas() != null ? camion.getZonas().stream().map(zona -> zona.getId()).toList() : null);
 		}
 		return builder.build();
 	}
-
-	public OrdenZonaDTOResponse mapToDTO(OrdenZona ordenZona, String[] populate) {
-		OrdenZonaDTOResponse.OrdenZonaDTOResponseBuilder builder = OrdenZonaDTOResponse.builder().id(ordenZona.getId())
-				.dia(ordenZona.getDia()).orden(ordenZona.getOrden());
+	public DiaZonaDTOResponse mapToDTO(DiaZona diaZona, String[] populate) {
+		DiaZonaDTOResponse.DiaZonaDTOResponseBuilder builder = DiaZonaDTOResponse.builder()
+				.id(diaZona.getId());
 		if (populate != null && List.of(populate).contains("zona")) {
-			builder.zona(ordenZona.getZona() != null ? this.mapToDTO(ordenZona.getZona(), removeFromPopulate(populate, "zona")) : null);
+			builder.zona(diaZona.getZona() != null
+					? this.mapToDTO(diaZona.getZona(), removeFromPopulate(populate, "zona"))
+					: null);
 		} else {
-			builder.zonaId(ordenZona.getZona() != null ? ordenZona.getZona().getId() : null);
+			builder.zonaId(diaZona.getZona() != null ? diaZona.getZona().getId() : null);
+		}
+		if (populate != null && List.of(populate).contains("dia")) {
+			builder.dia(diaZona.getDia() != null
+					? this.mapToDTO(diaZona.getDia(), removeFromPopulate(populate, "dia"))
+					: null);
+		} else {
+			builder.diaId(diaZona.getDia() != null ? diaZona.getDia().getId() : null);
+		}
+		return builder.build();
+	}
+	public DiaDTOResponse mapToDTO(Dia dia, String[] populate) {
+		DiaDTOResponse.DiaDTOResponseBuilder builder = DiaDTOResponse.builder().id(dia.getId()).nombre(dia.getNombre());
+		//Saqué la lógica del populate porque no se va a usar nunca. Agustín Dana - 23-04-26
+		return builder.build();
+		}
+	public DiaZonaOrdenDTOResponse mapToDTO(DiaZonaOrden diaZonaOrden, String[] populate) {
+		DiaZonaOrdenDTOResponse.DiaZonaOrdenDTOResponseBuilder builder = DiaZonaOrdenDTOResponse.builder()
+				.id(diaZonaOrden.getId()).orden(diaZonaOrden.getOrden());
+		if (populate != null && List.of(populate).contains("diaZona")) {
+			builder.diaZona(diaZonaOrden.getDiaZona() != null
+					? this.mapToDTO(diaZonaOrden.getDiaZona(), removeFromPopulate(populate, "diaZona"))
+					: null);
+		} else {
+			builder.diaZonaId(diaZonaOrden.getDiaZona() != null ? diaZonaOrden.getDiaZona().getId() : null);
 		}
 		if (populate != null && List.of(populate).contains("domicilio")) {
-			builder.domicilio(
-					ordenZona.getDomicilio() != null ? this.mapToDTO(ordenZona.getDomicilio(), removeFromPopulate(populate, "domicilio")) : null);
+			builder.domicilio(diaZonaOrden.getDomicilio() != null
+					? this.mapToDTO(diaZonaOrden.getDomicilio(), removeFromPopulate(populate, "domicilio"))
+					: null);
 		} else {
-			builder.domicilioId(ordenZona.getDomicilio() != null ? ordenZona.getDomicilio().getId() : null);
+			builder.domicilioId(diaZonaOrden.getDomicilio() != null ? diaZonaOrden.getDomicilio().getId() : null);
 		}
-
+		
 		return builder.build();
+	}
+	public DiaDomicilioDTOResponse mapToDTO(DiaDomicilio diaDomicilio, String[] populate) {
+	    DiaDomicilioDTOResponse.DiaDomicilioDTOResponseBuilder builder = DiaDomicilioDTOResponse.builder()
+	            .id(diaDomicilio.getId()).estado(diaDomicilio.getEstado());
+	    if (populate != null && List.of(populate).contains("dia")) {
+	        builder.dia(diaDomicilio.getDia() != null
+	                ? this.mapToDTO(diaDomicilio.getDia(), removeFromPopulate(populate, "dia"))
+	                : null);
+	    } else {
+	        builder.diaId(diaDomicilio.getDia() != null ? diaDomicilio.getDia().getId() : null);
+	    }
+	    if (populate != null && List.of(populate).contains("domicilio")) {
+	        builder.domicilio(diaDomicilio.getDomicilio() != null
+	                ? this.mapToDTO(diaDomicilio.getDomicilio(),
+	                        removeFromPopulate(populate, "domicilio"))
+	                : null);
+	    } else {
+	        builder.domicilioId(diaDomicilio.getDomicilio() != null ? diaDomicilio.getDomicilio().getId() : null);
+	    }
+	    
+	    return builder.build();
 	}
 
 	private String[] removeFromPopulate(String[] populate, String key) {
-		if (populate == null) return null;
-		return java.util.Arrays.stream(populate)
-				.filter(s -> !s.equals(key))
-				.toArray(String[]::new);
+		if (populate == null)
+			return null;
+		return java.util.Arrays.stream(populate).filter(s -> !s.equals(key)).toArray(String[]::new);
 	}
 }
