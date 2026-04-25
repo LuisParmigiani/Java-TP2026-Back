@@ -45,11 +45,11 @@ public class DomicilioService {
     }
 
 
-    public List<DomicilioDTOResponse> getByUserId(Long id, String activo, Integer dias, String[] populate) {
+    public List<DomicilioDTOResponse> getByUserId(Long id, String activo,String orderBy,String nameSearch, Integer dias, String[] populate) {
         List<Domicilio> resultados;
 
         Boolean activeBoolean = null;
-        if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null) {
+        if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null ) {
             resultados = repository.findDomicilioByPersonaUsuarioId(id);
 
         } else {
@@ -111,7 +111,6 @@ public class DomicilioService {
     public DomicilioDTOResponse update(Long id, DomicilioDTORequestPut entidad,String[] populate) {
         Domicilio existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + id));
-
         if(entidad.getZonaId() != null) {
             Zona zona = findZonaOrThrow(entidad.getZonaId());
             existing.setZona(zona);
