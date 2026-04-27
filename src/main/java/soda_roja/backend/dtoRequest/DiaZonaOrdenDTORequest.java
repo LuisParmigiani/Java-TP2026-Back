@@ -15,6 +15,9 @@ import java.util.Date;
 @Builder
 
 public class DiaZonaOrdenDTORequest {
+	//Solo se va a utilizar para el orden de los repartos
+	private Long id;
+	
     @NotNull(message = "El orden no puede ser nulo")
     @Min(value = 1, message = "El orden debe ser mayor o igual a 1")
     private Integer orden;

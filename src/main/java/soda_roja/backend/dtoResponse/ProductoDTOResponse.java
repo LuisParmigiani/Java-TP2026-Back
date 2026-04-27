@@ -22,7 +22,5 @@ public class ProductoDTOResponse {
     private List<CargaProductoDTOResponse> cargasProducto;
     private List<ProductoZonaDTOResponse> productoZonas;
     private List<ProductoDomicilioDTOResponse>  productosDomicilio;
-    private List<Long> productoZonaIds;
-    private List<Long> productoDomicilioIds;
 
 }

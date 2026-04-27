@@ -17,6 +17,5 @@ public class UsuarioDTOResponse {
     private String email;
     private PersonaDTOResponse persona;
     private List<CargaDTOResponse> cargas;
-    private List<Long> cargaIds;
     private Long personaId;
 }

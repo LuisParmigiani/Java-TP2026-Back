@@ -25,9 +25,6 @@ public class DomicilioDTOResponse {
     private PersonaDTOResponse persona;
     private Boolean activo;
     private List<PedidoSemanalDTOResponse> pedidosSemanales;
-    private List<Long> ventaIds;
-    private List<Long> productoDomicilioIds;
-    private List<Long> pedidoSemanalIds;
     private Long zonaId;
     private Long personaId;
     private List<Long> diasDomicilioIds;

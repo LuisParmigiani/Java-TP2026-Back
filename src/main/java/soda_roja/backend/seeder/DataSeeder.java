@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -149,11 +151,14 @@ public class DataSeeder implements CommandLineRunner {
 
 	private List<Zona> seedZonas(List<Camion> camiones) {
 	    List<Zona> zonas = new ArrayList<>();
+	    int zonasPorCamion = 2; // Cada camión tendrá 2 zonas
+	    
 	    for (int i = 0; i < 6; i++) {
 	        Zona zona = new Zona();
 	        zona.setNombre(faker.address().cityName() + i);
 	        zona.setDetalle(faker.address().streetAddress());
-	        zona.setCamion(camiones.get(faker.number().numberBetween(0, camiones.size())));
+	        // Asigna el camión de forma cíclica para distribuir zonas entre camiones
+	        zona.setCamion(camiones.get((i / zonasPorCamion) % camiones.size()));
 	        zona.setDiasZona(new ArrayList<>());
 	        zona.setDomicilios(new ArrayList<>());
 	        zonas.add(zona);
@@ -441,6 +446,12 @@ public class DataSeeder implements CommandLineRunner {
 
 	private List<DiaZona> seedDiasZona(List<Zona> zonas, List<Dia> dias) {
 	    List<DiaZona> diasZona = new ArrayList<>();
+	    
+	    // Agrupar zonas por camión
+	    Map<Camion, List<Zona>> zonasPorCamion = zonas.stream()
+	            .collect(Collectors.groupingBy(Zona::getCamion));
+	    
+	    // Patrones de días para cada camión
 	    boolean[][] patronesDias = {
 	        {false, true, false, true, false, false, false},   // Martes y Jueves
 	        {true, false, true, false, true, false, false},    // Lunes, Miércoles y Viernes
@@ -450,19 +461,26 @@ public class DataSeeder implements CommandLineRunner {
 	        {false, false, false, false, false, false, true}   // Domingo
 	    };
 	    
-	    for (int z = 0; z < zonas.size(); z++) {
-	        Zona zona = zonas.get(z);
-	        boolean[] patron = patronesDias[z % patronesDias.length];
+	    int camionIndex = 0;
+	    for (Camion camion : zonasPorCamion.keySet()) {
+	        List<Zona> zonasDelCamion = zonasPorCamion.get(camion);
+	        boolean[] patron = patronesDias[camionIndex % patronesDias.length];
+	        
+	        // Todos las zonas del mismo camión se asignan a los mismos días
 	        for (int i = 0; i < 7; i++) {
 	            if (patron[i]) {
-	                DiaZona diaZona = DiaZona.builder()
-	                        .dia(dias.get(i))
-	                        .zona(zona)
-	                        .build();
-	                diasZona.add(diaZona);
+	                for (Zona zona : zonasDelCamion) {
+	                    DiaZona diaZona = DiaZona.builder()
+	                            .dia(dias.get(i))
+	                            .zona(zona)
+	                            .build();
+	                    diasZona.add(diaZona);
+	                }
 	            }
 	        }
+	        camionIndex++;
 	    }
+	    
 	    diaZonaRepository.saveAll(diasZona);
 	    return diasZona;
 	}

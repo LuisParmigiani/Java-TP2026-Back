@@ -34,11 +34,6 @@ public class CamionDTOResponse {
     
     private List<ZonaDTOResponse> zonas;
 
-    private List<Long> gastoIds;
-
-    private List<Long> cargasIds;
-    
-     private List<Long> zonaIds;
     
     
 

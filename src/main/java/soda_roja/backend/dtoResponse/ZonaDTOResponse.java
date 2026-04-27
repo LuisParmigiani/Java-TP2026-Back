@@ -20,8 +20,6 @@ public class ZonaDTOResponse {
     private List<DomicilioDTOResponse> domicilios;
     private CamionDTOResponse camion;
     private Long camionId;
-    private List<Long> domicilioIds;
-    private List<Long> productoZonaIds;
 }
 
 

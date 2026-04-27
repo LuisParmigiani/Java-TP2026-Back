@@ -24,7 +24,4 @@ public class PersonaDTOResponse {
     private List<DomicilioDTOResponse> domicilios;
     private UsuarioDTOResponse usuario;
     private Long usuarioId;
-    private List<Long> pagosIds;
-    private List<Long> domicilioIds;
-
 }

@@ -24,8 +24,5 @@ public class ProductoZonaDTOResponse {
     private List<LineaPedidoDTOResponse> lineaPedidos;
     private Long zonaId;
     private Long productoId;
-    private List<Long> pedidoSemanalIds;
- 
-    private List<Long> lineaPedidosIds;
 
 }
