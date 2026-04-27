@@ -9,6 +9,9 @@ import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.ProductoDTOResponse;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import soda_roja.backend.repository.ProductoRepository;
 import soda_roja.backend.model.Producto;
 import soda_roja.backend.specification.ProductoSpecification;
@@ -29,29 +32,41 @@ public class ProductoService {
         return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
     }
 
-    public List<ProductoDTOResponse> getActive(String userId,String sortOption,String searchTerm, Double minPrice, Double maxPrice,String directionId,String[] populate) {
-        Sort sort = Sort.unsorted();
+    public Page<ProductoDTOResponse> getActive(
+            String userId, String sortOption, String searchTerm,
+            Double minPrice, Double maxPrice, String directionId,
+            String[] populate, int page, int size) {
 
+        Sort sort = Sort.unsorted();
         DomicilioDTOResponse domicilio = null;
-        if(directionId != null){
-            domicilio = domicilioService.getById(Long.parseLong(directionId),null);
+
+        if (directionId != null) {
+            domicilio = domicilioService.getById(Long.parseLong(directionId), null);
         }
+
         if (sortOption != null) {
             switch (sortOption) {
                 case "Menor Precio" -> sort = Sort.by("precio").ascending();
                 case "Mayor Precio" -> sort = Sort.by("precio").descending();
                 case "Nombre A-Z" -> sort = Sort.by("nombre").ascending();
                 case "Nombre Z-A" -> sort = Sort.by("nombre").descending();
-                default -> sort = Sort.by("id").descending(); // Orden por defecto
+                default -> sort = Sort.by("id").descending();
             }
+        } else {
+            sort = Sort.by("id").descending(); // siempre ordenar algo
         }
 
-        if(sortOption == null && searchTerm == null && minPrice == null && maxPrice == null && directionId == null && userId == null) {
-            return repository.findByActivoTrue().stream().map(p -> mapToDTO(p, populate)).toList();
-        }else {
-            List<Producto> resultados;
-            String estado = "activo";
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (sortOption == null && searchTerm == null && minPrice == null
+                && maxPrice == null && directionId == null && userId == null) {
+
+            return repository.findByActivoTrue(pageable)
+                    .map(p -> mapToDTO(p, populate));
+        } else {
+
             String zone = domicilio != null ? domicilio.getZonaId().toString() : null;
+            String estado = "activo";
             ProductoSpecification.ProductoFiltrosDTO filtros =
                     new ProductoSpecification.ProductoFiltrosDTO(
                             userId,
@@ -62,10 +77,8 @@ public class ProductoService {
                             maxPrice
                     );
 
-            resultados = repository.findAll(ProductoSpecification.filtrar(filtros), sort);
-            return resultados.stream()
-                    .map(p -> mapToDTO(p, populate))
-                    .toList();
+            return repository.findAll(ProductoSpecification.filtrar(filtros), pageable)
+                    .map(p -> mapToDTO(p, populate));
         }
     }
 

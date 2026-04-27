@@ -47,6 +47,12 @@ public class PagoService {
         return mapToDTO(repository.save(pago), populate);
     }
 
+    public List<PagoDTOResponse> getByUserId(String userId, String[] populate) {
+        return repository.findByPersonaUsuarioId(Long.parseLong(userId)).stream()
+                .map(p -> mapToDTO(p, populate))
+                .toList();
+    }
+
     public PagoDTOResponse update(Long id, PagoDTORequestPut entidad,String[] populate) {
         Pago existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pago no encontrado con id: " + id));

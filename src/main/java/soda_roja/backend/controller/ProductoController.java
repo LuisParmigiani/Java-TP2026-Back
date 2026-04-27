@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
 import soda_roja.backend.service.ProductoService;
@@ -34,29 +35,33 @@ public class ProductoController {
     }
 
     @GetMapping("/customer/active")
-    public ResponseEntity<List<ProductoDTOResponse>> getActive(
+    public ResponseEntity<Page<ProductoDTOResponse>> getActive(
             @AuthenticationPrincipal String userId
             , @RequestParam(required = false) String[] populate,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) String direction
+            @RequestParam(required = false) String direction,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
 
-        return ResponseEntity.ok(service.getActive(userId, sort, search, minPrice, maxPrice,direction, populate));
+        return ResponseEntity.ok(service.getActive(userId, sort, search, minPrice, maxPrice,direction, populate, page, size));
     }
     @GetMapping("/active")
-    public ResponseEntity<List<ProductoDTOResponse>> getActive(
+    public ResponseEntity<Page<ProductoDTOResponse>> getActive(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String direction,
-            @RequestParam(required = false) String[] populate
+            @RequestParam(required = false) String[] populate,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
 
-        return ResponseEntity.ok(service.getActive(null, sort, search, minPrice, maxPrice,direction, populate));
+        return ResponseEntity.ok(service.getActive(null, sort, search, minPrice, maxPrice,direction, populate,page,size));
     }
     @PostMapping
     public ResponseEntity<ProductoDTOResponse> create(

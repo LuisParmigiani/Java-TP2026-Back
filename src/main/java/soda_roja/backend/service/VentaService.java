@@ -2,6 +2,9 @@ package soda_roja.backend.service;
 
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,22 +50,10 @@ public class VentaService {
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
     }
 
-    public List<VentaDTOResponse> getByUserId(Long userId, String[] populate,String sortOption, String state) {
-
-        if((sortOption == null && state == null) ){
-            return repository.findByDomicilioPersonaUsuarioId(userId).stream()
-                    .map(v -> mapToDTO(v, populate))
-                    .toList();
-        }else if(sortOption != null && state != null){
-            if((sortOption.equals("Mas Recientes") && state.equals("Todos"))){
-                return repository.findByDomicilioPersonaUsuarioId(userId).stream()
-                        .map(v -> mapToDTO(v, populate))
-                        .toList();
-            }
-        }
+    public Page<VentaDTOResponse> getByUserId(Long userId, String[] populate, String sortOption, String state, int page, int size) {
 
         // Build sort - handle null sortOption
-        Sort sort = Sort.unsorted();
+        Sort sort = Sort.by("id").descending();
         if (sortOption != null) {
             switch (sortOption) {
                 case "Mas Recientes" -> sort = Sort.by("fecha").descending();
@@ -73,14 +64,14 @@ public class VentaService {
             }
         }
 
-        VentaSpecification.VentaFiltrosDTO filtros = new VentaSpecification.VentaFiltrosDTO(state,userId);
-        List<Venta> resultados = (sort.isUnsorted())
-                ? repository.findAll(VentaSpecification.filtrar(filtros))
-                : repository.findAll(VentaSpecification.filtrar(filtros), sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        return resultados.stream()
-                .map(p -> mapToDTO(p, populate))
-                .toList();
+        // Build specification filters
+        VentaSpecification.VentaFiltrosDTO filtros = new VentaSpecification.VentaFiltrosDTO(state, userId);
+
+        // Use specification with pageable
+        return repository.findAll(VentaSpecification.filtrar(filtros), pageable)
+                .map(v -> mapToDTO(v, populate));
     }
     @Transactional
     public VentaDTOResponse save(VentaDTORequest entidad, String[] populate) {

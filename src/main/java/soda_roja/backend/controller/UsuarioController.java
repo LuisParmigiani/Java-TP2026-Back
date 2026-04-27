@@ -41,7 +41,15 @@ public class UsuarioController {
         return ResponseEntity.ok((usuario));
     }
 
-
+    @PutMapping("/updatePersona")
+    public ResponseEntity<?> updatePersona(
+            @AuthenticationPrincipal String userId,
+            @Valid @RequestBody UsuarioDTORequestPut entidad,
+            @RequestParam(required = false) String[] populate) {
+        System.out.println("Entidad: " + entidad);
+        UsuarioDTOResponse updatedUsuario = service.update(Long.parseLong(userId), entidad, populate);
+        return ResponseEntity.ok(updatedUsuario);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTOResponse> getById(

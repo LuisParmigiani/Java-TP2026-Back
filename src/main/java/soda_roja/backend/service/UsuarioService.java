@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
+import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.model.Persona;
 import soda_roja.backend.model.Usuario;
@@ -79,6 +80,13 @@ public class UsuarioService {
         }
         if(entidad.getEmail() != null) {
             existing.setEmail(entidad.getEmail());
+            // Sincronizar email con la persona asociada
+            if(existing.getPersona() != null) {
+                existing.getPersona().setEmail(entidad.getEmail());
+            }
+        }
+        if((entidad.getPersona() != null && existing.getPersona() != null ) || (existing.getPersona() == null && entidad.getPersona() != null)) {
+            PersonaDTOResponse updatedPersona = personaService.update(existing.getPersona().getId(), entidad.getPersona(), new String[]{});;
         }
 
         return mapToDTO(repository.save(existing), populate);

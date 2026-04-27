@@ -1,12 +1,14 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
 import soda_roja.backend.dtoRequestPut.DomicilioDTORequestPut;
-import soda_roja.backend.dtoResponse.DiaDomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.model.*;
@@ -51,44 +53,45 @@ public class DomicilioService {
 
 
 
-    public List<DomicilioDTOResponse> getByUserId(Long id,String orderBy,String nameSearch, String activo, Integer dias, String[] populate) {
-        List<Domicilio> resultados;
-
+    public Page<DomicilioDTOResponse> getByUserId(Long id, String orderBy, String nameSearch,String habilitado ,String activo, Integer dias, String[] populate, Integer page, Integer size) {
         Boolean activeBoolean = null;
         if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null && orderBy == null && (nameSearch == null || nameSearch.isBlank())) {
-            resultados = repository.findDomicilioByPersonaUsuarioId(id);
-
-        } else {
-            if (activo != null && !activo.isBlank() ) {
-                if (activo.equalsIgnoreCase("true") || activo.equalsIgnoreCase("false")) {
-                    activeBoolean = Boolean.parseBoolean(activo);
-                } else {
-                    if(activo.equalsIgnoreCase("Activas")){
-                        activeBoolean = true;
-                    } else if (activo.equals( "Inactivas")) {
-                        activeBoolean = false;
-                    }
-                }
-            }
-            Sort sort = Sort.unsorted();
-            if(orderBy != null && !orderBy.isBlank()) {
-                switch (orderBy) {
-                    case "Nombre A-Z" -> sort = Sort.by("calle").ascending();
-                    case "Nombre Z-A" -> sort = Sort.by("calle").descending();
-                    case "Número Ascendente" -> sort = Sort.by("numero").ascending();
-                    case "Número Descendente" -> sort = Sort.by("numero").descending();
-                    default -> sort = Sort.by("id").descending(); // Orden por defecto
-                }
-            }
-            DomicilioSpecification.DomicilioFiltrosDTO filtros =
-                    new DomicilioSpecification.DomicilioFiltrosDTO(id, activeBoolean, dias);
-
-            resultados = repository.findAll(DomicilioSpecification.filtrar(filtros), sort);
+            // Default case: return all domicilios with default pagination
+            Pageable pageable = PageRequest.of(page, size);
+            return repository.findAll(pageable)
+                    .map(d -> mapToDTO(d, populate));
         }
 
-        return resultados.stream()
-                .map(d -> mapToDTO(d, populate))
-                .toList();
+        if (activo != null && !activo.isBlank()) {
+            if (activo.equalsIgnoreCase("true") || activo.equalsIgnoreCase("false")) {
+                activeBoolean = Boolean.parseBoolean(activo);
+            } else {
+                if (activo.equalsIgnoreCase("Activas")) {
+                    activeBoolean = true;
+                } else if (activo.equals("Inactivas")) {
+                    activeBoolean = false;
+                }
+            }
+        }
+
+        Sort sort = Sort.unsorted();
+        if (orderBy != null && !orderBy.isBlank()) {
+            sort = switch (orderBy) {
+                case "Nombre A-Z" -> Sort.by("calle").ascending();
+                case "Nombre Z-A" -> Sort.by("calle").descending();
+                case "Número Ascendente" -> Sort.by("numero").ascending();
+                case "Número Descendente" -> Sort.by("numero").descending();
+                default -> Sort.by("id").descending();
+            };
+        }
+
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        DomicilioSpecification.DomicilioFiltrosDTO filtros =
+                new DomicilioSpecification.DomicilioFiltrosDTO(id, activeBoolean, dias, habilitado, nameSearch);
+
+        return repository.findAll(DomicilioSpecification.filtrar(filtros), pageable)
+                .map(d -> mapToDTO(d, populate));
     }
 
     public DomicilioDTOResponse save(DomicilioDTORequest dto,String userId,String[] populate) {
@@ -102,7 +105,6 @@ public class DomicilioService {
                 .habilitado(0)
                 .zona(zona)
                 .activo(false)
-                .habilitado(0)
                 .persona(persona)
                 .build();
 

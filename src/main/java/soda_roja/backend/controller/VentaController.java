@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.VentaDTORequest;
 import soda_roja.backend.dtoRequestPut.VentaDTORequestPut;
@@ -33,22 +34,30 @@ public class VentaController {
     }
 
     @GetMapping("/token/ByUserId")
-    public ResponseEntity<List<VentaDTOResponse>> getByUserId(
+    public ResponseEntity<Page<VentaDTOResponse>> getByUserId(
             @AuthenticationPrincipal String userId,
             @RequestParam(required = false) String[] populate,
             @RequestParam(required = false) String orderBy,
-            @RequestParam(required = false) String state
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
+        System.out.println("User ID from token: " + userId);
+
         Long id = Long.parseLong(userId);
-        return ResponseEntity.ok(service.getByUserId(id, populate, orderBy, state));
+        return ResponseEntity.ok(service.getByUserId(id, populate, orderBy, state, page, size));
     }
 
 
     @GetMapping("/ByUserId/{id}")
-    public ResponseEntity<List<VentaDTOResponse>> getByUserId(
+    public ResponseEntity<Page<VentaDTOResponse>> getByUserId(
             @PathVariable long id,
-            @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.getByUserId(id, populate, null, null));
+            @RequestParam(required = false) String[] populate,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+
+        return ResponseEntity.ok(service.getByUserId(id, populate, null, null, page, size));
     }
 
     @PostMapping

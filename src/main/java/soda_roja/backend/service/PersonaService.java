@@ -68,6 +68,10 @@ public class PersonaService {
         }
         if(entidad.getEmail() != null) {
             existing.setEmail(entidad.getEmail());
+            // Sincronizar email con el usuario asociado
+            if(existing.getUsuario() != null) {
+                existing.getUsuario().setEmail(entidad.getEmail());
+            }
         }
         if(entidad.getTelefono() != null) {
             existing.setTelefono(entidad.getTelefono());

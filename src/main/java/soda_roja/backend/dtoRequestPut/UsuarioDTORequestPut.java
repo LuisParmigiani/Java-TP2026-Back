@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import soda_roja.backend.dtoRequestPut.PersonaDTORequestPut;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -29,4 +30,6 @@ public class UsuarioDTORequestPut {
     private String nivelAcceso;
     @Schema(example = "1", description = "Identificador del usuario al que pertenece este domicilio")
     private Long personaId;
+
+    private PersonaDTORequestPut persona;
 }
