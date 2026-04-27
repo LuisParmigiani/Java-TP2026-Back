@@ -15,8 +15,9 @@ public class DiaZonaDTOResponse {
 	private Long id;
 	private Long diaId;
 	private Long zonaId;
-	private List<Long> domicilioIds;
+	
 	//Aca va a ir la lista de ORdenDomicilioDTOResponse.
+	private List<DiaZonaOrdenDTOResponse> diaZonaOrdenes;
 	private DiaDTOResponse dia;
 	private ZonaDTOResponse zona;
 }

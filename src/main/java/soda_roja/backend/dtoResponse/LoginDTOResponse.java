@@ -10,3 +10,4 @@ public class LoginDTOResponse {
     private String token;
     private String error; // Optional, for error messages
 }
+

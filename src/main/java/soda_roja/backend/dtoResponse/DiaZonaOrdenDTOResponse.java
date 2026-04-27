@@ -2,7 +2,7 @@ package soda_roja.backend.dtoResponse;
 
 import lombok.*;
 
-import java.util.Date;
+import java.util.List;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -16,4 +16,5 @@ public class DiaZonaOrdenDTOResponse {
     private Long diaZonaId;
     private DomicilioDTOResponse domicilio;
     private Long domicilioId;
+    private List<DiaZonaOrdenDTOResponse> diaZonaOrdenes;
 }

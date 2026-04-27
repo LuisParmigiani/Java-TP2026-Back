@@ -1,6 +1,7 @@
 package soda_roja.backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
@@ -32,5 +34,10 @@ public class DiaZona {
     @JoinColumn(name = "zona_id", nullable = false)
     @JsonBackReference
     private Zona zona;
+
+    @OneToMany(mappedBy = "diaZona", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @Builder.Default
+    private List<DiaZonaOrden> diaZonaOrdenes = new ArrayList<>();
 
 }
