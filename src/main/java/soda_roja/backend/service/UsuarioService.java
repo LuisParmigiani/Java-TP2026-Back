@@ -1,12 +1,14 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
+import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.model.Persona;
 import soda_roja.backend.model.Usuario;
 import soda_roja.backend.repository.PersonaRepository;
@@ -26,6 +28,11 @@ public class UsuarioService {
     
     @Autowired
     private PersonaService personaService;
+    
+    @Autowired
+    private VentaService ventaService;
+    
+    
     @Autowired
     private MapToDTO mapToDTOMapper;
     
@@ -36,10 +43,17 @@ public class UsuarioService {
         return repository.findAll().stream().map(u -> mapToDTO(u, populate)).toList();
     }
 
-    public UsuarioDTOResponse getById(Long id,String[] populate) {
-        return repository.findById(id)
-                .map(u -> mapToDTO(u, populate))
+    public UsuarioDTOResponse getById(Long id, String[] populate) {
+        Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
+        
+        UsuarioDTOResponse responseDTO = mapToDTO(usuario, populate);
+        
+        // Calcular y asignar el precio del último pedido semanal
+        double precioUltPedido = calcularPrecioUltimoPedido(usuario);
+        responseDTO.setPrecioUltPedidoSem(precioUltPedido);
+        
+        return responseDTO;
     }
 
     public Usuario getByEmail(String email,String[] populate) {
@@ -109,5 +123,23 @@ public class UsuarioService {
 
     private UsuarioDTOResponse mapToDTO(Usuario usuario, String[] populate) {
         return mapToDTOMapper.mapToDTO(usuario, populate);
+    }
+    
+    private double calcularPrecioUltimoPedido(Usuario usuario) {
+        // Obtenemos la primera página con tamaño 1, ordenado por los más recientes
+        Page<VentaDTOResponse> ultimaVentaPage = ventaService.getByUserId(
+                usuario.getId(), 
+                new String[]{}, 
+                "Mas Recientes", 
+                null, 
+                0, 
+                1
+        );
+
+        if (ultimaVentaPage.hasContent()) {
+            return ultimaVentaPage.getContent().get(0).getTotal();
+        }
+
+        return 0.0;
     }
 }

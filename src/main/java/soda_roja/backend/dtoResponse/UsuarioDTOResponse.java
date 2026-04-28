@@ -19,4 +19,5 @@ public class UsuarioDTOResponse {
     private List<CargaDTOResponse> cargas;
     private List<Long> cargaIds;
     private Long personaId;
+    private double precioUltPedidoSem;
 }
