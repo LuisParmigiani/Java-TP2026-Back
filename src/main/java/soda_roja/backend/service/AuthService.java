@@ -1,12 +1,22 @@
 package soda_roja.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import soda_roja.backend.dtoRequest.LoginDTORequest;
 import soda_roja.backend.dtoRequest.PersonaDTORequest;
@@ -16,6 +26,7 @@ import soda_roja.backend.dtoResponse.LoginDTOResponse;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.RegisterDTOResponse;
 import soda_roja.backend.model.Usuario;
+import soda_roja.backend.repository.UsuarioRepository;
 import soda_roja.backend.token.JwtService;
 
 @Service
@@ -25,7 +36,32 @@ public class AuthService {
     private final UsuarioService usuarioService;
     private final JwtService jwtService;
     private final PersonaService personaService;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    // token -> {email, expiracion}
+    private final Map<String, TokenResetData> tokensReset = new ConcurrentHashMap<>();
+    @Autowired
+    private MailService mailService;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    
+    // Clase interna para los datos del token
+    @Data
+    @AllArgsConstructor
+    @Builder
+    private static class TokenResetData {
+        private final String email;
+        private final LocalDateTime expiracion;
 
+        public boolean estaExpirado() {
+            return LocalDateTime.now().isAfter(expiracion);
+        }
+    }
+    
     public LoginDTOResponse login(LoginDTORequest request) {
         Usuario usuario = usuarioService.getByEmail(request.getEmail(),null);
 
@@ -91,4 +127,45 @@ public class AuthService {
 		}
 		return false;
 	}
+    
+    // Parte de Password Reset
+    
+    public void solicitarResetPassword(String email) {
+        usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email no encontrado"));
+
+        String token = UUID.randomUUID().toString();
+        tokensReset.put(token, new TokenResetData(email, LocalDateTime.now().plusMinutes(30)));
+
+        String link = "Tu token es: <b>" + token + "</b>";
+        mailService.enviarMail(email, "Restablecer contraseña", 
+                "<p>Ingresá este token en nuestra app</p><p>" + link + "</p>"
+                + "<p><b>Expira en 30 minutos.</b></p>");
+    }
+    
+    public void verificarResetToken(String token) {
+        TokenResetData data = tokensReset.get(token);
+        if (data == null || data.estaExpirado()) {
+            tokensReset.remove(token);
+            throw new RuntimeException("Token inválido o expirado");
+        }
+    }
+
+    public void resetearPassword(String token, String nuevaPassword) {
+        TokenResetData data = tokensReset.get(token);
+        if (data == null || data.estaExpirado()) {
+            tokensReset.remove(token);
+            throw new RuntimeException("Token inválido o expirado");
+        }
+
+        Usuario usuario = usuarioRepository.findByEmail(data.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.setContrasena(passwordEncoder.encode(nuevaPassword));
+        usuarioRepository.save(usuario);
+
+        tokensReset.remove(token); // token de un solo uso
+    }
+
+    
 }

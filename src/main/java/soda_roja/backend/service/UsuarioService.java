@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
@@ -73,7 +74,8 @@ public class UsuarioService {
                 .build();
         return mapToDTO(repository.save(usuario), populate);
     }
-
+    
+    @Transactional
     public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad,String[] populate) {
         Usuario existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
