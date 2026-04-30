@@ -267,8 +267,8 @@ public class DataSeeder implements CommandLineRunner {
 	                domicilio.setProductoDomicilio(new ArrayList<>());
 	                domicilio.setDiasDomicilio(new ArrayList<>());
 	                domicilio.setPersona(persona);
-					domicilio.setHabilitado(faker.number().numberBetween(0, 2) );
-	                domicilio.setActivo(faker.bool().bool());
+					domicilio.setHabilitado(faker.options().option("Habilitada", "Pendiente","Deshabilitada"));
+	                domicilio.setActivo(faker.options().option("Desactiva", "Activa"));
 	                domicilios.add(domicilio);
 	            }
 	        } else {
@@ -276,13 +276,14 @@ public class DataSeeder implements CommandLineRunner {
 	            Zona zona = zonas.get(faker.number().numberBetween(0, zonas.size()));
 	            domicilio.setCalle(faker.address().streetName());
 	            domicilio.setNumero(String.valueOf(faker.number().numberBetween(1, 1000)));
-				domicilio.setHabilitado(1); // Habilitado por defecto para empleados
-	            domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
+				domicilio.setHabilitado("Habilitada");
+
+				domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
 	            domicilio.setZona(zona);
 	            domicilio.setProductoDomicilio(new ArrayList<>());
 	            domicilio.setDiasDomicilio(new ArrayList<>());
 	            domicilio.setPersona(persona);
-	            domicilio.setActivo(Boolean.TRUE);
+	            domicilio.setActivo("Activa");
 	            domicilios.add(domicilio);
 	        }
 	    });

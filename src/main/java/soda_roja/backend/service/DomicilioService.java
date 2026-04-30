@@ -62,17 +62,6 @@ public class DomicilioService {
                     .map(d -> mapToDTO(d, populate));
         }
 
-        if (activo != null && !activo.isBlank()) {
-            if (activo.equalsIgnoreCase("true") || activo.equalsIgnoreCase("false")) {
-                activeBoolean = Boolean.parseBoolean(activo);
-            } else {
-                if (activo.equalsIgnoreCase("Activas")) {
-                    activeBoolean = true;
-                } else if (activo.equals("Inactivas")) {
-                    activeBoolean = false;
-                }
-            }
-        }
 
         Sort sort = Sort.unsorted();
         if (orderBy != null && !orderBy.isBlank()) {
@@ -88,7 +77,7 @@ public class DomicilioService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         DomicilioSpecification.DomicilioFiltrosDTO filtros =
-                new DomicilioSpecification.DomicilioFiltrosDTO(id, activeBoolean, dias, habilitado, nameSearch);
+                new DomicilioSpecification.DomicilioFiltrosDTO(id, activo, dias, habilitado, nameSearch);
 
         return repository.findAll(DomicilioSpecification.filtrar(filtros), pageable)
                 .map(d -> mapToDTO(d, populate));
@@ -98,13 +87,19 @@ public class DomicilioService {
         UsuarioDTOResponse usuario = usuarioService.getById(Long.parseLong(userId), new String[]{"persona"});
         Zona zona = findZonaOrThrow(dto.getZonaId());
         Persona persona = findPersonaOrThrow(usuario.getPersona().getId());
+        for(int i =0 ;i<persona.getDomicilios().size();i++){
+            if(persona.getDomicilios().get(i).getCalle().equalsIgnoreCase(dto.getCalle()) && persona.getDomicilios().get(i).getNumero().equalsIgnoreCase(dto.getNumero()) && persona.getDomicilios().get(i).getCasa().equalsIgnoreCase(dto.getCasa()) ){
+                throw new RuntimeException("El usuario ya tiene un domicilio con esa descripcion por cualquier consulta contactarse con el servicio.");
+            }
+        }
+
         Domicilio domicilio = Domicilio.builder()
                 .calle(dto.getCalle())
                 .numero(dto.getNumero())
                 .casa(dto.getCasa())
-                .habilitado(0)
+                .habilitado("Pendiente")
                 .zona(zona)
-                .activo(false)
+                .activo("Desactivado")
                 .persona(persona)
                 .build();
 

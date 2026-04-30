@@ -16,14 +16,14 @@ public class DomicilioDTOResponse {
     private Long id;
     private String calle;
     private String numero;
-    private Integer habilitado; // 0: Pendiente, 1: Habilitado, 2: Deshabilitado
+    private String habilitado; // 0: Pendiente, 1: Habilitado, 2: Deshabilitado
     private String casa; // es el número de la casa o del departamento dentro de un conjunto de hogares
     private ZonaDTOResponse zona;
     private List<VentaDTOResponse> ventas;
     private List<ProductoDomicilioDTOResponse> productosDomicilio;
     private CamionDTOResponse camion;
     private PersonaDTOResponse persona;
-    private Boolean activo;
+    private String activo;
     private List<PedidoSemanalDTOResponse> pedidosSemanales;
     private Long zonaId;
     private Long personaId;

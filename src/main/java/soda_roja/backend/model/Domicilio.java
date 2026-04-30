@@ -58,12 +58,12 @@ public class Domicilio {
     private List<ProductoDomicilio> productoDomicilio = new ArrayList<>();
 
     @Column(name = "activo")
-    private Boolean activo;
+    private String activo;
 
     @OneToMany(mappedBy = "domicilio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<PedidoSemanal> pedidosSemanal;
 
     @Column(name = "habilitado")
-    private Integer habilitado;
+    private String habilitado;
 }

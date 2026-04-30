@@ -12,7 +12,7 @@ public class DomicilioSpecification {
     // DTO interno de filtros para la Specification
     public record DomicilioFiltrosDTO(
             Long usuarioId,
-            Boolean activo,
+            String activo,
             Integer diaIndex,
             String habilitado,
             String   nameSearch
@@ -26,18 +26,25 @@ public class DomicilioSpecification {
                 predicates.add(cb.equal(root.get("persona").get("usuario").get("id"), filtro.usuarioId()));
             }
             if (filtro.activo() != null) {
-                predicates.add(cb.equal(root.get("activo"), filtro.activo()));
+                if (filtro.activo().equals("Mostrar Todas") || filtro.activo().isBlank()) {
+                    // No agregar Predicate para mostrar todas las opciones
+                } else {
+                    if (filtro.activo().equalsIgnoreCase("Activas")) {
+                        predicates.add(cb.equal(root.get("activo"), "Activa"));
+                    } else {
+                        predicates.add(cb.equal(root.get("activo"), "Desactiva"));
+
+                    }
+                }
             }
 
-            if (filtro.diaIndex() != null) {
-                // Por ahora NO se agrega Predicate para evitar errores de runtime.
-            }
+
             if (filtro.habilitado() != null) {
                 switch (filtro.habilitado()) {
-                    case "Todos" -> predicates.add(cb.notEqual(root.get("habilitado"), 2)); // Mostrar todos excepto Deshabilitados
-                    case "Habilitados" -> predicates.add(cb.equal(root.get("habilitado"), 1));
-                    case "Pendientes de aprobacion" -> predicates.add(cb.equal(root.get("habilitado"), 0));
-                    case "Rechazados" -> predicates.add(cb.equal(root.get("habilitado"), 2));
+                    case "Todos" -> predicates.add(cb.notEqual(root.get("habilitado"), "Deshabilitada")); // Mostrar todos excepto Deshabilitados
+                    case "Habilitados" -> predicates.add(cb.equal(root.get("habilitado"), "Habilitada"));
+                    case "Pendientes de aprobacion" -> predicates.add(cb.equal(root.get("habilitado"), "Pendiente"));
+                    case "Rechazados" -> predicates.add(cb.equal(root.get("habilitado"), "Deshabilitada"));
                 }
             }else {
                 predicates.add(cb.notEqual(root.get("habilitado"), 2));
