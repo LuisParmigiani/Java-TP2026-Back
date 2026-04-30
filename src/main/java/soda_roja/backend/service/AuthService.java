@@ -3,7 +3,7 @@ package soda_roja.backend.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,13 +134,19 @@ public class AuthService {
         usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email no encontrado"));
 
-        String token = UUID.randomUUID().toString();
+        // Remove any existing token for this email
+        tokensReset.entrySet().removeIf(entry -> entry.getValue().getEmail().equals(email));
+
+        // Generate a 6-digit numeric token
+        Random random = new Random();
+        String token = String.format("%06d", random.nextInt(1000000));
+ 
         tokensReset.put(token, new TokenResetData(email, LocalDateTime.now().plusMinutes(30)));
 
         String link = "Tu token es: <b>" + token + "</b>";
-        mailService.enviarMail(email, "Restablecer contraseña", 
-                "<p>Ingresá este token en nuestra app</p><p>" + link + "</p>"
-                + "<p><b>Expira en 30 minutos.</b></p>");
+        mailService.enviarMail(email, "Pedido de reestablecimiento de contraseña", 
+                "<p>Para reestablecer tu contraseña, por favor, ingresa el token que te enviamos en nuestra app.</p><p>" + link + "</p>"
+                + "<p><b>Expira en 30 minutos.</b></p>" + "</br> <p>Si no solicitaste este cambio, contactate con nosotros a través de los medios presentes aquí debajo:</p>");
     }
     
     public void verificarResetToken(String token) {
