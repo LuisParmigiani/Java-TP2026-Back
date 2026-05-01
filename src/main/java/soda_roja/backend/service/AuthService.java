@@ -114,6 +114,11 @@ public class AuthService {
 				 .build();
 		usuarioService.save(nuevoUsuario, null);
 		
+		mailService.enviarMail(request.getEmail(),"Registro exitoso de tu nueva cuenta", 
+                "<h1>Bienvenido a Soda Roja!</h1></br>"
+                + "<p>El registro de tu cuenta con este mail y nombre de usuario: <b>"+request.getUsuario_nombre()+"</b> ha sido exitoso</p>" +
+                		"</br> <p>Si no solicitaste el registro de esta cuenta, contactate con nosotros a través de los medios presentes aquí debajo:</p>");
+		
 		return new RegisterDTOResponse(true, null);
     } catch (Exception e) {
         return new RegisterDTOResponse(false, e.getMessage());
@@ -145,7 +150,7 @@ public class AuthService {
 
         String link = "Tu token es: <b>" + token + "</b>";
         mailService.enviarMail(email, "Pedido de reestablecimiento de contraseña", 
-                "<p>Para reestablecer tu contraseña, por favor, ingresa el token que te enviamos en nuestra app.</p><p>" + link + "</p>"
+                "<h1>Reestablecer tu contraseña</h1></br>"+"<p>Para reestablecer tu contraseña, por favor, ingresa el token que te enviamos en nuestra app.</p><p>" + link + "</p>"
                 + "<p><b>Expira en 30 minutos.</b></p>" + "</br> <p>Si no solicitaste este cambio, contactate con nosotros a través de los medios presentes aquí debajo:</p>");
     }
     
@@ -171,6 +176,10 @@ public class AuthService {
         usuarioRepository.save(usuario);
 
         tokensReset.remove(token); // token de un solo uso
+        
+        mailService.enviarMail(usuario.getEmail(), "Cambio de credenciales de acceso", 
+                "<h1>Reestablecimiento exitoso de contraseña</h1></br>"+"<p>Hemos actualizado la clave de acceso a tu cuenta por la nueva contraseña que nos proporcionaste</p>"
+                +"</br> <p>Si no solicitaste este cambio, contactate con nosotros a través de los medios presentes aquí debajo:</p>");
     }
 
     
