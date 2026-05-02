@@ -36,4 +36,13 @@ public class CloudinaryService {
         
         return (String) uploadResult.get("secure_url");
     }
+    
+    public boolean deleteImage(String publicId) throws Exception {
+        Map result = cloudinary.uploader().destroy(
+            publicId,
+            ObjectUtils.asMap("resource_type", "image")
+        );
+        return "ok".equals(result.get("result"));
+    }
+
 }

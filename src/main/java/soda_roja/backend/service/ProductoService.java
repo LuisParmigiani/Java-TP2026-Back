@@ -143,6 +143,23 @@ public class ProductoService {
     public void delete(Long id) {
         Producto producto = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
+
+        // Delete image from Cloudinary if exists
+        String imagenUrl = producto.getImagenUrl();
+        if (imagenUrl != null && !imagenUrl.isEmpty()) {
+            try {
+                // Extract publicId from the URL (adjust extraction as needed)
+            	String publicId = imagenUrl.substring(
+            		    imagenUrl.indexOf("/", imagenUrl.indexOf("/upload/") + 8) + 1, 
+            		    imagenUrl.lastIndexOf(".")
+            		);
+                cloudinaryService.deleteImage(publicId);
+            } catch (Exception e) {
+                // Log or handle the error as needed
+                throw new RuntimeException("Error deleting image: " + e.getMessage());
+            }
+        }
+
         repository.delete(producto);
     }
 
