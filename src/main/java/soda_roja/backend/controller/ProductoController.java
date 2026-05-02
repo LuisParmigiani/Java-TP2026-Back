@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
 import soda_roja.backend.service.ProductoService;
 import soda_roja.backend.dtoRequest.ProductoDTORequest;
@@ -63,19 +65,21 @@ public class ProductoController {
 
         return ResponseEntity.ok(service.getActive(null, sort, search, minPrice, maxPrice,direction, populate,page,size));
     }
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<ProductoDTOResponse> create(
-            @Valid @RequestBody ProductoDTORequest entidad,
+            @Valid @RequestPart("entidad") ProductoDTORequest entidad,
+            @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, populate));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, file, populate));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductoDTOResponse> update(
             @PathVariable Long id,
-            @Valid @RequestBody ProductoDTORequestPut entidad,
+            @Valid @RequestPart("entidad") ProductoDTORequestPut entidad,
+            @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.update(id, entidad, populate));
+        return ResponseEntity.ok(service.update(id, entidad, file, populate));
     }
 
     @DeleteMapping("/{id}")
