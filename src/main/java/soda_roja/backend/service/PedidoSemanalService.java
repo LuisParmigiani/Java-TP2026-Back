@@ -38,6 +38,15 @@ public class PedidoSemanalService {
                 .map(p -> mapToDTO(p, populate))
                 .orElseThrow(() -> new EntityNotFoundException("PedidoSemanal no encontrado con id: " + id));
     }
+    
+    public Double getTotalMontoByPersona(Long usuarioId) {
+        List<PedidoSemanal> pedidos = repository.findByDomicilioPersonaUsuarioId(usuarioId);
+        return pedidos.stream()
+                .filter(p -> p.getCantidad() > 0)
+                .mapToDouble(p -> p.getProductoZona().getProducto().getPrecio() * p.getCantidad())
+                .sum();
+    }
+
 
     public PedidoSemanalDTOResponse save(PedidoSemanalDTORequest entidad,String[] populate) {
         Domicilio domicilio = domicilioRepository.findById(entidad.getDomicilioId())

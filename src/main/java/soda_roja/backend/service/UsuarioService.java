@@ -33,6 +33,9 @@ public class UsuarioService {
     @Autowired
     private VentaService ventaService;
     
+    @Autowired
+    private PedidoSemanalService pedidoSemanalService;
+    
     
     @Autowired
     private MapToDTO mapToDTOMapper;
@@ -51,8 +54,8 @@ public class UsuarioService {
         UsuarioDTOResponse responseDTO = mapToDTO(usuario, populate);
         
         // Calcular y asignar el precio del último pedido semanal
-        double precioUltPedido = calcularPrecioUltimoPedido(usuario);
-        responseDTO.setPrecioUltPedidoSem(precioUltPedido);
+        double precioPedidosSemanales = pedidoSemanalService.getTotalMontoByPersona(usuario.getId());
+        responseDTO.setPrecioPedidosSemanales(precioPedidosSemanales);
         
         return responseDTO;
     }
@@ -126,22 +129,5 @@ public class UsuarioService {
     private UsuarioDTOResponse mapToDTO(Usuario usuario, String[] populate) {
         return mapToDTOMapper.mapToDTO(usuario, populate);
     }
-    
-    private double calcularPrecioUltimoPedido(Usuario usuario) {
-        // Obtenemos la primera página con tamaño 1, ordenado por los más recientes
-        Page<VentaDTOResponse> ultimaVentaPage = ventaService.getByUserId(
-                usuario.getId(), 
-                new String[]{}, 
-                "Mas Recientes", 
-                null, 
-                0, 
-                1
-        );
 
-        if (ultimaVentaPage.hasContent()) {
-            return ultimaVentaPage.getContent().get(0).getTotal();
-        }
-
-        return 0.0;
-    }
 }
