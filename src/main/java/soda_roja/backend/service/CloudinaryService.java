@@ -16,7 +16,7 @@ public class CloudinaryService {
     @Autowired
     private ProcesamientoDeImagen procesadorImagen;
 
-    public String uploadImage(MultipartFile file, Long productoId) throws Exception {
+    public String uploadImage(MultipartFile file, String entidad,Long entidadId) throws Exception {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("El archivo está vacío");
         }
@@ -27,13 +27,22 @@ public class CloudinaryService {
         }
 
         byte[] processedImageBytes = procesadorImagen.processImage(file, 1200, 1200, 0.85f);
-        String fileName = "producto" + productoId;
+        String fileName = entidad + entidadId;
 
         Map uploadResult = cloudinary.uploader().upload(
             processedImageBytes,
-            ObjectUtils.asMap("folder", "productos","public_id", fileName, "overwrite", true, "resource_type", "image")
+            ObjectUtils.asMap("folder", entidad+"s","public_id", fileName, "overwrite", true, "resource_type", "image")
         );
         
         return (String) uploadResult.get("secure_url");
     }
+    
+    public boolean deleteImage(String publicId) throws Exception {
+        Map result = cloudinary.uploader().destroy(
+            publicId,
+            ObjectUtils.asMap("resource_type", "image")
+        );
+        return "ok".equals(result.get("result"));
+    }
+
 }

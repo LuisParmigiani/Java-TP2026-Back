@@ -14,9 +14,10 @@ public class UsuarioDTOResponse {
     private Long id;
     private String nombreUsuario;
     private String nivelAcceso;
+    private String imagenUrl;
     private String email;
     private PersonaDTOResponse persona;
     private List<CargaDTOResponse> cargas;
     private Long personaId;
-    private double precioUltPedidoSem;
+    private double precioPedidosSemanales;
 }

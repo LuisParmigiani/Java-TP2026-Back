@@ -1,14 +1,14 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
-import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
-import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.model.Persona;
 import soda_roja.backend.model.Usuario;
 import soda_roja.backend.repository.PersonaRepository;
@@ -32,6 +32,12 @@ public class UsuarioService {
     @Autowired
     private VentaService ventaService;
     
+    @Autowired
+    private PedidoSemanalService pedidoSemanalService;
+    
+    @Autowired
+    private CloudinaryService cloudinaryService;
+    
     
     @Autowired
     private MapToDTO mapToDTOMapper;
@@ -50,8 +56,8 @@ public class UsuarioService {
         UsuarioDTOResponse responseDTO = mapToDTO(usuario, populate);
         
         // Calcular y asignar el precio del último pedido semanal
-        double precioUltPedido = calcularPrecioUltimoPedido(usuario);
-        responseDTO.setPrecioUltPedidoSem(precioUltPedido);
+        double precioPedidosSemanales = pedidoSemanalService.getTotalMontoByPersona(usuario.getId());
+        responseDTO.setPrecioPedidosSemanales(precioPedidosSemanales);
         
         return responseDTO;
     }
@@ -73,8 +79,9 @@ public class UsuarioService {
                 .build();
         return mapToDTO(repository.save(usuario), populate);
     }
-
-    public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad,String[] populate) {
+    
+    @Transactional
+    public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad, MultipartFile file, String[] populate) {
         Usuario existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
 
@@ -82,7 +89,6 @@ public class UsuarioService {
             Persona persona = findPersonaOrThrow(entidad.getPersonaId());
             existing.setPersona(persona);
         }
-
         if(entidad.getNombreUsuario() != null) {
             existing.setNombreUsuario(entidad.getNombreUsuario());
         }
@@ -94,13 +100,18 @@ public class UsuarioService {
         }
         if(entidad.getEmail() != null) {
             existing.setEmail(entidad.getEmail());
-            // Sincronizar email con la persona asociada
             if(existing.getPersona() != null) {
                 existing.getPersona().setEmail(entidad.getEmail());
             }
         }
-        if((entidad.getPersona() != null && existing.getPersona() != null ) || (existing.getPersona() == null && entidad.getPersona() != null)) {
-            PersonaDTOResponse updatedPersona = personaService.update(existing.getPersona().getId(), entidad.getPersona(), new String[]{});;
+
+        if (file != null && !file.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(file, "usuario",existing.getId());
+                existing.setImagenUrl(imageUrl);
+            } catch (Exception e) {
+                throw new RuntimeException("Error uploading image: " + e.getMessage());
+            }
         }
 
         return mapToDTO(repository.save(existing), populate);
@@ -109,6 +120,20 @@ public class UsuarioService {
     public void delete(Long id) {
         Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
+
+        String imagenUrl = usuario.getImagenUrl();
+        if (imagenUrl != null && !imagenUrl.isEmpty()) {
+            try {
+                String publicId = imagenUrl.substring(
+                    imagenUrl.indexOf("/", imagenUrl.indexOf("/upload/") + 8) + 1,
+                    imagenUrl.lastIndexOf(".")
+                );
+                cloudinaryService.deleteImage(publicId);
+            } catch (Exception e) {
+                throw new RuntimeException("Error deleting image: " + e.getMessage());
+            }
+        }
+
         repository.delete(usuario);
     }
 
@@ -124,22 +149,5 @@ public class UsuarioService {
     private UsuarioDTOResponse mapToDTO(Usuario usuario, String[] populate) {
         return mapToDTOMapper.mapToDTO(usuario, populate);
     }
-    
-    private double calcularPrecioUltimoPedido(Usuario usuario) {
-        // Obtenemos la primera página con tamaño 1, ordenado por los más recientes
-        Page<VentaDTOResponse> ultimaVentaPage = ventaService.getByUserId(
-                usuario.getId(), 
-                new String[]{}, 
-                "Mas Recientes", 
-                null, 
-                0, 
-                1
-        );
 
-        if (ultimaVentaPage.hasContent()) {
-            return ultimaVentaPage.getContent().get(0).getTotal();
-        }
-
-        return 0.0;
-    }
 }

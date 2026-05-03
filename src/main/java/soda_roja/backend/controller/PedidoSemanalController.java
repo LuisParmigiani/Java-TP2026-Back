@@ -4,6 +4,7 @@ import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequestPut.PedidoSemanalDTORequestPut;
@@ -35,6 +36,7 @@ public class PedidoSemanalController {
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getById(id,populate));
     }
+
 
 
     @PostMapping

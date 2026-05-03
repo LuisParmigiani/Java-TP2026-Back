@@ -7,4 +7,9 @@ import java.util.List;
 
 public interface PedidoSemanalRepository extends JpaRepository<PedidoSemanal, Long>, JpaSpecificationExecutor<PedidoSemanal> {
     List<PedidoSemanal> findAllByDomicilioId(Long domicilioId);
+    
+ // Nuevo: buscar pedidos por usuarioId (persona.usuario.id)
+    List<PedidoSemanal> findByDomicilioPersonaUsuarioId(Long usuarioId);
+
 }
+
