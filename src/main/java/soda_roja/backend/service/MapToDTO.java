@@ -64,7 +64,8 @@ public class MapToDTO {
 	public UsuarioDTOResponse mapToDTO(Usuario usuario, String[] populate) {
 		UsuarioDTOResponse.UsuarioDTOResponseBuilder builder = UsuarioDTOResponse.builder().id(usuario.getId())
 				.nombreUsuario(usuario.getNombreUsuario()).email(usuario.getEmail())
-				.nivelAcceso(usuario.getNivelAcceso());
+				.nivelAcceso(usuario.getNivelAcceso())
+				.imagenUrl(usuario.getImagenUrl());
 		if (populate != null && List.of(populate).contains("persona")) {
 			builder.persona(this.mapToDTO(usuario.getPersona(), removeFromPopulate(populate, "persona")));
 		} else {

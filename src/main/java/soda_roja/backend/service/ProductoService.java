@@ -104,7 +104,7 @@ public class ProductoService {
 
         if (file != null && !file.isEmpty()) {
             try {
-                String imageUrl = cloudinaryService.uploadImage(file, producto.getId());
+                String imageUrl = cloudinaryService.uploadImage(file, "producto",producto.getId());
                 producto.setImagenUrl(imageUrl);
                 producto = repository.save(producto);
             } catch (Exception e) {
@@ -127,7 +127,7 @@ public class ProductoService {
 
         if (file != null && !file.isEmpty()) {
             try {
-                String imageUrl = cloudinaryService.uploadImage(file, existing.getId());
+                String imageUrl = cloudinaryService.uploadImage(file, "producto" ,existing.getId());
                 existing.setImagenUrl(imageUrl);
             } catch (Exception e) {
                 throw new RuntimeException("Error uploading image: " + e.getMessage());

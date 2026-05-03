@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
@@ -41,14 +43,13 @@ public class UsuarioController {
         return ResponseEntity.ok((usuario));
     }
 
-    @PutMapping("/updatePersona")
-    public ResponseEntity<?> updatePersona(
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<UsuarioDTOResponse> update(
             @AuthenticationPrincipal String userId,
-            @Valid @RequestBody UsuarioDTORequestPut entidad,
+            @Valid @RequestPart("entidad") UsuarioDTORequestPut entidad,
+            @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestParam(required = false) String[] populate) {
-        System.out.println("Entidad: " + entidad);
-        UsuarioDTOResponse updatedUsuario = service.update(Long.parseLong(userId), entidad, populate);
-        return ResponseEntity.ok(updatedUsuario);
+        return ResponseEntity.ok(service.update(Long.parseLong(userId), entidad, file, populate));
     }
 
     @GetMapping("/{id}")
@@ -66,14 +67,14 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, populate));
     }
 
-
-    @PutMapping("/{id}")
+    //lo comenté porque necesitaba refactorizarlo y al pedo porque no se usa
+    /*@PutMapping("/{id}")
     public ResponseEntity<UsuarioDTOResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody UsuarioDTORequestPut entidad,
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.update(id, entidad, populate));
-    }
+    }*/
 
 
     @DeleteMapping("/{id}")
