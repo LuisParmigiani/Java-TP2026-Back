@@ -179,7 +179,7 @@ public class MapToDTO {
 		PersonaDTOResponse.PersonaDTOResponseBuilder builder = PersonaDTOResponse.builder().id(persona.getId())
 				.tipoDoc(persona.getTipoDoc()).nroDocumento(persona.getNroDocumento()).nombre(persona.getNombre())
 				.apellido(persona.getApellido()).email(persona.getEmail()).telefono(persona.getTelefono())
-				.saldo(persona.getSaldo());
+				.saldo(persona.getSaldo()).estado(persona.getEstado());
 		if (populate != null && List.of(populate).contains("usuario")) {
 			builder.usuario(persona.getUsuario() != null
 					? this.mapToDTO(persona.getUsuario(), removeFromPopulate(populate, "usuario"))

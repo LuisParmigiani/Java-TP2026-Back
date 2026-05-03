@@ -24,4 +24,5 @@ public class PersonaDTOResponse {
     private List<DomicilioDTOResponse> domicilios;
     private UsuarioDTOResponse usuario;
     private Long usuarioId;
+    private String estado;
 }

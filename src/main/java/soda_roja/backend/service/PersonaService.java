@@ -27,6 +27,13 @@ public class PersonaService {
     public List<PersonaDTOResponse> getAll(String[] populate) {
         return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
     }
+    public List<PersonaDTOResponse> getByName(String query, String[] populate) {
+		return repository.findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(query, query)
+				.stream()
+				.map(p -> mapToDTO(p, populate))
+				.toList();
+	}
+    
 
     public PersonaDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
@@ -45,6 +52,7 @@ public class PersonaService {
                 .email(entidad.getEmail())
                 .telefono(entidad.getTelefono())
                 .saldo(entidad.getSaldo())
+                .estado(entidad.getEstado()!= null ? entidad.getEstado() : "Pendiente") // Si no se proporciona estado, se asigna "Pendiente"
                 .build();
 
         return mapToDTO(repository.save(persona), populate);
@@ -79,6 +87,9 @@ public class PersonaService {
         if(entidad.getSaldo() != null) {
             existing.setSaldo(entidad.getSaldo());
         }
+        if(entidad.getEstado() != null) {
+			existing.setEstado(entidad.getEstado());
+		}
 
         return mapToDTO(repository.save(existing), populate);
     }
@@ -88,6 +99,12 @@ public class PersonaService {
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
         repository.delete(persona);
     }
+    public void logicDelete(Long id) {
+		Persona persona = repository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
+		persona.setEstado("Deshabilitado");
+		repository.save(persona);
+	}
 
     private Domicilio findDomicilioOrThrow(Long id) {
         return domicilioRepository.findById(id)
