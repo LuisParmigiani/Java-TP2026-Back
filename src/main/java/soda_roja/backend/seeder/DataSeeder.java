@@ -181,6 +181,7 @@ public class DataSeeder implements CommandLineRunner {
 			String email = faker.internet().emailAddress() + i;
 			persona.setEmail(email);
 			persona.setSaldo(faker.number().numberBetween(-2000, 100000));
+			persona.setEstado(faker.options().option("Habilitado", "Deshabilitado", "Pendiente"));
 			persona.setDomicilios(new ArrayList<>());
 			personasList.add(persona);
 
@@ -223,6 +224,7 @@ public class DataSeeder implements CommandLineRunner {
 		String adminEmail = "admin@sodaroja.com";
 		adminPersona.setEmail(adminEmail);
 		adminPersona.setSaldo(0);
+		adminPersona.setEstado("Habilitado");
 		adminPersona.setDomicilios(new ArrayList<>());
 		personasList.add(adminPersona);
 

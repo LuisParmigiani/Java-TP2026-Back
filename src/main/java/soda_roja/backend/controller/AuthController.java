@@ -29,6 +29,7 @@ public class AuthController {
     public ResponseEntity<LoginDTOResponse> login(@RequestBody LoginDTORequest request) {
         try {
             LoginDTOResponse response = authService.login(request);
+            
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
            return ResponseEntity.status(401)

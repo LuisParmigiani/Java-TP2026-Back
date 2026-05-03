@@ -24,7 +24,13 @@ public class PersonaController {
         return ResponseEntity.ok(service.getAll(populate));
     }
 
-
+    @GetMapping("/search/{query}")
+    public ResponseEntity<List<PersonaDTOResponse>> getByName(
+    					@PathVariable String query,
+    					@RequestParam(required = false) String[] populate) {
+    			return ResponseEntity.ok(service.getByName(query, populate));
+    			
+    }
     @GetMapping("/{id}")
     public ResponseEntity<PersonaDTOResponse> getById(
             @PathVariable Long id,
@@ -41,7 +47,7 @@ public class PersonaController {
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
     }
-
+    
 
     @PutMapping("/{id}")
     public ResponseEntity<PersonaDTOResponse> update(
@@ -59,4 +65,11 @@ public class PersonaController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+    //BAJA LOGICAAAAAAA
+    @DeleteMapping("/{id}/disable")
+    public ResponseEntity<Void> disablePersona(@PathVariable Long id) {
+        service.logicDelete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

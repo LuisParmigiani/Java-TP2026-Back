@@ -32,7 +32,9 @@ public class AuthService {
         if (usuario == null || !usuarioService.verifyPassword(request.getContrasena(), usuario.getContrasena())) {
             throw new RuntimeException( "Credenciales inválidas");
         }
-
+        if (!usuario.getPersona().getEstado().equalsIgnoreCase("Habilitado")) {
+			throw new RuntimeException("El usuario no está habilitado");
+		}
         UserDetails userDetails = User.builder()
                 .username(usuario.getId().toString())
                 .authorities(new SimpleGrantedAuthority(usuario.getNivelAcceso()))

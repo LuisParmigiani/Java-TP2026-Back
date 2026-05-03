@@ -25,9 +25,17 @@ public class DomicilioController {
 
     @GetMapping
     public ResponseEntity<List<DomicilioDTOResponse>> getAll(
-            @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.getAll(populate));
+            @RequestParam(required = false) String[] populate)
+			{
+    	return ResponseEntity.ok(service.getAll(populate));
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<DomicilioDTOResponse>> getAllByCalleOrNumero(
+            @RequestParam String calleNumero,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAllByCalleOrNumero(populate, calleNumero));
+    }
+
 
 
     @GetMapping("/{id}")

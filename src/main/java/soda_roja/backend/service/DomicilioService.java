@@ -42,8 +42,12 @@ public class DomicilioService {
     private DiaRepository diaRepository;
 
     public List<DomicilioDTOResponse> getAll(String[] populate) {
-        return repository.findAll().stream().map(d -> mapToDTO(d, populate)).toList();
+    	return repository.findAll().stream().map(d -> mapToDTO(d, populate)).toList();
     }
+    public List<DomicilioDTOResponse> getAllByCalleOrNumero(String[] populate, String calleNumero) {
+    	return repository.findDomicilioByCalleOrNumero(calleNumero).stream().map(d -> mapToDTO(d, populate)).toList();
+    }
+    
 
     public DomicilioDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)
