@@ -181,7 +181,7 @@ public class DataSeeder implements CommandLineRunner {
 			String email = faker.internet().emailAddress() + i;
 			persona.setEmail(email);
 			persona.setSaldo(faker.number().numberBetween(-2000, 100000));
-			persona.setEstado(faker.options().option("Habilitado", "Deshabilitado", "Pendiente"));
+			persona.setEstado(faker.options().option("Habilitado", "Deshabilitado"));
 			persona.setDomicilios(new ArrayList<>());
 			personasList.add(persona);
 

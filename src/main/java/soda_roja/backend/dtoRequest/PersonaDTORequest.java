@@ -46,8 +46,8 @@ public class PersonaDTORequest {
     @Schema(example = "0.0" , description = "El saldo de la persona, que se actualiza con cada pago realizado. No puede ser negativo.")
     private float saldo;
     
-    @Pattern(regexp = "Habilitado|Deshabilitado|Pendiente", message = "El estado debe ser Habilitado, Deshabilitado o Pendiente")
-    @Schema(example = "Habilitado", description = "Estado de la persona: Habilitado, Deshabilitado o Pendiente")
+    @Pattern(regexp = "Habilitado|Deshabilitado", message = "El estado debe ser Habilitado, Deshabilitado")
+    @Schema(example = "Habilitado", description = "Estado de la persona: Habilitado, Deshabilitado")
     private String estado;
 
 

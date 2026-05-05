@@ -48,7 +48,7 @@ public class Persona {
     private float saldo;
     @Column(name = "estado", nullable = false)
     @Builder.Default
-    private String estado = "Pendiente";
+    private String estado = "Habilitado";
     @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
     @JsonIgnore
     private Usuario usuario;
