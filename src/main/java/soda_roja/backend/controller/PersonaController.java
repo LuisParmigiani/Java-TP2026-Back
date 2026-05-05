@@ -1,6 +1,14 @@
 package soda_roja.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import soda_roja.backend.model.Camion;
+import soda_roja.backend.model.Dia;
+import soda_roja.backend.model.Zona;
+import soda_roja.backend.repository.CamionRepository;
+import soda_roja.backend.repository.DiaRepository;
+import soda_roja.backend.repository.ZonaRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +17,6 @@ import soda_roja.backend.service.PersonaService;
 import soda_roja.backend.dtoRequest.PersonaDTORequest;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import jakarta.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/persona")
@@ -17,19 +24,39 @@ public class PersonaController {
 
     @Autowired
     private PersonaService service;
+    @Autowired
+    private ZonaRepository zonaRepository;
+
+    @Autowired
+    private CamionRepository camionRepository;
+
+    @Autowired
+    private DiaRepository diaRepository;
 
     @GetMapping
-    public ResponseEntity<List<PersonaDTOResponse>> getAll(
+    public ResponseEntity<Page<PersonaDTOResponse>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.getAll(populate));
+        return ResponseEntity.ok(service.getAll(page, size, populate));
     }
 
-    @GetMapping("/search/{query}")
-    public ResponseEntity<List<PersonaDTOResponse>> getByName(
-    					@PathVariable String query,
-    					@RequestParam(required = false) String[] populate) {
-    			return ResponseEntity.ok(service.getByName(query, populate));
-    			
+    @GetMapping("/search")
+    public ResponseEntity<Page<PersonaDTOResponse>> getByNameAndFiltered(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Long zonaId,
+            @RequestParam(required = false) Long camionId,
+            @RequestParam(required = false) Long diaId,
+            @RequestParam(required = false, defaultValue = "ascendente") String ordenSaldo,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String[] populate) {
+    		Zona zona = zonaId != null ? zonaRepository.findById(zonaId).orElse(null) : null;
+    	    Camion camion = camionId != null ? camionRepository.findById(camionId).orElse(null) : null;
+    	    Dia dia = diaId != null ? diaRepository.findById(diaId).orElse(null) : null;
+
+
+        return ResponseEntity.ok(service.getByNameAndFiltered(query, zona, camion, dia, ordenSaldo, page, size, populate));
     }
     @GetMapping("/{id}")
     public ResponseEntity<PersonaDTOResponse> getById(

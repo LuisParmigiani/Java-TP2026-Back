@@ -8,10 +8,18 @@ import soda_roja.backend.dtoRequestPut.PersonaDTORequestPut;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.model.Persona;
+import soda_roja.backend.model.Zona;
 import soda_roja.backend.repository.DomicilioRepository;
 import soda_roja.backend.repository.PersonaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import soda_roja.backend.model.Camion;
+import soda_roja.backend.model.Dia;
+import soda_roja.backend.specification.PersonaSpecification;
 
-import java.util.List;
+
 
 @Service
 public class PersonaService {
@@ -24,16 +32,42 @@ public class PersonaService {
     @Autowired
     private MapToDTO mapToDTOMapper;
 
-    public List<PersonaDTOResponse> getAll(String[] populate) {
-        return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
+    public Page<PersonaDTOResponse> getAll(int page, int size, String[] populate) {
+        return repository.findAll(PageRequest.of(page, size))
+            .map(p -> mapToDTO(p, populate));
     }
-    public List<PersonaDTOResponse> getByName(String query, String[] populate) {
-		return repository.findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(query, query)
-				.stream()
-				.map(p -> mapToDTO(p, populate))
-				.toList();
-	}
-    
+    public Page<PersonaDTOResponse> getByNameAndFiltered(String query, Zona zona, Camion camion, Dia dia, String ordenSaldo, int page, int size, String[] populate) {
+        Specification<Persona> spec = Specification.where(PersonaSpecification.porZona(zona))
+            .and(PersonaSpecification.porCamion(camion))
+            .and(PersonaSpecification.porDia(dia))
+            .and((root, query1, cb) -> {
+                if (query == null || query.isEmpty()) return null;
+                return cb.or(
+                    cb.like(cb.lower(root.get("nombre")), "%" + query.toLowerCase() + "%"),
+                    cb.like(cb.lower(root.get("apellido")), "%" + query.toLowerCase() + "%")
+                );
+            });
+        
+        Sort sort = "Descendente".equals(ordenSaldo) ? 
+            Sort.by(Sort.Direction.DESC, "saldo") : 
+            Sort.by(Sort.Direction.ASC, "saldo");
+        
+        return repository.findAll(spec, PageRequest.of(page, size, sort))
+            .map(p -> mapToDTO(p, populate));
+    }
+
+    public Page<Persona> getAllFiltrado(Zona zona, Camion camion, Dia dia, String ordenSaldo, int page, int size) {
+        Specification<Persona> spec = Specification.where(PersonaSpecification.porZona(zona))
+            .and(PersonaSpecification.porCamion(camion))
+            .and(PersonaSpecification.porDia(dia));
+        
+        Sort sort = "Descendente".equals(ordenSaldo) ? 
+            Sort.by(Sort.Direction.DESC, "saldo") : 
+            Sort.by(Sort.Direction.ASC, "saldo");
+        
+        return repository.findAll(spec, PageRequest.of(page, size, sort));
+    }
+ 
 
     public PersonaDTOResponse getById(Long id,String[] populate) {
         return repository.findById(id)

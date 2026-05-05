@@ -2,10 +2,12 @@ package soda_roja.backend.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
-import soda_roja.backend.model.Camion;
 import soda_roja.backend.model.Persona;
 
 @Repository
@@ -15,6 +17,13 @@ public interface PersonaRepository extends JpaRepository<Persona, Long>, JpaSpec
 	
 	// PersonaRepository.java
 	List<Persona> findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(String nombre, String apellido);
+	// Método que combina búsqueda por nombre/apellido con filtros y paginación
+	Page<Persona> findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCase(
+		String nombre, 
+		String apellido, 
+		Specification<Persona> spec, 
+		Pageable pageable
+	);
 
 
 }
