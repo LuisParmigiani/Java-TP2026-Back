@@ -27,10 +27,18 @@ public class MailService {
         
         //true para enviar html
         // Footer with blue color and italics
-        String footer = "<br><br><span style=\"color:blue; font-style:italic;\">"
-            + "Soda Roja® - Calle Principal 123, Centro<br>"
-            + "Contacto: sodaroja.java@gmail.com / +52 123 456 7890"
-            + "</span>";
+        String footer = """
+        	    <br><br>
+        	    <table width="100%" style="border-top: 1px solid #cccccc; margin-top: 20px;">
+        	        <tr>
+        	            <td style="padding-top: 12px; color: #555555; font-size: 12px; font-style: italic;">
+        	                <strong>Soda Roja®</strong><br>
+        	                Calle Principal 123, Centro<br>
+        	                sodaroja.java@gmail.com / +52 123 456 7890
+        	            </td>
+        	        </tr>
+        	    </table>
+        	    """;
         helper.setText(cuerpo + footer, true);
 
         // Marcar como importante
