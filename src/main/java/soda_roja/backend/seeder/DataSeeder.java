@@ -186,7 +186,7 @@ public class DataSeeder implements CommandLineRunner {
 			personasList.add(persona);
 
 			Usuario usuario = new Usuario();
-			usuario.setNombreUsuario(faker.name().username() + i);
+			usuario.setNombreUsuario(faker.name().username().replace(".", "_") + i);
 			usuario.setContrasena(passwordEncoder.encode("123456"));
 			usuario.setNivelAcceso("Usuario");
 			usuario.setEmail(email);
@@ -207,7 +207,7 @@ public class DataSeeder implements CommandLineRunner {
 			persona.setDomicilios(new ArrayList<>());
 			personasList.add(persona);
 			Usuario usuario = new Usuario();
-			usuario.setNombreUsuario(faker.name().username() + "emp" + i);
+			usuario.setNombreUsuario(faker.name().username().replace(".", "_") + "emp" + i);
 			usuario.setContrasena(passwordEncoder.encode("123456"));
 			usuario.setNivelAcceso("Empleado");
 			usuario.setEmail(email);
