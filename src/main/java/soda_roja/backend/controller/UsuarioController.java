@@ -10,8 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
+import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.model.Usuario;
+import soda_roja.backend.service.PersonaService;
 import soda_roja.backend.service.UsuarioService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -25,6 +27,8 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService service;
+    @Autowired
+    private PersonaService servicePersona;
 
 
     @GetMapping
@@ -43,13 +47,17 @@ public class UsuarioController {
         return ResponseEntity.ok((usuario));
     }
 
-    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/updatePersona", consumes = {"multipart/form-data"})
     public ResponseEntity<UsuarioDTOResponse> update(
             @AuthenticationPrincipal String userId,
             @Valid @RequestPart("entidad") UsuarioDTORequestPut entidad,
             @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.update(Long.parseLong(userId), entidad, file, populate));
+    	UsuarioDTOResponse usuario= service.getById(Long.parseLong(userId), new String[0]);
+    	servicePersona.update(usuario.getPersonaId(), entidad.getPersona() , new String[0]);
+    	UsuarioDTOResponse usuarioActualizado= service.update(Long.parseLong(userId), entidad, file, populate);
+    	
+    	return ResponseEntity.ok(usuarioActualizado);
     }
 
     @GetMapping("/{id}")
