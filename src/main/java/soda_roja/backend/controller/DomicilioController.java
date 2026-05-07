@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequestPut.DomicilioDTORequestPut;
 import soda_roja.backend.service.DomicilioService;
+import soda_roja.backend.dtoRequest.DiaDomicilioDTORequest;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
 import jakarta.validation.Valid;
@@ -83,6 +84,19 @@ public class DomicilioController {
             @RequestParam(required = false) String[] populate) {
 
         return ResponseEntity.ok(service.update(id, entidad,populate));
+    }
+    
+    @PutMapping("/{domicilioId}/dias")
+    public ResponseEntity<?> actualizarDiasDomicilio(
+        @PathVariable Long domicilioId,
+        @RequestBody List<DiaDomicilioDTORequest> dias) {
+    	
+        // Validar que el domicilio existe
+        // Eliminar días anteriores
+        // Crear nuevos DiaDomicilio con los nuevos días
+        // Guardar
+    			service.updateDias( dias, domicilioId);
+        return ResponseEntity.ok("Días actualizados");
     }
 
 

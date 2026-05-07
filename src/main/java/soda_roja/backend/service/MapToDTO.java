@@ -27,6 +27,14 @@ public class MapToDTO {
 									.toList()
 							: List.of());
 		} 	
+		if(populate != null && List.of(populate).contains("diasZona")) {
+			builder.diasZona(
+					zona.getDiasZona() != null
+							? zona.getDiasZona().stream()
+									.map(diaZona -> this.mapToDTO(diaZona, removeFromPopulate(populate, "diasZona")))
+									.toList()
+							: List.of());
+		}
 		if (populate != null && List.of(populate).contains("camion")) {
 			builder.camion(
 					zona.getCamion() != null ? this.mapToDTO(zona.getCamion(), removeFromPopulate(populate, "camion"))
@@ -36,6 +44,7 @@ public class MapToDTO {
 
 
 		}
+		
 		return builder.build();
 	}
 
@@ -195,7 +204,16 @@ public class MapToDTO {
 											removeFromPopulate(populate, "domicilio")))
 									.toList()
 							: List.of());
-		} 	
+		}
+		if (populate != null && List.of(populate).contains("domicilioCompleto")) {
+		    builder.domicilios(
+		            persona.getDomicilios() != null
+		                    ? persona.getDomicilios().stream()
+		                            .map(domicilio -> this.mapToDTO(domicilio,
+		                                    new String[]{"zona", "diaDomicilio","zonaCamion"}))
+		                            .toList()
+		                    : List.of());
+		}
 		if (populate != null && List.of(populate).contains("pago")) {
 			builder.pagos(
 					persona.getPagos() != null
@@ -322,6 +340,12 @@ public class MapToDTO {
 		} else {
 			builder.diasDomicilioIds(domicilio.getDiasDomicilio() != null ? domicilio.getDiasDomicilio().stream().map(diaDomicilio -> diaDomicilio.getId()).toList() : List.of());
 		}
+		if (populate != null && List.of(populate).contains("zonaCamion")) {
+		    builder.zona(domicilio.getZona() != null
+		            ? this.mapToDTO(domicilio.getZona(), new String[]{"camion"})
+		            : null);
+		}
+
 
 
 		return builder.build();
