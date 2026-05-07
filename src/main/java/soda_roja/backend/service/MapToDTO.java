@@ -40,18 +40,24 @@ public class MapToDTO {
 	}
 
 	public VentaDTOResponse mapToDTO(Venta venta, String[] populate) {
-		VentaDTOResponse.VentaDTOResponseBuilder builder = VentaDTOResponse.builder().id(venta.getId())
-				.fecha(venta.getFecha()).total(venta.getTotal()).estado(venta.getEstado())
+		VentaDTOResponse.VentaDTOResponseBuilder builder = VentaDTOResponse.builder();
+
+		if (venta.getId() != null) {
+			builder.id(venta.getId());
+		}
+
+		builder.fecha(venta.getFecha()).total(venta.getTotal()).estado(venta.getEstado())
 				.lineasPedido(
-						venta.getLineasPedido().stream().map(lineaPedido -> this.mapToDTO(lineaPedido, null)).toList());
+						venta.getLineasPedido() != null ? venta.getLineasPedido().stream().map(lineaPedido -> this.mapToDTO(lineaPedido, null)).toList() : List.of());
+
 		if (populate != null && List.of(populate).contains("domicilio")) {
 			builder.domicilio(venta.getDomicilio() != null
 					? this.mapToDTO(venta.getDomicilio(), removeFromPopulate(populate, "domicilio"))
 					: null);
-			;
-			;
 		} else {
-			builder.idDomicilio(venta.getDomicilio().getId());
+			if (venta.getDomicilio() != null) {
+				builder.idDomicilio(venta.getDomicilio().getId());
+			}
 		}
 		if (populate != null && List.of(populate).contains("lineaPedido")) {
 			builder.lineasPedido(venta.getLineasPedido() != null ? venta.getLineasPedido().stream()
@@ -423,13 +429,14 @@ public class MapToDTO {
 	    
 	    if (populate != null && List.of(populate).contains("diaZonaOrden")) {
 	        // Crear populate solo para domicilio, sin incluir zona aquí
-	        String[] diaZonaOrdenPopulate = new String[]{"domicilio"};
 	        builder.diaZonaOrdenes(diaZona.getDiaZonaOrdenes() != null
 	                ? diaZona.getDiaZonaOrdenes().stream()
-	                        .map(diaZonaOrden -> this.mapToDTO(diaZonaOrden, diaZonaOrdenPopulate))
+	                        .map(diaZonaOrden -> this.mapToDTO(diaZonaOrden, removeFromPopulate(populate, "diaZonaOrden")))
 	                        .toList()
 	                : List.of());
-	    }
+
+
+		}
 	    
 	    return builder.build();
 	}

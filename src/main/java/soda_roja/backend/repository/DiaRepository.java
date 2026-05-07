@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface DiaRepository extends JpaRepository<Dia, Long> {
     Optional<Dia> findByNombre(String nombre);
+    Optional<Dia> findByNombreIgnoreCase(String nombre);
 }

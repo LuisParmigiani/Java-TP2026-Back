@@ -13,6 +13,8 @@ import soda_roja.backend.model.Persona;
 import soda_roja.backend.model.Usuario;
 import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.UsuarioRepository;
+import soda_roja.backend.repository.CargaRepository;
+import soda_roja.backend.specification.CargaSpecification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
@@ -38,7 +40,10 @@ public class UsuarioService {
     @Autowired
     private CloudinaryService cloudinaryService;
     
-    
+    @Autowired
+    private CargaRepository cargaRepository;
+
+
     @Autowired
     private MapToDTO mapToDTOMapper;
     
@@ -77,9 +82,23 @@ public class UsuarioService {
                 .email(entidad.getEmail())
                 .persona(persona)
                 .build();
-        return mapToDTO(repository.save(usuario), populate);
+
+        Usuario usuarioGuardado = repository.save(usuario);
+
+        return  mapToDTO(usuarioGuardado, populate);
+
     }
-    
+
+    public UsuarioDTOResponse getEmpleado(Long id, String[] populate) {
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
+
+        // Cargar las cargas de hoy del usuario
+        cargarCargasDeHoy(usuario);
+
+        return mapToDTO(usuario, populate);
+    }
+
     @Transactional
     public UsuarioDTOResponse update(Long id, UsuarioDTORequestPut entidad, MultipartFile file, String[] populate) {
         Usuario existing = repository.findById(id)
@@ -142,6 +161,11 @@ public class UsuarioService {
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
     }
     
+    private void cargarCargasDeHoy(Usuario usuario) {
+        var cargas = cargaRepository.findAll(CargaSpecification.cargasDeHoyPorUsuario(usuario.getId()));
+        usuario.setCargas(cargas);
+    }
+
     public boolean verifyPassword(String rawPassword, String hashedPassword) {
         return passwordEncoder.matches(rawPassword, hashedPassword);
     }

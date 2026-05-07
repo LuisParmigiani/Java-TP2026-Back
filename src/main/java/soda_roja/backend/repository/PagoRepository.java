@@ -11,5 +11,5 @@ import java.util.List;
 public interface PagoRepository extends JpaRepository<Pago, Long> , JpaSpecificationExecutor<Pago> {
     // JpaRepository ya tiene métodos para CRUD (Create, Read, Update, Delete)
     // No es necesario escribir código adicional aquí a menos que quieras métodos personalizados
-    List<Pago> findByPersonaUsuarioId(Long userId);
+    List<Pago> findByPersonaUsuarioIdOrderByFechaDesc(Long userId);
 }

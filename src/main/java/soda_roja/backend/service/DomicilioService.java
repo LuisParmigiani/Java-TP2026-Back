@@ -58,7 +58,6 @@ public class DomicilioService {
 
 
     public Page<DomicilioDTOResponse> getByUserId(Long id, String orderBy, String nameSearch,String habilitado ,String activo, Integer dias, String[] populate, Integer page, Integer size) {
-        Boolean activeBoolean = null;
         if (((activo == null || activo.equals("Mostrar Todas")) || activo.isBlank()) && dias == null && orderBy == null && (nameSearch == null || nameSearch.isBlank())) {
             // Default case: return all domicilios with default pagination
             Pageable pageable = PageRequest.of(page, size);
@@ -81,7 +80,7 @@ public class DomicilioService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
         DomicilioSpecification.DomicilioFiltrosDTO filtros =
-                new DomicilioSpecification.DomicilioFiltrosDTO(id, activo, dias, habilitado, nameSearch);
+                new DomicilioSpecification.DomicilioFiltrosDTO(id, activo, dias, habilitado, nameSearch, null, null, null, null);
 
         return repository.findAll(DomicilioSpecification.filtrar(filtros), pageable)
                 .map(d -> mapToDTO(d, populate));

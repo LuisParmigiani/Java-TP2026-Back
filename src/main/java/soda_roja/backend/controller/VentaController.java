@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import soda_roja.backend.dtoRequest.CreatVentaDriverDTORequest;
+import soda_roja.backend.dtoRequest.ProductoDomicilioDTORequest;
+import soda_roja.backend.dtoRequest.ProductoZonaDTORequest;
 import soda_roja.backend.dtoRequest.VentaDTORequest;
 import soda_roja.backend.dtoRequestPut.VentaDTORequestPut;
 import soda_roja.backend.dtoResponse.VentaDTOResponse;
@@ -66,6 +69,15 @@ public class VentaController {
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, populate));
 
+
+    }
+
+    @PostMapping("/driver")
+    public ResponseEntity<VentaDTOResponse> createByDriver(
+            @Valid @RequestBody CreatVentaDriverDTORequest dto,
+            @RequestParam(required = false) String monto,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveByDriver(dto.getVenta(), dto.getProductoDomicilio(), monto, populate));
     }
 
 
@@ -85,4 +97,12 @@ public class VentaController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/ventaHoy/{domicilioId}")
+    public ResponseEntity<VentaDTOResponse> getVentasHoyByDomicilioId(
+            @PathVariable long domicilioId,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getVentasHoyByDomicilioId(domicilioId, populate));
+    }
+
 }

@@ -43,6 +43,14 @@ public class UsuarioController {
         return ResponseEntity.ok((usuario));
     }
 
+    @GetMapping("/driver")
+    public ResponseEntity<?> getDriver(
+            @AuthenticationPrincipal String userId,
+            @RequestParam(required = false) String[] populate) {
+        UsuarioDTOResponse usuario = service.getEmpleado(Long.parseLong(userId),populate);
+        return ResponseEntity.ok((usuario));
+    }
+
     @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<UsuarioDTOResponse> update(
             @AuthenticationPrincipal String userId,
