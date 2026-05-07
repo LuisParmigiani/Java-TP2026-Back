@@ -5,6 +5,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import soda_roja.backend.dtoRequest.DomicilioDTORequest;
@@ -14,10 +16,9 @@ import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.*;
 import soda_roja.backend.specification.DomicilioSpecification;
-
+import soda_roja.backend.dtoRequest.DiaDomicilioDTORequest;
 import java.util.List;
 import java.util.ArrayList;
-
 @Service
 public class DomicilioService {
 
@@ -172,6 +173,28 @@ public class DomicilioService {
         DomicilioDTOResponse dt =  mapToDTO(repository.save(existing), populate);
         System.out.println("DTO Response: " + dt);
         return dt;
+    }
+    @Transactional
+    public DomicilioDTOResponse updateDias(List<DiaDomicilioDTORequest> dias, Long domicilioId) {
+        Domicilio domicilio = repository.findById(domicilioId)
+                .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + domicilioId));
+
+        // Limpiar y reutilizar la lista existente
+        domicilio.getDiasDomicilio().clear();
+
+        for (DiaDomicilioDTORequest diaDom : dias) {
+            Dia dia = diaRepository.findById(diaDom.getDiaId())
+                    .orElseThrow(() -> new EntityNotFoundException("Dia no encontrado con id: " + diaDom.getDiaId()));
+            DiaDomicilio nuevoDiaDomicilio = DiaDomicilio.builder()
+                    .dia(dia)
+                    .domicilio(domicilio)
+                    .estado(diaDom.getEstado())
+                    .build();
+            // Agregar directamente a la lista existente
+            domicilio.getDiasDomicilio().add(nuevoDiaDomicilio);
+        }
+
+        return mapToDTO(repository.save(domicilio), new String[]{"diaDomicilio"});
     }
 
     public void delete(Long id) {
