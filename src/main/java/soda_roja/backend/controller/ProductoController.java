@@ -35,6 +35,12 @@ public class ProductoController {
     {
         return ResponseEntity.ok(service.getById(id, populate));
     }
+    @GetMapping("/Zona/{zona}")
+    public ResponseEntity<List<ProductoDTOResponse>> getByZona(
+            @PathVariable Long zona,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getByZona(zona, populate));
+    }
 
     @GetMapping("/customer/active")
     public ResponseEntity<Page<ProductoDTOResponse>> getActive(

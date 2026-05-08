@@ -7,16 +7,15 @@ import soda_roja.backend.dtoRequest.DiaZonaDTORequest;
 import soda_roja.backend.dtoRequest.DiaZonaDTORequestWithOrdenes;
 import soda_roja.backend.dtoRequestPut.DiaZonaDTORequestPut;
 import soda_roja.backend.dtoResponse.DiaZonaDTOResponse;
-import soda_roja.backend.model.DiaZona;
-import soda_roja.backend.model.DiaZonaOrden;
-import soda_roja.backend.repository.DiaZonaRepository;
-import soda_roja.backend.repository.ZonaRepository;
-import soda_roja.backend.model.Zona;
-import soda_roja.backend.repository.DiaRepository;
-import soda_roja.backend.model.Dia;
+import soda_roja.backend.model.*;
+import soda_roja.backend.repository.*;
+import soda_roja.backend.specification.CargaSpecification;
+import soda_roja.backend.specification.DiaZonaSpecification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 public class DiaZonaService {
@@ -24,8 +23,12 @@ public class DiaZonaService {
 	 private DiaRepository diaRepository;
 	@Autowired
 	 private ZonaRepository zonaRepository;
-	@Autowired
-		private DiaZonaRepository repository;
+    @Autowired
+    private DiaZonaRepository repository;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private CargaRepository cargaRepository;
     @Autowired
     private MapToDTO mapToDTOMapper;
 
@@ -47,10 +50,65 @@ public class DiaZonaService {
     }
 
     public List<DiaZonaDTOResponse> getByCamionIdAndDiaId(Long camionId, Long diaId, String[] populate) {
-        return repository.findByCamionIdAndDiaId(camionId, diaId)
+        return repository.findByCamionIdAndDia(camionId, diaId)
                 .stream()
                 .map(p -> mapToDTO(p, populate))
                 .toList();
+    }
+
+    public List<DiaZonaDTOResponse> getByMeAndDiaId(Long userId, String dia, String[] populate, String zona, String direccion, String venta) {
+        Usuario user = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + userId));
+
+        Carga carga = cargaRepository.findOne(CargaSpecification.cargasDeHoyPorUsuario(user.getId()))
+                .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada para el usuario: " + userId));
+
+        Long diaId = diaRepository.findByNombreIgnoreCase(dia)
+                .orElseThrow(() -> new EntityNotFoundException("Dia no encontrado con nombre: " + dia))
+                .getId();
+
+        Long camionId = carga.getCamion().getId();
+
+
+        if( venta != null && venta.equalsIgnoreCase("true")) {
+            LocalDate today = LocalDate.now();
+            LocalDate tomorrow = today.plusDays(1);
+            LocalDateTime todayStart = today.atStartOfDay();
+            LocalDateTime tomorrowStart = tomorrow.atStartOfDay();
+            System.out.println("--=-=-=-=-=-=-=--=--=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-= ");
+            System.out.println("camionId: " + camionId);
+            System.out.println("diaId: " + diaId);
+            System.out.println("todayStart: " + todayStart);
+            System.out.println("tomorrowStart: " + tomorrowStart);
+            System.out.println("zona: " + zona);
+            System.out.println("direccion: " + direccion);
+            System.out.println("venta: " + venta);
+            return repository.findByCamionIdAndDiaIdWithFechaVentaToday(
+                    camionId,
+                    diaId,
+                    todayStart,
+                    (zona != null && !zona.trim().isEmpty()) ? (zona.equals("Todas") ? null : zona) : null,
+                    (direccion != null && !direccion.trim().isEmpty()) ? direccion : null,
+                    tomorrowStart
+            )
+            .stream()
+            .map(p -> mapToDTO(p, populate))
+            .toList();
+        }else {
+            System.out.println("-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++j-=-=-=-=-=-=-=--=--=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-= ");
+            System.out.println("camionId: " + camionId);
+            System.out.println("diaId: " + diaId);
+            System.out.println("zona: " + zona);
+            System.out.println("direccion: " + direccion);
+            System.out.println("venta: " + venta);
+            return repository.findByCamionIdAndDiaId(
+                    camionId, diaId,
+                    (zona != null && !zona.trim().isEmpty()) ? (zona.equals("Todas") ? null : zona) : null,
+                    (direccion != null && !direccion.trim().isEmpty()) ? direccion : null)
+                    .stream()
+                    .map(p -> mapToDTO(p, populate))
+                    .toList();
+        }
     }
 
     public DiaZonaDTOResponse save(DiaZonaDTORequest entidad,String[] populate) {

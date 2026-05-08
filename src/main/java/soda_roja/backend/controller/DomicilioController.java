@@ -47,6 +47,7 @@ public class DomicilioController {
     }
 
 
+
     @GetMapping("/token/usuario")
     public ResponseEntity<Page<DomicilioDTOResponse>> getByUserId(
             @AuthenticationPrincipal String userId,

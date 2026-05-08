@@ -3,6 +3,7 @@ package soda_roja.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequest.DiaZonaDTORequest;
 import soda_roja.backend.dtoRequest.DiaZonaDTORequestWithOrdenes;
@@ -49,6 +50,22 @@ public class DiaZonaController {
         return ResponseEntity.ok(service.getByCamionIdAndDiaId(camionId, diaId, populate));
     }
 
+    @GetMapping("/camion/me/dia/{dia}")
+    public ResponseEntity<List<DiaZonaDTOResponse>> getByMeAndDiaId(
+            @AuthenticationPrincipal String userId,
+            @PathVariable String dia,
+            @RequestParam(required = false) String zona,
+            @RequestParam(required = false) String direccion,
+            @RequestParam(required = false) String venta,
+            @RequestParam(required = false) String[] populate) {
+        System.out.println("User ID: " + userId);
+        System.out.println("Dia: " + dia);
+        System.out.println("Zona: " + zona);
+        System.out.println("Direccion: " + direccion);
+        System.out.println("Venta: " + venta);
+        System.out.println("Zona: " + zona);
+        return ResponseEntity.ok(service.getByMeAndDiaId(Long.parseLong(userId), dia, populate, zona, direccion, venta));
+    }
     @PostMapping
     public ResponseEntity<DiaZonaDTOResponse> create(
             @Valid

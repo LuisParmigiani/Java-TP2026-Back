@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import soda_roja.backend.model.Zona;
 import soda_roja.backend.repository.ProductoRepository;
 import soda_roja.backend.model.Producto;
 import soda_roja.backend.specification.ProductoSpecification;
@@ -28,6 +29,7 @@ public class ProductoService {
     private MapToDTO mapToDTOMapper;
     @Autowired
     private DomicilioService domicilioService;
+
     @Autowired
     private CloudinaryService cloudinaryService;
 
@@ -137,6 +139,10 @@ public class ProductoService {
         }
 
         return mapToDTO(repository.save(existing), populate);
+    }
+    public List<ProductoDTOResponse> getByZona(Long zonaId, String[] populate) {
+
+        return repository.findByZona(zonaId).stream().map(p -> mapToDTO(p, populate)).toList();
     }
 
     

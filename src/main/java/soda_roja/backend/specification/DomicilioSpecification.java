@@ -15,7 +15,11 @@ public class DomicilioSpecification {
             String activo,
             Integer diaIndex,
             String habilitado,
-            String   nameSearch
+            String   nameSearch,
+            Long  diaId,
+            Long camionId,
+            Long    zona,
+            String direccion
     ) {}
 
     public static Specification<Domicilio> filtrar(DomicilioFiltrosDTO filtro) {
@@ -51,6 +55,19 @@ public class DomicilioSpecification {
             }
             if (filtro.nameSearch() != null && !filtro.nameSearch().isBlank()) {
                 predicates.add(cb.like(cb.lower(root.get("calle")), "%" + filtro.nameSearch().toLowerCase() + "%"));
+            }
+            if(filtro.diaId() != null){
+                predicates.add(cb.equal(root.join("diaZonaOrden").join("zona").join("diaZona").get("id"), filtro.diaId()));
+            }
+            if(filtro.camionId() != null){
+
+                predicates.add(cb.equal(root.join("diaZonaOrden").join("zona").join("camion").get("id"), filtro.camionId()));
+            }
+            if(filtro.zona() != null){
+                predicates.add(cb.equal(root.join("diaZonaOrden").join("zona").get("id"), filtro.zona()));
+            }
+            if(filtro.direccion() != null && !filtro.direccion().isBlank()){
+                predicates.add(cb.like(cb.lower(root.join("diaZonaOrden").join("domicilio").get("calle")), "%" + filtro.direccion().toLowerCase() + "%"));
             }
 
 

@@ -4,15 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoRequestPut.UsuarioDTORequestPut;
-import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
-import soda_roja.backend.model.Usuario;
 import soda_roja.backend.service.PersonaService;
 import soda_roja.backend.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -47,7 +44,16 @@ public class UsuarioController {
         return ResponseEntity.ok((usuario));
     }
 
-    @PutMapping(value = "/updatePersona", consumes = {"multipart/form-data"})
+    @GetMapping("/driver")
+    public ResponseEntity<?> getDriver(
+            @AuthenticationPrincipal String userId,
+            @RequestParam(required = false) String[] populate) {
+        UsuarioDTOResponse usuario = service.getEmpleado(Long.parseLong(userId),populate);
+        return ResponseEntity.ok((usuario));
+    }
+
+
+    @PutMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<UsuarioDTOResponse> update(
             @AuthenticationPrincipal String userId,
             @Valid @RequestPart("entidad") UsuarioDTORequestPut entidad,

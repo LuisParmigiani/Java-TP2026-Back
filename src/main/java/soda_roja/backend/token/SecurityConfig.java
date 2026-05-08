@@ -52,20 +52,21 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
-                //.requestMatchers(HttpMethod.GET, "/api/usuario").hasAuthority("Administrador") //si no hay contexto, devuelve 401
-//                .requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/api/usuario/**").hasAuthority("Usuario") //descomentar si lo necesitan para algo
-                 //descomentar si lo necesitan para algo
+                // Cualquier usuario autenticado puede acceder a su propia información
+                .requestMatchers(HttpMethod.GET, "/api/usuario/me").authenticated()
+                // Otros endpoints de usuario requieren autenticación
+                .requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/usuario/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/usuario/**").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/api/usuario/**").authenticated()
 
                /* SINTAXIS
                 * .requestMatchers(método, "endpoint").
                 * permitAll()
                 * hasAuthority("Administrador/Usuario/Empleado") -> requiere autenticación y que el rol del token sea el indicado (si no hay token o el rol no coincide, devuelve 403)
-                  authenticated()*/
-                
-              
+                  authenticated() -> requiere estar autenticado, pero permite cualquier rol
+                */
 
-                
                 .anyRequest().permitAll() //todas las demás, permitidas
             )
             //Antes de lo de arriba, el jwtAuthFilter intercepta:

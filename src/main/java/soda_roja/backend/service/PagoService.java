@@ -48,7 +48,7 @@ public class PagoService {
     }
 
     public List<PagoDTOResponse> getByUserId(String userId, String[] populate) {
-        return repository.findByPersonaUsuarioId(Long.parseLong(userId)).stream()
+        return repository.findByPersonaUsuarioIdOrderByFechaDesc(Long.parseLong(userId)).stream()
                 .map(p -> mapToDTO(p, populate))
                 .toList();
     }
