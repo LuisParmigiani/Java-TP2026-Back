@@ -49,7 +49,7 @@ public class Persona {
     @Column(name = "estado", nullable = false)
     @Builder.Default
     private String estado = "Habilitado";
-    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Usuario usuario;
 
