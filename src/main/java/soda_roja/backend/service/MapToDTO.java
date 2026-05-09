@@ -387,7 +387,10 @@ public class MapToDTO {
 	public CargaProductoDTOResponse mapToDTO(CargaProducto cargaProducto, String[] populate) {
 		CargaProductoDTOResponse.CargaProductoDTOResponseBuilder builder = CargaProductoDTOResponse.builder()
 				.id(cargaProducto.getId()).cantLleno(cargaProducto.getCantLleno())
-				.cantVacio(cargaProducto.getCantVacio());
+				.cantVacio(cargaProducto.getCantVacio())
+				.cantVendidos(cargaProducto.getCantVendidos())
+				.cantDevueltos(cargaProducto.getCantDevueltos());
+				
 		if (populate != null && List.of(populate).contains("carga")) {
 			builder.carga(cargaProducto.getCarga() != null
 					? mapToDTO(cargaProducto.getCarga(), removeFromPopulate(populate, "carga"))

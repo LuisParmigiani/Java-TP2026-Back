@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import soda_roja.backend.dtoRequest.ProductoDomicilioDTORequest;
 import soda_roja.backend.dtoRequest.VentaDTORequest;
 import soda_roja.backend.dtoRequestPut.VentaDTORequestPut;
+import soda_roja.backend.dtoResponse.CargaDTOResponse;
 import soda_roja.backend.dtoResponse.VentaDTOResponse;
 import soda_roja.backend.model.*;
 import soda_roja.backend.repository.*;
@@ -29,6 +30,9 @@ public class VentaService {
 
     @Autowired
     private VentaRepository repository;
+
+    @Autowired
+    private CargaRepository cargaRepository;
 
     @Autowired
     private PagoRepository pagoRepository;
@@ -133,9 +137,19 @@ public class VentaService {
 
 
     @Transactional
-    public VentaDTOResponse saveByDriver(VentaDTORequest entidad, List<ProductoDomicilioDTORequest> productoDomicilio, String monto, String[] populate) {
+    public VentaDTOResponse saveByDriver(VentaDTORequest entidad, List<ProductoDomicilioDTORequest> productoDomicilio, String monto, String[] populate,String driverId) {
+    	Carga carga = cargaRepository.findByUsuarioIdAndFechaHoraBetween(Long.parseLong(driverId), getStartOfDay(), getEndOfDay())
+				.stream()
+				.findFirst()
+				.orElseThrow(() -> new EntityNotFoundException("No se encontró una carga para el driver con id: " + driverId + " en el día de hoy"));
+    	
+    	List<CargaProducto> cargaProductos = carga.getCargasProducto();
+    	
+    	
+    	
         // Se restan todos los retornables que se devolvieron.
         productoDomicilio.forEach(pd -> {
+        	
             Domicilio domicilioEntity = domicilioRepository.findById(pd.getDomicilioId())
                     .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + pd.getDomicilioId()));
 
@@ -143,7 +157,26 @@ public class VentaService {
                     .filter(p -> p.getProducto().getId().equals(pd.getProductoId()))
                     .findFirst()
                     .orElseThrow(() -> new EntityNotFoundException("ProductoDomicilio no encontrado para el productoId: " + pd.getProductoId() + " y domicilioId: " + pd.getDomicilioId()));
+            
+            Optional<CargaProducto> cargaProducto = cargaProductos.stream()
+					.filter(cp -> cp.getProducto().getId().equals(pd.getProductoId()))
+					.findFirst();
+        		if(cargaProducto.isPresent()) {
+        			CargaProducto cp = cargaProducto.get();
+        			cp.setCantDevueltos(cp.getCantDevueltos() + pd.getCantVaciosActuales());
+        			
 
+        			}else {
+        				CargaProducto nuevoCargaProducto = new CargaProducto().builder()
+								.cantLleno(0)
+								.cantVacio(0)
+								.cantDevueltos(pd.getCantVaciosActuales())
+								.carga(carga)
+								.producto(productoRepository.findById(pd.getProductoId())
+										.orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + pd.getProductoId())))
+								.build();
+        				
+        			}
             productoDomicilioEntity.setCantVaciosActuales(productoDomicilioEntity.getCantVaciosActuales() - pd.getCantVaciosActuales());
             productoDomicilioRepository.save(productoDomicilioEntity);
         });
@@ -179,7 +212,27 @@ public class VentaService {
 
         // Se suman los retornables dejados en cada línea de pedido
         entidad.getLineasPedido().forEach(lp -> {
+        	
             if (lp.getCantidad() != 0) {
+            	Optional<CargaProducto> cargaProducto = cargaProductos.stream()
+						.filter(cp -> cp.getProducto().getId().equals(lp.getProductoZonaId()))
+						.findFirst();
+            		if(cargaProducto.isPresent()) {
+            			CargaProducto cp = cargaProducto.get();
+            			cp.setCantVendidos(cp.getCantVendidos() + lp.getCantidad());
+            			
+
+            			}else {
+            				CargaProducto nuevoCargaProducto = new CargaProducto().builder()
+									.cantLleno(0)
+									.cantVacio(0)
+									.cantVendidos(lp.getCantidad())
+									.carga(carga)
+									.producto(productoRepository.findById(lp.getProductoZonaId())
+											.orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + lp.getProductoZonaId())))
+									.build();
+            				
+            			}
                 Domicilio domicilioEntity = domicilioRepository.findById(entidad.getIdDomicilio())
                         .orElseThrow(() -> new EntityNotFoundException("Domicilio no encontrado con id: " + entidad.getIdDomicilio()));
 
@@ -505,4 +558,22 @@ public class VentaService {
 
         return mapToDTO(ventaConsolidada, populate);
     }
+    private Date getStartOfDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
+    private Date getEndOfDay() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        return calendar.getTime();
+    }
+
 }
