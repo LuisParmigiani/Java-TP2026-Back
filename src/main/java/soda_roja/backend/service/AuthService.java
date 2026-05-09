@@ -112,7 +112,7 @@ public class AuthService {
 				 .nombreUsuario(request.getUsuario_nombre())
 				 .email(request.getEmail())
 				 .contrasena(request.getUsuario_contrasena())
-				 .nivelAcceso("Usuario")
+				 .nivelAcceso(request.getUsuario_nivelAcceso())
 				 .personaId(nuevaPersonaDto.getId())
 				 .build();
 		usuarioService.save(nuevoUsuario, null);

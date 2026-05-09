@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Data //getters, setters, toString, equals y hashCode
 @AllArgsConstructor
@@ -29,4 +30,6 @@ public class CargaDTORequest {
     @NotNull(message = "El id del camion no puede estar vacío")
     @Schema(example = "1", description = "ID del camion asociado a la carga o descarga")
     private Long idCamion;
+    @NotNull(message = "La lista de productos no puede estar vacía")
+    private List<CargaProductoDTORequest> cargaProductos;
 }

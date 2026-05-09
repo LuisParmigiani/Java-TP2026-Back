@@ -30,6 +30,7 @@ public class CargaProducto {
     
     @Column(name = "cant_vacio", nullable = false)
     private int cantVacio;
+    //Atributo
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productoId", nullable = false)

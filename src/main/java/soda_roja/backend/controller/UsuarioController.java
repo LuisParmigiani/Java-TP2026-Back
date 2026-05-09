@@ -36,6 +36,17 @@ public class UsuarioController {
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getAll( populate));
     }
+    
+    @GetMapping("/empleados")
+    public ResponseEntity<List<UsuarioDTOResponse>> getEmpleados(
+    					@RequestParam(required = false) String[] populate,
+    					@RequestParam(required = false) String nivelAcceso,
+    					@RequestParam(required = false) String estado,
+    					@RequestParam(required = false) String conCargas){
+    	List<UsuarioDTOResponse> empleados = service.getByNivelAcceso(nivelAcceso, populate,estado,conCargas);
+    	return ResponseEntity.ok(empleados);
+    	
+    }
 
 
 
@@ -46,7 +57,8 @@ public class UsuarioController {
         UsuarioDTOResponse usuario = service.getById(Long.parseLong(userId),populate);
         return ResponseEntity.ok((usuario));
     }
-
+     
+    
     @PutMapping(value = "/updatePersona", consumes = {"multipart/form-data"})
     public ResponseEntity<UsuarioDTOResponse> update(
             @AuthenticationPrincipal String userId,
@@ -59,6 +71,17 @@ public class UsuarioController {
     	
     	return ResponseEntity.ok(usuarioActualizado);
     }
+    
+    @PutMapping(value="/update/withPersona/{id}/{personaId}")
+    public ResponseEntity<UsuarioDTOResponse> updateWithPersona(
+			@PathVariable Long id,
+			@PathVariable Long personaId,
+			@Valid @RequestBody UsuarioDTORequestPut entidad,
+			@RequestParam(required = false) String[] populate) {
+		UsuarioDTOResponse usuarioActualizado= service.updateWithPersona(id,personaId, entidad,entidad.getPersona(), populate);
+		
+		return ResponseEntity.ok(usuarioActualizado);
+	}
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDTOResponse> getById(
@@ -75,21 +98,22 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad, populate));
     }
 
-    //lo comenté porque necesitaba refactorizarlo y al pedo porque no se usa
-    /*@PutMapping("/{id}")
-    public ResponseEntity<UsuarioDTOResponse> update(
-            @PathVariable Long id,
-            @Valid @RequestBody UsuarioDTORequestPut entidad,
-            @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.update(id, entidad, populate));
-    }*/
+//    @PutMapping("/{id}")
+//    public ResponseEntity<UsuarioDTOResponse> updateById(
+//            @PathVariable Long id,
+//            @PathVariable Long personaId,
+//            @Valid @RequestBody UsuarioDTORequestPut entidad,
+//            @RequestParam(required = false) String[] populate) {
+//        return ResponseEntity.ok(service.update(id,personaId, entidad,null, populate));
+//    }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id
           ) {
-        service.delete(id);
+    	System.out.println("El id recibido para eliminar es: " + id);
+        service.logicDelete(id);
         return ResponseEntity.noContent().build();
     }
 }
