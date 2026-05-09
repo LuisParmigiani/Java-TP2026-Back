@@ -26,6 +26,13 @@ public class CamionController {
     	
         return ResponseEntity.ok(service.getAll(populate));
     }
+    @GetMapping("/active")
+    public ResponseEntity<List<CamionDTOResponse>> getActive(
+            @RequestParam(required = false) String[] populate) {
+
+        return ResponseEntity.ok(service.getActive(populate));
+    }
+
 
     // GET - traer por ID
     @GetMapping("/{id}")

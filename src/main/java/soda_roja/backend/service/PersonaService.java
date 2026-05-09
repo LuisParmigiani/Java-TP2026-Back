@@ -22,6 +22,7 @@ import soda_roja.backend.model.Camion;
 import soda_roja.backend.model.Dia;
 import soda_roja.backend.specification.PersonaSpecification;
 
+import java.util.List;
 
 
 @Service
@@ -85,6 +86,16 @@ public class PersonaService {
         return repository.findById(id)
                 .map(p -> mapToDTO(p, populate))
                 .orElseThrow(() -> new EntityNotFoundException("Persona no encontrada con id: " + id));
+    }
+
+    public List<PersonaDTOResponse> getActiveClient(String[] populate) {
+        List<Persona> activos = repository.findByEstado("Habilitado");
+        if (activos.isEmpty()) {
+            throw new EntityNotFoundException("No se encontró ningún cliente activo");
+        }
+        return activos.stream()
+                .map(p -> mapToDTO(p, populate))
+                .toList();
     }
 
     public PersonaDTOResponse save(PersonaDTORequest entidad,String[] populate) {

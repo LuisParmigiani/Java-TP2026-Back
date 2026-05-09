@@ -18,6 +18,8 @@ import soda_roja.backend.dtoRequest.PersonaDTORequest;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/persona")
 public class PersonaController {
@@ -64,7 +66,11 @@ public class PersonaController {
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getById(id,populate));
     }
-
+    @GetMapping("/client/active")
+    public ResponseEntity<List<PersonaDTOResponse>> getActiveClient(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getActiveClient(populate));
+    }
 
     @PostMapping
     public ResponseEntity<PersonaDTOResponse> create(
