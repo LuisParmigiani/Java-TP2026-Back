@@ -55,11 +55,9 @@ public class DiaZonaOrdenService {
         DiaZonaOrden existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("DiaZonaOrden no encontrado con id: " + id));
 
-        DiaZona diaZona = findDiaZonaOrThrow(entidad.getDiaZonaId());
-        Domicilio domicilio = findDomicilioOrThrow(entidad.getDomicilioId());
-        //Solo checkeo esto porque si yo pondria una restricción de que el orden es único, no los podria ordenar a todos
-        //al mismo tiempo
         if (entidad.getOrden() != null) existing.setOrden(entidad.getOrden());
+        if (entidad.getDiaZonaId() != null) existing.setDiaZona(findDiaZonaOrThrow(entidad.getDiaZonaId()));
+        if (entidad.getDomicilioId() != null) existing.setDomicilio(findDomicilioOrThrow(entidad.getDomicilioId()));
 
         return mapToDTO(repository.save(existing), populate);
     }

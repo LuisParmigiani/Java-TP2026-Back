@@ -20,5 +20,7 @@ public interface DomicilioRepository extends JpaRepository<Domicilio, Long>, Jpa
     @Query("SELECT d FROM Domicilio d WHERE d.calle LIKE %:calleNumero% OR d.numero LIKE %:calleNumero%")
     List<Domicilio> findDomicilioByCalleOrNumero(@Param("calleNumero") String calleNumero);
 
+    List<Domicilio> findDomicilioByHabilitado(String habilitado);
+
 
 }

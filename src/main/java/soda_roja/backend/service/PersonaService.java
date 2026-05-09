@@ -1,6 +1,7 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.dtoRequest.PersonaDTORequest;
@@ -8,9 +9,11 @@ import soda_roja.backend.dtoRequestPut.PersonaDTORequestPut;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.model.Domicilio;
 import soda_roja.backend.model.Persona;
+import soda_roja.backend.model.Usuario;
 import soda_roja.backend.model.Zona;
 import soda_roja.backend.repository.DomicilioRepository;
 import soda_roja.backend.repository.PersonaRepository;
+import soda_roja.backend.repository.UsuarioRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,9 +31,18 @@ public class PersonaService {
     private PersonaRepository repository;
 
     @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private MailService mailService;
+
+    @Autowired
     private DomicilioRepository domicilioRepository;
+
     @Autowired
     private MapToDTO mapToDTOMapper;
+
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Page<PersonaDTOResponse> getAll(int page, int size, String[] populate) {
         return repository.findAll(PageRequest.of(page, size))
@@ -89,7 +101,38 @@ public class PersonaService {
                 .estado(entidad.getEstado()!= null ? entidad.getEstado() : "Pendiente") // Si no se proporciona estado, se asigna "Pendiente"
                 .build();
 
-        return mapToDTO(repository.save(persona), populate);
+        Persona personaGuardada = repository.save(persona);
+
+        String nombreUsuario = (personaGuardada.getNombre() + personaGuardada.getApellido() + personaGuardada.getNroDocumento())
+                .toLowerCase()
+                .replaceAll("\\s+", "");
+
+        Usuario usuario = Usuario.builder()
+                .nombreUsuario(nombreUsuario)
+                .contrasena(passwordEncoder.encode(personaGuardada.getNroDocumento()))
+                .nivelAcceso("Usuario")
+                .email(personaGuardada.getEmail())
+                .persona(personaGuardada)
+                .build();
+
+        usuarioRepository.save(usuario);
+
+        if (personaGuardada.getEmail() != null && !personaGuardada.getEmail().isBlank()) {
+            mailService.enviarMail(
+                personaGuardada.getEmail(),
+                "Tu cuenta fue creada - Soda Roja",
+                "<h1>¡Bienvenido/a a Soda Roja!</h1>" +
+                "<p>Hola <b>" + personaGuardada.getNombre() + " " + personaGuardada.getApellido() + "</b>, te informamos que tu cuenta y usuario fueron creados exitosamente.</p>" +
+                "<br>" +
+                "<p>Podés ingresar con los siguientes datos:</p>" +
+                "<p>Usuario: <b>" + nombreUsuario + "</b></p>" +
+                "<p>Nivel de acceso: <b>Usuario</b></p>" +
+                "<br>" +
+                "<p>Si no reconocés este registro, contactate con nosotros a través de los medios presentes aquí debajo.</p>"
+            );
+        }
+
+        return mapToDTO(personaGuardada, populate);
     }
 
     public PersonaDTOResponse update(Long id, PersonaDTORequestPut entidad,String[] populate) {
@@ -119,7 +162,21 @@ public class PersonaService {
             existing.setTelefono(entidad.getTelefono());
         }
         if(entidad.getSaldo() != null) {
+            float saldoAnterior = existing.getSaldo();
             existing.setSaldo(entidad.getSaldo());
+            if (entidad.getSaldo() > saldoAnterior) {
+                float montoCargado = entidad.getSaldo() - saldoAnterior;
+                mailService.enviarMail(
+                    existing.getEmail(),
+                    "Carga de saldo - Soda Roja",
+                    "<h1>¡Se acreditó saldo en tu cuenta!</h1>" +
+                    "<p>Hola <b>" + existing.getNombre() + " " + existing.getApellido() + "</b>, te informamos que se realizó una carga de saldo en tu cuenta.</p>" +
+                    "<br>" +
+                    "<p>Monto cargado: <b>$" + String.format("%.2f", montoCargado) + "</b></p>" +
+                    "<p>Saldo anterior: <b>$" + String.format("%.2f", saldoAnterior) + "</b></p>" +
+                    "<p>Saldo actual: <b>$" + String.format("%.2f", entidad.getSaldo()) + "</b></p>"
+                );
+            }
         }
         if(entidad.getEstado() != null) {
 			existing.setEstado(entidad.getEstado());

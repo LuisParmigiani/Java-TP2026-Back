@@ -30,6 +30,13 @@ public class DomicilioController {
 			{
     	return ResponseEntity.ok(service.getAll(populate));
     }
+    @GetMapping("/pendientes")
+    public ResponseEntity<List<DomicilioDTOResponse>> getPendientes(
+            @RequestParam(required = false) String[] populate)
+    {
+        return ResponseEntity.ok(service.getPendientes(populate));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<DomicilioDTOResponse>> getAllByCalleOrNumero(
             @RequestParam String calleNumero,
@@ -76,6 +83,15 @@ public class DomicilioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,userId,populate));
     }
 
+    @PostMapping("/admin")
+    public ResponseEntity<DomicilioDTOResponse> createByAdmin(
+            @Valid
+            @RequestBody DomicilioDTORequest entidad,
+            @RequestParam(required = false) String[] populate) {
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveByAdmin(entidad,populate));
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<DomicilioDTOResponse> update(
@@ -91,7 +107,7 @@ public class DomicilioController {
     public ResponseEntity<?> actualizarDiasDomicilio(
         @PathVariable Long domicilioId,
         @RequestBody List<DiaDomicilioDTORequest> dias) {
-    	
+
         // Validar que el domicilio existe
         // Eliminar días anteriores
         // Crear nuevos DiaDomicilio con los nuevos días
@@ -108,4 +124,7 @@ public class DomicilioController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
 }

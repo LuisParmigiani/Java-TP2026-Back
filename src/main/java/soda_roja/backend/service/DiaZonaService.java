@@ -30,6 +30,9 @@ public class DiaZonaService {
     @Autowired
     private CargaRepository cargaRepository;
     @Autowired
+    private DiaZonaOrdenRepository diaZonaOrdenRepository;
+
+    @Autowired
     private MapToDTO mapToDTOMapper;
 
     public List<DiaZonaDTOResponse> getAll(String[] populate) {

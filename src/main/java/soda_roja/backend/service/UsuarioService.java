@@ -46,7 +46,10 @@ public class UsuarioService {
 
     @Autowired
     private MapToDTO mapToDTOMapper;
-    
+
+    @Autowired
+    private MailService mailService;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
@@ -85,6 +88,19 @@ public class UsuarioService {
 
         Usuario usuarioGuardado = repository.save(usuario);
 
+        mailService.enviarMail(
+            usuarioGuardado.getEmail(),
+            "Tu cuenta fue creada - Soda Roja",
+            "<h1>Tu cuenta fue creada en Soda Roja</h1>" +
+            "<p>Hola <b>" + usuarioGuardado.getNombreUsuario() + "</b>, tu cuenta ha sido registrada con los siguientes datos:</p>" +
+            "<br>" +
+            "<p>Usuario: <b>" + usuarioGuardado.getNombreUsuario() + "</b></p>" +
+            "<p>Email: <b>" + usuarioGuardado.getEmail() + "</b></p>" +
+            "<p>Nivel de acceso: <b>" + usuarioGuardado.getNivelAcceso() + "</b></p>" +
+            "<br>" +
+            "<p>Si no solicitaste la creación de esta cuenta, contactate con nosotros a través de los medios presentes aquí debajo.</p>"
+        );
+
         return  mapToDTO(usuarioGuardado, populate);
 
     }
@@ -104,36 +120,55 @@ public class UsuarioService {
         Usuario existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
 
+        StringBuilder cambios = new StringBuilder();
+
         if(entidad.getPersonaId() != null) {
-            Persona persona = findPersonaOrThrow(entidad.getPersonaId());
-            existing.setPersona(persona);
+            existing.setPersona(findPersonaOrThrow(entidad.getPersonaId()));
         }
         if(entidad.getNombreUsuario() != null) {
+            cambios.append("<p>Nombre de usuario: <b>").append(entidad.getNombreUsuario()).append("</b></p>");
             existing.setNombreUsuario(entidad.getNombreUsuario());
         }
         if(entidad.getContrasena() != null) {
+            cambios.append("<p>Contraseña: <b>actualizada</b></p>");
             existing.setContrasena(passwordEncoder.encode(entidad.getContrasena()));
         }
         if(entidad.getNivelAcceso() != null) {
+            cambios.append("<p>Nivel de acceso: <b>").append(entidad.getNivelAcceso()).append("</b></p>");
             existing.setNivelAcceso(entidad.getNivelAcceso());
         }
         if(entidad.getEmail() != null) {
+            cambios.append("<p>Email: <b>").append(entidad.getEmail()).append("</b></p>");
             existing.setEmail(entidad.getEmail());
             if(existing.getPersona() != null) {
                 existing.getPersona().setEmail(entidad.getEmail());
             }
         }
-
         if (file != null && !file.isEmpty()) {
             try {
-                String imageUrl = cloudinaryService.uploadImage(file, "usuario",existing.getId());
+                String imageUrl = cloudinaryService.uploadImage(file, "usuario", existing.getId());
                 existing.setImagenUrl(imageUrl);
+                cambios.append("<p>Foto de perfil: <b>actualizada</b></p>");
             } catch (Exception e) {
                 throw new RuntimeException("Error uploading image: " + e.getMessage());
             }
         }
 
-        return mapToDTO(repository.save(existing), populate);
+        Usuario saved = repository.save(existing);
+
+        if (cambios.length() > 0) {
+            mailService.enviarMail(
+                saved.getEmail(),
+                "Tu cuenta fue actualizada - Soda Roja",
+                "<h1>Tu cuenta fue actualizada</h1>" +
+                "<p>Hola <b>" + saved.getNombreUsuario() + "</b>, te informamos que se realizaron cambios en tu cuenta.</p>" +
+                "<br><h3>Datos actualizados:</h3>" +
+                cambios +
+                "<br><p>Si no solicitaste estos cambios, contactate con nosotros a través de los medios presentes aquí debajo.</p>"
+            );
+        }
+
+        return mapToDTO(saved, populate);
     }
 
     public void delete(Long id) {

@@ -270,7 +270,7 @@ public class DataSeeder implements CommandLineRunner {
 	                domicilio.setDiasDomicilio(new ArrayList<>());
 	                domicilio.setPersona(persona);
 					domicilio.setHabilitado(faker.options().option("Habilitada", "Pendiente","Deshabilitada"));
-	                domicilio.setActivo(faker.options().option("Desactiva", "Activa"));
+	                domicilio.setActivo(faker.options().option("Inactiva", "Activa"));
 	                domicilios.add(domicilio);
 	            }
 	        } else {
@@ -456,12 +456,12 @@ public class DataSeeder implements CommandLineRunner {
 	    
 	    // Patrones de días para cada camión
 	    boolean[][] patronesDias = {
-	        {false, true, false, true, false, false, false},   // Martes y Jueves
-	        {true, false, true, false, true, false, false},    // Lunes, Miércoles y Viernes
-	        {false, false, false, false, false, false, true},  // Domingo
-	        {false, true, false, true, false, false, false},   // Martes y Jueves
-	        {true, false, true, false, true, false, false},    // Lunes, Miércoles y Viernes
-	        {false, false, false, false, false, false, true}   // Domingo
+	        {false, true, false, true, false, true, false},   // Martes y Jueves
+	        {true, false, true, false, true, true, false},    // Lunes, Miércoles y Viernes
+	        {false, false, false, false, false, true, true},  // Domingo
+	        {false, true, false, true, false, true, false},   // Martes y Jueves
+	        {true, false, true, false, true, true, false},    // Lunes, Miércoles y Viernes
+	        {false, false, false, false, false, true, true}   // Domingo
 	    };
 	    
 	    int camionIndex = 0;
@@ -527,10 +527,13 @@ public class DataSeeder implements CommandLineRunner {
 	        // Obtener domicilios de esta zona que están activos ese día
 	        List<Domicilio> domiciliosPorZona = domicilios.stream()
 	                .filter(d -> d.getZona().getId().equals(zona.getId()))
+	                .filter(d -> "Habilitada".equals(d.getHabilitado()))
+	                .filter(d -> "Activa".equals(d.getActivo()))
 	                .filter(d -> diasDomicilio.stream()
-	                        .anyMatch(dd -> dd.getDomicilio().getId().equals(d.getId()) 
+	                        .anyMatch(dd -> dd.getDomicilio().getId().equals(d.getId())
 	                                && dd.getDia().getId().equals(dia.getId())
-	                                && "ACTIVO".equals(dd.getEstado())))
+	                                && "ACTIVO".equals(dd.getEstado()))
+					)
 	                .toList();
 	        
 	        for (Domicilio domicilio : domiciliosPorZona) {

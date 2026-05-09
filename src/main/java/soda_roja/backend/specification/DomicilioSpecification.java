@@ -36,7 +36,7 @@ public class DomicilioSpecification {
                     if (filtro.activo().equalsIgnoreCase("Activas")) {
                         predicates.add(cb.equal(root.get("activo"), "Activa"));
                     } else {
-                        predicates.add(cb.equal(root.get("activo"), "Desactiva"));
+                        predicates.add(cb.equal(root.get("activo"), "Inactiva"));
 
                     }
                 }

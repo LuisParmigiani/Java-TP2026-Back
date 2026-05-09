@@ -17,6 +17,7 @@ import soda_roja.backend.model.*;
 import soda_roja.backend.repository.*;
 import soda_roja.backend.specification.VentaSpecification;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -49,6 +50,8 @@ public class VentaService {
     private MapToDTO mapToDTOMapper;
     @Autowired
     private ProductoRepository productoRepository;
+    @Autowired
+    private MailService mailService;
 
     public List<VentaDTOResponse> getAll(String[] populate) {
         return repository.findAll().stream().map(v -> mapToDTO(v, populate)).toList();
@@ -123,7 +126,9 @@ public class VentaService {
                 .build();
 
         lineasPedido.forEach(lp -> lp.setVenta(venta));
-        return mapToDTO(repository.save(venta), populate);
+        Venta saved = repository.save(venta);
+        enviarMailVentaNueva(saved);
+        return mapToDTO(saved, populate);
     }
 
 
@@ -236,7 +241,7 @@ public class VentaService {
 
         // Then set the saved venta on lineasPedido
         lineasPedido.forEach(lp -> lp.setVenta(savedVenta));
-        if(!monto.isEmpty()) {
+        if(monto != null &&!monto.isEmpty()) {
             Pago pago = new Pago().builder()
                     .monto(Float.parseFloat(monto))
                     .fecha(new Date())
@@ -250,38 +255,43 @@ public class VentaService {
         domicilio.getPersona().setSaldo((float)(domicilio.getPersona().getSaldo() - total[0] + (monto != null ? Double.parseDouble(monto) : 0.0)));
         domicilioRepository.save(domicilio);
 
+        enviarMailVentaCompletada(savedVenta);
+        if (monto != null && !monto.isEmpty()) {
+            enviarMailPago(domicilio.getPersona(), Float.parseFloat(monto), "Efectivo", new Date(), domicilio.getPersona().getSaldo());
+        }
+
         return mapToDTO(savedVenta, populate);
     }
 
     public VentaDTOResponse update(Long id, VentaDTORequestPut entidad, String[] populate) {
         Venta existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Venta no encontrada con id: " + id));
-        if( entidad.getIdDomicilio() != null) {
-            Domicilio domicilio = findDomicilioOrThrow(entidad.getIdDomicilio());
-            existing.setDomicilio(domicilio);
-        }
-        if(entidad.getLineasPedidoIds() != null) {
+
+        if (entidad.getIdDomicilio() != null) existing.setDomicilio(findDomicilioOrThrow(entidad.getIdDomicilio()));
+        if (entidad.getLineasPedidoIds() != null) {
             List<LineaPedido> lineasPedido = entidad.getLineasPedidoIds().stream()
                     .map(this::findLineaPedidoOrThrow)
                     .toList();
-            if (lineasPedido.isEmpty()) {
-			    throw new IllegalArgumentException("Una venta debe tener al menos una linea de pedido");
-		    }
+            if (lineasPedido.isEmpty()) throw new IllegalArgumentException("Una venta debe tener al menos una linea de pedido");
             lineasPedido.forEach(lp -> lp.setVenta(existing));
         }
+        if (entidad.getTotal() != null) existing.setTotal(entidad.getTotal());
+        if (entidad.getFecha() != null) existing.setFecha(entidad.getFecha());
 
-        if (entidad.getTotal() != null) {
-            existing.setTotal(entidad.getTotal());
-        }
-        if(entidad.getFecha() != null) {
-            existing.setFecha(entidad.getFecha());
-        }
-        if(entidad.getEstado() != null) {
-            existing.setEstado(entidad.getEstado());
+        String estadoAnterior = existing.getEstado();
+        if (entidad.getEstado() != null) existing.setEstado(entidad.getEstado());
+
+        Venta saved = repository.save(existing);
+
+        if (entidad.getEstado() != null && !entidad.getEstado().equalsIgnoreCase(estadoAnterior)) {
+            if (entidad.getEstado().equalsIgnoreCase("Completada")) {
+                enviarMailVentaCompletada(saved);
+            } else if (entidad.getEstado().equalsIgnoreCase("Cancelada")) {
+                enviarMailVentaCancelada(saved);
+            }
         }
 
-
-        return mapToDTO(repository.save(existing), populate);
+        return mapToDTO(saved, populate);
     }
 
     public void delete(Long id) {
@@ -298,6 +308,105 @@ public class VentaService {
     private LineaPedido findLineaPedidoOrThrow(Long id) {
         return lineaPedidoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("LineaPedido no encontrado con id: " + id));
+    }
+
+    private void enviarMailVentaNueva(Venta venta) {
+        Persona persona = venta.getDomicilio().getPersona();
+        String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(venta.getFecha());
+
+        StringBuilder filas = new StringBuilder();
+        venta.getLineasPedido().forEach(lp -> filas.append(
+            "<tr>" +
+            "<td style='border:1px solid #ddd;padding:8px;'>" + lp.getProductoZona().getProducto().getNombre() + "</td>" +
+            "<td style='border:1px solid #ddd;padding:8px;text-align:center;'>" + lp.getCantidad() + "</td>" +
+            "<td style='border:1px solid #ddd;padding:8px;text-align:right;'>$" + String.format("%.2f", lp.getSubtotal()) + "</td>" +
+            "</tr>"
+        ));
+
+        String cuerpo = "<h1>¡Recibimos tu pedido!</h1>" +
+            "<p>Hola <b>" + persona.getNombre() + " " + persona.getApellido() + "</b>, tu pedido fue registrado y está pendiente de entrega.</p>" +
+            "<br><h3>Detalle del pedido #" + venta.getId() + "</h3>" +
+            "<table style='border-collapse:collapse;width:100%;'>" +
+            "<thead><tr>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:left;'>Producto</th>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:center;'>Cantidad</th>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:right;'>Subtotal</th>" +
+            "</tr></thead><tbody>" + filas + "</tbody></table>" +
+            "<br><p><b>Total: $" + String.format("%.2f", venta.getTotal()) + "</b></p>" +
+            "<p>Fecha estimada: <b>" + fecha + "</b></p>";
+
+        mailService.enviarMail(persona.getEmail(), "Recibimos tu pedido - Soda Roja", cuerpo);
+    }
+
+    private void enviarMailVentaCompletada(Venta venta) {
+        Persona persona = venta.getDomicilio().getPersona();
+        String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(venta.getFecha());
+
+        StringBuilder filas = new StringBuilder();
+        venta.getLineasPedido().forEach(lp -> filas.append(
+            "<tr>" +
+            "<td style='border:1px solid #ddd;padding:8px;'>" + lp.getProductoZona().getProducto().getNombre() + "</td>" +
+            "<td style='border:1px solid #ddd;padding:8px;text-align:center;'>" + lp.getCantidad() + "</td>" +
+            "<td style='border:1px solid #ddd;padding:8px;text-align:right;'>$" + String.format("%.2f", lp.getSubtotal()) + "</td>" +
+            "</tr>"
+        ));
+
+        String cuerpo = "<h1>¡Tu pedido fue completado!</h1>" +
+            "<p>Hola <b>" + persona.getNombre() + " " + persona.getApellido() + "</b>, te confirmamos que tu pedido fue procesado exitosamente.</p>" +
+            "<br><h3>Detalle del pedido #" + venta.getId() + "</h3>" +
+            "<table style='border-collapse:collapse;width:100%;'>" +
+            "<thead><tr>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:left;'>Producto</th>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:center;'>Cantidad</th>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:right;'>Subtotal</th>" +
+            "</tr></thead><tbody>" + filas + "</tbody></table>" +
+            "<br><p><b>Total: $" + String.format("%.2f", venta.getTotal()) + "</b></p>" +
+            "<p>Fecha: <b>" + fecha + "</b></p>";
+
+        mailService.enviarMail(persona.getEmail(), "Tu pedido fue completado - Soda Roja", cuerpo);
+    }
+
+    private void enviarMailVentaCancelada(Venta venta) {
+        Persona persona = venta.getDomicilio().getPersona();
+        String fecha = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(venta.getFecha());
+
+        StringBuilder filas = new StringBuilder();
+        venta.getLineasPedido().forEach(lp -> filas.append(
+            "<tr>" +
+            "<td style='border:1px solid #ddd;padding:8px;'>" + lp.getProductoZona().getProducto().getNombre() + "</td>" +
+            "<td style='border:1px solid #ddd;padding:8px;text-align:center;'>" + lp.getCantidad() + "</td>" +
+            "<td style='border:1px solid #ddd;padding:8px;text-align:right;'>$" + String.format("%.2f", lp.getSubtotal()) + "</td>" +
+            "</tr>"
+        ));
+
+        String cuerpo = "<h1>Tu pedido fue cancelado</h1>" +
+            "<p>Hola <b>" + persona.getNombre() + " " + persona.getApellido() + "</b>, te informamos que tu pedido fue cancelado.</p>" +
+            "<br><h3>Detalle del pedido #" + venta.getId() + "</h3>" +
+            "<table style='border-collapse:collapse;width:100%;'>" +
+            "<thead><tr>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:left;'>Producto</th>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:center;'>Cantidad</th>" +
+            "<th style='border:1px solid #ddd;padding:8px;text-align:right;'>Subtotal</th>" +
+            "</tr></thead><tbody>" + filas + "</tbody></table>" +
+            "<br><p><b>Total: $" + String.format("%.2f", venta.getTotal()) + "</b></p>" +
+            "<p>Fecha: <b>" + fecha + "</b></p>" +
+            "<br><p>Si tenés alguna consulta, no dudes en contactarnos.</p>";
+
+        mailService.enviarMail(persona.getEmail(), "Tu pedido fue cancelado - Soda Roja", cuerpo);
+    }
+
+    void enviarMailPago(Persona persona, float monto, String metodoPago, Date fecha, float saldoActual) {
+        String fechaStr = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(fecha);
+        String cuerpo = "<h1>Registro de pago</h1>" +
+            "<p>Hola <b>" + persona.getNombre() + " " + persona.getApellido() + "</b>, te confirmamos que se registró un pago en tu cuenta.</p>" +
+            "<br>" +
+            "<p>Monto abonado: <b>$" + String.format("%.2f", monto) + "</b></p>" +
+            "<p>Método de pago: <b>" + metodoPago + "</b></p>" +
+            "<p>Fecha: <b>" + fechaStr + "</b></p>" +
+            "<br>" +
+            "<p>Saldo actual: <b>$" + String.format("%.2f", saldoActual) + "</b></p>";
+
+        mailService.enviarMail(persona.getEmail(), "Registro de pago - Soda Roja", cuerpo);
     }
 
     private VentaDTOResponse mapToDTO(Venta venta, String[] populate) {

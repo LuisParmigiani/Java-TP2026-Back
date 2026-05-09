@@ -11,6 +11,7 @@ import soda_roja.backend.model.Persona;
 import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.PagoRepository;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -23,6 +24,8 @@ public class PagoService {
     private PersonaRepository personaRepository;
     @Autowired
     private MapToDTO mapToDTOMapper;
+    @Autowired
+    private VentaService ventaService;
 
     public List<PagoDTOResponse> getAll(String[] populate) {
         return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
@@ -44,7 +47,9 @@ public class PagoService {
                 .persona(persona)
                 .estado(entidad.getEstado())
                 .build();
-        return mapToDTO(repository.save(pago), populate);
+        Pago saved = repository.save(pago);
+        ventaService.enviarMailPago(persona, saved.getMonto(), saved.getMetodoPago(), saved.getFecha() != null ? saved.getFecha() : new Date(), persona.getSaldo());
+        return mapToDTO(saved, populate);
     }
 
     public List<PagoDTOResponse> getByUserId(String userId, String[] populate) {

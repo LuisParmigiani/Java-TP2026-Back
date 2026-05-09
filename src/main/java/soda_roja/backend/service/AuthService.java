@@ -2,6 +2,7 @@ package soda_roja.backend.service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +26,9 @@ import soda_roja.backend.dtoRequest.UsuarioDTORequest;
 import soda_roja.backend.dtoResponse.LoginDTOResponse;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.RegisterDTOResponse;
+import soda_roja.backend.model.Carga;
 import soda_roja.backend.model.Usuario;
+import soda_roja.backend.repository.CamionRepository;
 import soda_roja.backend.repository.UsuarioRepository;
 import soda_roja.backend.token.JwtService;
 
@@ -47,6 +50,8 @@ public class AuthService {
     
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CamionRepository cargaRepository;
     
     
     // Clase interna para los datos del token
@@ -68,6 +73,7 @@ public class AuthService {
         if (usuario == null || !usuarioService.verifyPassword(request.getContrasena(), usuario.getContrasena())) {
             throw new RuntimeException( "Credenciales inválidas");
         }
+        
         if (!usuario.getPersona().getEstado().equalsIgnoreCase("Habilitado")) {
 			throw new RuntimeException("El usuario no está habilitado");
 		}

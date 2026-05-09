@@ -47,7 +47,7 @@ public interface DiaZonaRepository extends JpaRepository<DiaZona, Long>, JpaSpec
         "INNER JOIN z.camion c " +
         "INNER JOIN FETCH dz.diaZonaOrdenes dzo " +
         "INNER JOIN FETCH dzo.domicilio d " +
-        "INNER JOIN  d.ventas v ON v.estado = 'En Proceso' " +
+        "LEFT JOIN  d.ventas v ON v.estado = 'En Proceso' " +
         "WHERE c.id = :camionId " +
         "AND dz.dia.id = :diaId " +
         "AND dzo.domicilio.habilitado = 'Habilitada' " +
@@ -70,5 +70,7 @@ public interface DiaZonaRepository extends JpaRepository<DiaZona, Long>, JpaSpec
             @Param("calle") String calle,
             @Param("finalDay") LocalDateTime finalDay
     );
+
+    DiaZona getByDiaIdAndZonaId(Long diaId, Long ZonaId);
 
 }

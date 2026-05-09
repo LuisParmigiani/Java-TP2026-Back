@@ -11,7 +11,7 @@ import jakarta.validation.constraints.*;
 public class GastoDTORequest {
 	
 	@NotBlank(message = "El detalle no puede estar vacío") // Valida que el campo no esté vacío
-	@Size(min=10, max = 250, message = "El detalle no puede tener menos de 10 caracteres ni más de 250 caracteres") // Valida el tamaño del campo
+	@Size(min=0, max = 250, message = "El detalle no puede tener menos de 10 caracteres ni más de 250 caracteres") // Valida el tamaño del campo
 	@Schema(example = "Cambio de aceite", description = "Detalle del gasto")
 	 private String detalle;
     @NotNull(message = "El monto no puede ser nulo") // Valida que el campo no sea nulo

@@ -3,6 +3,10 @@ package soda_roja.backend.service;
 import soda_roja.backend.dtoRequestPut.GastoDTORequestPut;
 import soda_roja.backend.model.Camion;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import soda_roja.backend.model.Gasto;
@@ -22,8 +26,9 @@ public class GastoService {
 	@Autowired
 	private MapToDTO mapToDTOMapper;
 
-	public List<GastoDTOResponse> getAll(String[] populate) {
-		return repository.findAll().stream().map(g -> mapToDTO(g, populate)).toList();
+	public Page<GastoDTOResponse> getAll(int page, int size, String[] populate) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("fecha").descending());
+		return repository.findAll(pageable).map(g -> mapToDTO(g, populate));
 	}
 
 	public GastoDTOResponse getById(Long id,String[] populate) {

@@ -1,6 +1,7 @@
 package soda_roja.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,12 @@ public class GastoController {
 	private GastoService service;
 
 	@GetMapping
-	public ResponseEntity<List<GastoDTOResponse>> getAll(
-			@RequestParam(required = false) String[] populate) {
-		return ResponseEntity.ok(service.getAll(populate));
+	public ResponseEntity<Page<GastoDTOResponse>> getAll(
+			@RequestParam(required = false) String[] populate,
+			@RequestParam(required = false, defaultValue = "0") Integer page,
+			@RequestParam(required = false, defaultValue = "10") Integer size
+	) {
+		return ResponseEntity.ok(service.getAll(page,size,populate));
 	}
 
 
