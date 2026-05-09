@@ -54,6 +54,8 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
                 // Cualquier usuario autenticado puede acceder a su propia información
                 .requestMatchers(HttpMethod.GET, "/api/usuario/me").authenticated()
+                // Lista de empleados restringida a administrador
+                .requestMatchers(HttpMethod.GET, "/api/usuario/empleados").hasAuthority("Administrador")
                 // Otros endpoints de usuario requieren autenticación
                 .requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/usuario/**").authenticated()

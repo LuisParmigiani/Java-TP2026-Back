@@ -1,5 +1,6 @@
-package soda_roja.backend.repository; 
-import java.util.Optional;
+package soda_roja.backend.repository; import java.util.Optional;
+import soda_roja.backend.dtoResponse.UsuarioDTOResponse;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -13,4 +14,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>, JpaSpec
 	Optional<Usuario> findByEmail(String email);
     // JpaRepository ya tiene métodos para CRUD (Create, Read, Update, Delete)
     // No es necesario escribir código adicional aquí a menos que quieras métodos personalizados
+	
+	List<Usuario>findByNivelAcceso(String nivelAcceso);
 }

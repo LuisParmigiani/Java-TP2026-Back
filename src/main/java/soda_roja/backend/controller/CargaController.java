@@ -26,6 +26,13 @@ public class CargaController {
         return ResponseEntity.ok(service.getAll(populate));
     }
 
+    @GetMapping("/hoy/")
+    public ResponseEntity<List<CargaDTOResponse>> getCargasHoy(
+            @RequestParam(required = false) String[] populate)
+            {
+        return ResponseEntity.ok(service.getCargasHoy(populate));
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<CargaDTOResponse> getById(
@@ -43,7 +50,15 @@ public class CargaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(entidad,populate));
     }
 
-
+    @PutMapping("/withCargaProductos/{id}")
+    public ResponseEntity<CargaDTOResponse> updateWithCargaProductos(
+    					@PathVariable Long id,
+    					@Valid
+    					@RequestBody CargaDTORequest entidad,
+    					@RequestParam(required = false) String[] populate) {
+    			return ResponseEntity.ok(service.updateWithProducto(id, entidad,populate));
+    			
+    }
     @PutMapping("/{id}")
     public ResponseEntity<CargaDTOResponse> update(
             @PathVariable long id,
