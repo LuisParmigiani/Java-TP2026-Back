@@ -11,6 +11,7 @@ import soda_roja.backend.repository.ZonaRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import soda_roja.backend.dtoRequestPut.PersonaDTORequestPut;
 import soda_roja.backend.service.PersonaService;
@@ -57,6 +58,7 @@ public class PersonaController {
             @RequestParam(required = false) Long camionId,
             @RequestParam(required = false) Long diaId,
             @RequestParam(required = false, defaultValue = "ascendente") String ordenSaldo,
+            @RequestParam(required = false) String nivelAcceso,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String[] populate) {
@@ -64,7 +66,7 @@ public class PersonaController {
         Camion camion = camionId != null ? camionRepository.findById(camionId).orElse(null) : null;
         Dia dia = diaId != null ? diaRepository.findById(diaId).orElse(null) : null;
 
-        return ResponseEntity.ok(service.getByNameAndFiltered(query, zona, camion, dia, ordenSaldo, page, size, populate));
+        return ResponseEntity.ok(service.getByNameAndFiltered(query, zona, camion, dia, ordenSaldo, nivelAcceso ,page, size, populate));
     }
 
     @GetMapping("/{id}")
@@ -78,6 +80,8 @@ public class PersonaController {
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getActiveClient(populate));
     }
+    
+
 
     @PostMapping
     public ResponseEntity<PersonaDTOResponse> create(
@@ -110,6 +114,14 @@ public class PersonaController {
     public ResponseEntity<Void> disablePersona(@PathVariable Long id) {
         service.logicDelete(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/clientes")
+    public ResponseEntity<Page<PersonaDTOResponse>> getAllClientes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getAllClientes(page, size, populate));
     }
 
 }

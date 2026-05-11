@@ -35,6 +35,17 @@ public class VentaController {
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getById(id, populate));
     }
+    @GetMapping("/pending")
+    public ResponseEntity<Page<VentaDTOResponse>> getPendientes(
+            @RequestParam(required = false) String[] populate,
+            @RequestParam(required = false) String zona,
+            @RequestParam(required = false, defaultValue = "Mas Recientes") String ordenBy,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        return ResponseEntity.ok(service.getPendientes(populate, zona, ordenBy, page, size));
+    }
+
 
     @GetMapping("/token/ByUserId")
     public ResponseEntity<Page<VentaDTOResponse>> getByUserId(

@@ -61,6 +61,25 @@ public class VentaService {
         return repository.findAll().stream().map(v -> mapToDTO(v, populate)).toList();
     }
 
+    public Page<VentaDTOResponse> getPendientes(String[] populate, String zona, String ordenBy, Integer page, Integer size) {
+        Sort sort = Sort.by("id").descending();
+        if (ordenBy != null) {
+            switch (ordenBy) {
+                case "Mas Recientes" -> sort = Sort.by("fecha").descending();
+                case "Mas Antiguos" -> sort = Sort.by("fecha").ascending();
+                case "Menor Precio" -> sort = Sort.by("total").ascending();
+                case "Mayor Precio" -> sort = Sort.by("total").descending();
+                default -> sort = Sort.by("id").descending();
+            }
+        }
+        Pageable pageable = PageRequest.of(page != null ? page : 0, size != null ? size : 10, sort);
+
+        VentaSpecification.VentaFiltrosDTO filtros = new VentaSpecification.VentaFiltrosDTO("Pendientes", null, zona);
+
+        return repository.findAll(VentaSpecification.filtrar(filtros), pageable)
+                .map(v -> mapToDTO(v, populate));
+    }
+
     public VentaDTOResponse getById(Long id, String[] populate) {
         return repository.findById(id)
                 .map(venta -> mapToDTOMapper.mapToDTO(venta, populate))
@@ -84,7 +103,7 @@ public class VentaService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         // Build specification filters
-        VentaSpecification.VentaFiltrosDTO filtros = new VentaSpecification.VentaFiltrosDTO(state, userId);
+        VentaSpecification.VentaFiltrosDTO filtros = new VentaSpecification.VentaFiltrosDTO(state, userId, null);
 
         // Use specification with pageable
         return repository.findAll(VentaSpecification.filtrar(filtros), pageable)

@@ -30,4 +30,7 @@ public interface PersonaRepository extends JpaRepository<Persona, Long>, JpaSpec
 
 	@Query("SELECT p FROM Persona p INNER JOIN p.usuario u WHERE p.estado = :estado and u.nivelAcceso = 'Usuario'")
 	List<Persona> findByEstado(@Param("estado") String estado);
+	
+	@Query("SELECT p FROM Persona p INNER JOIN p.usuario u WHERE u.nivelAcceso = 'Usuario'")
+	Page<Persona> findAllClientes(Pageable pageable);
 }

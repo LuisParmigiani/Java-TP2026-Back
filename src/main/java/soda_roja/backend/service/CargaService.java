@@ -73,6 +73,14 @@ public class CargaService {
             .map(dto -> {
 		        Producto prod = productoRepository.findById(dto.getIdProducto())
 		                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + dto.getIdProducto()));
+                if(entidad.getTipo().equals("Carga")) {
+                        prod.setStock(prod.getStock() - dto.getCantLleno() - dto.getCantVacio());;
+                        productoRepository.save(prod);
+                }
+                if(entidad.getTipo().equals("Descarga") ) {
+                    prod.setStock(prod.getStock() + dto.getCantLleno() + dto.getCantVacio());
+                    productoRepository.save(prod);
+                }
                 CargaProducto cp = new CargaProducto();
                 cp.setCantLleno(dto.getCantLleno());
                 cp.setCantVacio(dto.getCantVacio());
@@ -84,6 +92,7 @@ public class CargaService {
         
         cargaSaved.setCargasProducto(cargaProductos);
         Carga saved = repository.save(cargaSaved);
+
         return mapToDTO(saved, populate);
     }
     public CargaDTOResponse updateWithProducto(Long id, CargaDTORequest entidad, String[] populate) {
@@ -98,7 +107,19 @@ public class CargaService {
 
         existing.setUsuario(usuario);
         existing.setCamion(camion);
-        
+        existing.getCargasProducto().forEach(cp -> {
+                    Producto prod = cp.getProducto();
+                    if (entidad.getTipo().equals("Carga")) {
+                        prod.setStock(prod.getStock() + cp.getCantLleno() + cp.getCantVacio());
+                        ;
+                        productoRepository.save(prod);
+                    }
+                    if (entidad.getTipo().equals("Descarga")) {
+                        prod.setStock(prod.getStock() - cp.getCantLleno() + cp.getCantVacio());
+                        productoRepository.save(prod);
+                    }
+                });
+
         // 1. Vaciamos la colección gestionada por Hibernate, SIN cambiar la referencia
         existing.getCargasProducto().clear();
 
@@ -107,6 +128,14 @@ public class CargaService {
             .map(dto -> {
                 Producto prod = productoRepository.findById(dto.getIdProducto())
                         .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + dto.getIdProducto()));
+                if(entidad.getTipo().equals("Carga")) {
+                    prod.setStock(prod.getStock() - dto.getCantLleno() - dto.getCantVacio());;
+                    productoRepository.save(prod);
+                }
+                if(entidad.getTipo().equals("Descarga") ) {
+                    prod.setStock(prod.getStock() + dto.getCantLleno() + dto.getCantVacio());
+                    productoRepository.save(prod);
+                }
                 CargaProducto cp = new CargaProducto();
                 cp.setCantLleno(dto.getCantLleno());
                 cp.setCantVacio(dto.getCantVacio());
@@ -125,6 +154,13 @@ public class CargaService {
         
         return mapToDTO(updated, populate);
     }
+
+
+
+
+
+
+
     public CargaDTOResponse update(Long id, CargaDTORequestPut entidad,String[] populate) {
         Carga existing = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Carga no encontrada con id: " + id));

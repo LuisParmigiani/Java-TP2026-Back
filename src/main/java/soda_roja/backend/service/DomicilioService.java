@@ -225,8 +225,9 @@ public class DomicilioService {
                 });
             }
             if (entidad.getActivo().equalsIgnoreCase("Activa") && !existing.getActivo().equalsIgnoreCase("Activa")) {
+
                 existing.getDiasDomicilio().forEach(dd -> {
-                    if (dd.getEstado().equalsIgnoreCase("ACTIVO") && existing.getHabilitado().equalsIgnoreCase("Habilitada")) {
+                    if (dd.getEstado().equalsIgnoreCase("ACTIVO") && existing.getHabilitado().equalsIgnoreCase("Habilitado")) {
                         DiaZona diaZona = diaZonaRepository.getByDiaIdAndZonaId(dd.getDia().getId(), existing.getZona().getId());
                         agregarAOrden(existing, diaZona);
                     }
