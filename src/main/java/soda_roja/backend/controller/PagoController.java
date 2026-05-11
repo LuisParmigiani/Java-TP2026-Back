@@ -26,6 +26,12 @@ public class PagoController {
         return ResponseEntity.ok(service.getAll(populate));
     }
 
+    @GetMapping("/ingressos")
+    public ResponseEntity<Float> getIngresos(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getIngresos(populate));
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<PagoDTOResponse> getById(

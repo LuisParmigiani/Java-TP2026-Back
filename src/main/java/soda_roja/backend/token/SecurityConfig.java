@@ -50,24 +50,48 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No HTTP sessions
             )
             .authorizeHttpRequests(auth -> auth
+            	//rutas públicas
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/producto/active").permitAll()
+                .requestMatchers("/api/producto/customer/active").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
-                // Cualquier usuario autenticado puede acceder a su propia información
-                .requestMatchers(HttpMethod.GET, "/api/usuario/me").authenticated()
+                //rutas usuario
+                .requestMatchers("/api/usuario/me").hasAuthority("Usuario")
+                .requestMatchers("/api/usuario/updatePersona").hasAuthority("Usuario")
+                .requestMatchers("/api/domicilio/**").hasAuthority("Usuario")
+                .requestMatchers("/api/venta/token/ByUserId").hasAuthority("Usuario")
+                .requestMatchers("/api/venta/ventaHoy/**").hasAuthority("Usuario")
+                .requestMatchers("/api/pedidoSemanal/**").hasAuthority("Usuario")
+                .requestMatchers("/api/pago/me").hasAuthority("Usuario")
+                
+                //rutas empleado
+				.requestMatchers("/api/usuario/driver").hasAuthority("Empleado")
+				.requestMatchers("/api/venta/driver").hasAuthority("Empleado")
+				.requestMatchers("/api/carga/hoy/**").hasAuthority("Empleado")
+				.requestMatchers("/api/carga/withCargaProductos").hasAuthority("Empleado")
+				.requestMatchers("/api/carga").hasAuthority("Empleado")
+				
+				//rutas administrador
+				.requestMatchers("/api/admin/**").hasAuthority("Empleado")
+				.requestMatchers(HttpMethod.PUT, "/api/producto").hasAuthority("Administrador")
+                .requestMatchers(HttpMethod.POST, "/api/producto").hasAuthority("Administrador")
+                .requestMatchers(HttpMethod.DELETE, "/api/producto").hasAuthority("Administrador")
+                .requestMatchers("/api/zona/**").hasAuthority("Administrador")
+                .requestMatchers("/api/camion/**").hasAuthority("Administrador")
+                .requestMatchers("/api/usuario/empleados").hasAuthority("Administrador")
+                .requestMatchers("/api/usuario/**").hasAuthority("Administrador")
+                .requestMatchers("/api/persona/search").hasAuthority("Administrador")
+                .requestMatchers("/api/persona").hasAuthority("Administrador")
+                .requestMatchers("/api/gasto").hasAuthority("Administrador")
+                .requestMatchers("/api/pago/ingressos").hasAuthority("Administrador")
+                
+                //rutas compartidas entre admin y usuario
+                .requestMatchers("/api/venta").hasAnyAuthority("Administrador","Usuario")
+                .requestMatchers("/api/venta/**").hasAnyAuthority("Administrador","Usuario")
+                
                 // Lista de empleados restringida a administrador
                 .requestMatchers(HttpMethod.GET, "/api/usuario/empleados").hasAuthority("Administrador")
-                // Otros endpoints de usuario requieren autenticación
-                .requestMatchers(HttpMethod.GET, "/api/usuario/**").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/usuario/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/usuario/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/usuario/**").authenticated()
-
-               /* SINTAXIS
-                * .requestMatchers(método, "endpoint").
-                * permitAll()
-                * hasAuthority("Administrador/Usuario/Empleado") -> requiere autenticación y que el rol del token sea el indicado (si no hay token o el rol no coincide, devuelve 403)
-                  authenticated() -> requiere estar autenticado, pero permite cualquier rol
-                */
+                .requestMatchers("/api/email/send").hasAuthority("Administrador")
 
                 .anyRequest().permitAll() //todas las demás, permitidas
             )

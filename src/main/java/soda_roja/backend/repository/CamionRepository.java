@@ -19,6 +19,12 @@ public interface CamionRepository extends JpaRepository<Camion, Long>, JpaSpecif
     // No es necesario escribir código adicional aquí a menos que quieras métodos personalizados
     @Query("SELECT c FROM Carga c WHERE c.usuario.id = :userId AND c.fechaHora BETWEEN :initialDay AND :finalDay")
     List<Carga> cargasDelDia(@Param("userId") Long userId, @Param("finalDay") LocalDateTime finalDay, @Param("initialDay") LocalDateTime initialDay);
+
+    @Query("SELECT c FROM Camion c WHERE c.estado = true")
+    List<Camion> getActive();
+
+
+
 }
 
 

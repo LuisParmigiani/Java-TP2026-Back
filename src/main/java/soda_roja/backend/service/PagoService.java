@@ -37,6 +37,12 @@ public class PagoService {
                 .orElseThrow(() -> new EntityNotFoundException("Pago no encontrado con id: " + id));
     }
 
+
+    public Float getIngresos(String[] populate) {
+        Date hoy = new Date();
+        Date mesAtras = new Date(hoy.getTime() - (30L * 24 * 60 * 60 * 1000));
+        return repository.findIngresosMensuales(hoy,mesAtras);
+    }
     public PagoDTOResponse save(PagoDTORequest entidad,String[] populate) {
         Persona persona = findPersonaOrThrow(entidad.getPersonaId());
 

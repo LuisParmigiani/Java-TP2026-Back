@@ -38,7 +38,9 @@ public class CamionService {
     public List<CamionDTOResponse> getAll(String[] populate) {
         return repository.findAll().stream().map(c -> mapToDTO(c, populate)).toList();
     }
-
+    public List<CamionDTOResponse> getActive(String[] populate) {
+        return repository.getActive().stream().map(c -> mapToDTO(c, populate)).toList();
+    }
     public CamionDTOResponse getById(Long id,String[]populate) {
         return repository.findById(id)
                 .map(c -> mapToDTO(c, populate))
