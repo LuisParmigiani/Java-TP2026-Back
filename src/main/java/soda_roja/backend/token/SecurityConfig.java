@@ -55,6 +55,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/producto/active/**").permitAll()
                 .requestMatchers("/api/producto/customer/active").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
+                
                 //rutas usuario
                 .requestMatchers("/api/usuario/me").hasAuthority("Usuario")
                 .requestMatchers("/api/usuario/updatePersona").hasAuthority("Usuario")
