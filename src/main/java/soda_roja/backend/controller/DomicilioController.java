@@ -99,6 +99,8 @@ public class DomicilioController {
             @Valid
             @RequestBody DomicilioDTORequestPut entidad,
             @RequestParam(required = false) String[] populate) {
+        System.out.println("ID: " + id);
+        System.out.println("Entidad: " + entidad);
 
         return ResponseEntity.ok(service.update(id, entidad,populate));
     }
