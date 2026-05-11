@@ -43,6 +43,13 @@ public class PersonaController {
         return ResponseEntity.ok(service.getAll(page, size, populate));
     }
 
+    @GetMapping("/search/nameOnly")
+    public ResponseEntity<List<PersonaDTOResponse>> getByNameOnly(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getByNameOnly(query, populate));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<Page<PersonaDTOResponse>> getByNameAndFiltered(
             @RequestParam(required = false) String query,
@@ -53,18 +60,18 @@ public class PersonaController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String[] populate) {
-    		Zona zona = zonaId != null ? zonaRepository.findById(zonaId).orElse(null) : null;
-    	    Camion camion = camionId != null ? camionRepository.findById(camionId).orElse(null) : null;
-    	    Dia dia = diaId != null ? diaRepository.findById(diaId).orElse(null) : null;
-
+        Zona zona = zonaId != null ? zonaRepository.findById(zonaId).orElse(null) : null;
+        Camion camion = camionId != null ? camionRepository.findById(camionId).orElse(null) : null;
+        Dia dia = diaId != null ? diaRepository.findById(diaId).orElse(null) : null;
 
         return ResponseEntity.ok(service.getByNameAndFiltered(query, zona, camion, dia, ordenSaldo, page, size, populate));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<PersonaDTOResponse> getById(
             @PathVariable Long id,
             @RequestParam(required = false) String[] populate) {
-        return ResponseEntity.ok(service.getById(id,populate));
+        return ResponseEntity.ok(service.getById(id, populate));
     }
     @GetMapping("/client/active")
     public ResponseEntity<List<PersonaDTOResponse>> getActiveClient(

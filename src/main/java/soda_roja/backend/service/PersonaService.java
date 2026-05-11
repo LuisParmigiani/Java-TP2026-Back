@@ -69,6 +69,21 @@ public class PersonaService {
             .map(p -> mapToDTO(p, populate));
     }
 
+    public List<PersonaDTOResponse> getByNameOnly(String query, String[] populate) {
+        Specification<Persona> spec = (root, queryObj, cb) -> {
+            if (query == null || query.isEmpty()) {
+                return cb.conjunction();
+            }
+            return cb.or(
+                cb.like(cb.lower(root.get("nombre")), "%" + query.toLowerCase() + "%"),
+                cb.like(cb.lower(root.get("apellido")), "%" + query.toLowerCase() + "%")
+            );
+        };
+        
+        return repository.findAll(spec).stream()
+            .map(p -> mapToDTO(p, populate))
+            .toList();
+    }
     public Page<Persona> getAllFiltrado(Zona zona, Camion camion, Dia dia, String ordenSaldo, int page, int size) {
         Specification<Persona> spec = Specification.where(PersonaSpecification.porZona(zona))
             .and(PersonaSpecification.porCamion(camion))

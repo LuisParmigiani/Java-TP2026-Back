@@ -41,6 +41,11 @@ public class ProductoController {
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.ok(service.getByZona(zona, populate));
     }
+    @GetMapping("/activo/sinPag")
+    public ResponseEntity<List<ProductoDTOResponse>> getActiveSinPag(
+            @RequestParam(required = false) String[] populate) {
+        return ResponseEntity.ok(service.getActiveSinPag(populate));
+    }
 
     @GetMapping("/customer/active")
     public ResponseEntity<Page<ProductoDTOResponse>> getActive(

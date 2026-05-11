@@ -52,7 +52,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
             	//rutas públicas
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/producto/active").permitAll()
+                .requestMatchers("/api/producto/active/**").permitAll()
                 .requestMatchers("/api/producto/customer/active").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
                 //rutas usuario
@@ -71,6 +71,7 @@ public class SecurityConfig {
 				
 				//rutas administrador
 				.requestMatchers("/api/admin/**").hasAuthority("Empleado")
+                .requestMatchers("/api/producto/activo/sinPag").hasAuthority("Administrador")
 				.requestMatchers("/api/dia-zona/camion/dia/**").hasAuthority("Administrador")
 				.requestMatchers("/api/carga/hoy/**").hasAuthority("Administrador")
 				.requestMatchers("/api/carga/withCargaProductos").hasAuthority("Administrador")
@@ -81,8 +82,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/zona/**").hasAnyAuthority("Administrador","Empleado","Usuario") 
                 .requestMatchers("/api/camion/**").hasAuthority("Administrador")
                 .requestMatchers("/api/usuario/empleados").hasAuthority("Administrador")
-                .requestMatchers("/api/usuario/**").hasAuthority("Administrador")
-                .requestMatchers("/api/persona/search").hasAuthority("Administrador")
+                .requestMatchers("/api/usuario/**").hasAuthority("Administrador") 
+                .requestMatchers("/api/persona/search/**").hasAuthority("Administrador")
                 .requestMatchers("/api/persona").hasAuthority("Administrador")
                 .requestMatchers("/api/gasto").hasAuthority("Administrador")
                 .requestMatchers("/api/pago/ingressos").hasAuthority("Administrador")

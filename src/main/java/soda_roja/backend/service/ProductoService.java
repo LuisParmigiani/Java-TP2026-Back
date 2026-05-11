@@ -46,6 +46,12 @@ public class ProductoService {
         return repository.findAll().stream().map(p -> mapToDTO(p, populate)).toList();
     }
 
+    public List<ProductoDTOResponse> getActiveSinPag(
+            String[] populate) {
+            return repository.findByActivoTrue().stream()
+                    .map(p -> mapToDTO(p, populate)).toList();
+    }
+    
     public Page<ProductoDTOResponse> getActive(
             String userId, String sortOption, String searchTerm,
             Double minPrice, Double maxPrice, String directionId,
