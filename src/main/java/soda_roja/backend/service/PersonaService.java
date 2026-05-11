@@ -49,7 +49,12 @@ public class PersonaService {
         return repository.findAll(PageRequest.of(page, size))
             .map(p -> mapToDTO(p, populate));
     }
-    public Page<PersonaDTOResponse> getByNameAndFiltered(String query, Zona zona, Camion camion, Dia dia, String ordenSaldo, int page, int size, String[] populate) {
+    
+    public Page<PersonaDTOResponse> getAllClientes(int page, int size, String[] populate) {
+        return repository.findAllClientes(PageRequest.of(page, size))
+            .map(p -> mapToDTO(p, populate));
+    }
+    public Page<PersonaDTOResponse> getByNameAndFiltered(String query, Zona zona, Camion camion, Dia dia, String ordenSaldo, String nivelAcceso,int page, int size, String[] populate) {
         Specification<Persona> spec = Specification.where(PersonaSpecification.porZona(zona))
             .and(PersonaSpecification.porCamion(camion))
             .and(PersonaSpecification.porDia(dia))
@@ -59,7 +64,12 @@ public class PersonaService {
                     cb.like(cb.lower(root.get("nombre")), "%" + query.toLowerCase() + "%"),
                     cb.like(cb.lower(root.get("apellido")), "%" + query.toLowerCase() + "%")
                 );
-            });
+            })
+            // Nueva especificación para filtrar por nivel de acceso
+            .and((root, query1, cb) -> {
+                if (nivelAcceso == null || nivelAcceso.isEmpty()) return null;
+                return cb.equal(root.join("usuario").get("nivelAcceso"), nivelAcceso);
+            });;
         
         Sort sort = "Descendente".equals(ordenSaldo) ? 
             Sort.by(Sort.Direction.DESC, "saldo") : 
@@ -97,6 +107,7 @@ public class PersonaService {
                 .map(p -> mapToDTO(p, populate))
                 .toList();
     }
+
 
     public PersonaDTOResponse save(PersonaDTORequest entidad,String[] populate) {
 
