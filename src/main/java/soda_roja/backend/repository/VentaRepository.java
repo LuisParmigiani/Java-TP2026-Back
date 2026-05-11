@@ -23,4 +23,7 @@ public interface VentaRepository extends JpaRepository<Venta, Long>, JpaSpecific
 
      @Query("SELECT v FROM Venta v WHERE v.estado = 'Pendiente' AND v.domicilio.id = :idDomicilio")
      List<Venta> findWithEstadoPendiente(@Param("idDomicilio") Long idDomicilio);
+
+
+
 }

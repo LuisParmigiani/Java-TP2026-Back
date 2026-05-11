@@ -27,6 +27,7 @@ public class ProductoSpecification
 
                 predicates.add(cb.equal(root.get("productosZona").get("zona").get("id"), Long.parseLong(filtro.zone)));
             }
+
             if (filtro.userId != null) {
                 Join<Producto, ProductoZona> pz = root.join("productosZona");
                 Join<ProductoZona, Zona> z = pz.join("zona");
