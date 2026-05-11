@@ -21,9 +21,13 @@ import soda_roja.backend.model.Dia;
 import soda_roja.backend.model.DiaDomicilio;
 import soda_roja.backend.model.DiaZona;
 import soda_roja.backend.model.Domicilio;
+import soda_roja.backend.model.Producto;
+import soda_roja.backend.model.ProductoZona;
 import soda_roja.backend.repository.ZonaRepository;
 import soda_roja.backend.repository.CamionRepository;
 import soda_roja.backend.repository.DiaRepository;
+import soda_roja.backend.repository.ProductoRepository;
+import soda_roja.backend.repository.ProductoZonaRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,10 @@ import java.util.List;
 @Service
 public class ZonaService {
 
+    @Autowired
+    private ProductoZonaRepository pZonarepository;
+    @Autowired
+    private ProductoRepository prodRepository;
     @Autowired
     private ZonaRepository repository;
     @Autowired
@@ -50,8 +58,9 @@ public class ZonaService {
                 .orElseThrow(() -> new EntityNotFoundException("Zona no encontrada con id: " + id));
     }
     
-
+    @Transactional
     public ZonaDTOResponse save(ZonaDTORequest entidad,String[] populate) {
+    	List<Producto> productos = prodRepository.findAll().stream().toList();
     	Camion camion = camionRepository.findById(entidad.getCamionId())
 				.orElseThrow(() -> new EntityNotFoundException("Camion no encontrado con id: " + entidad.getCamionId()));
         Zona zona = Zona.builder()
@@ -76,7 +85,15 @@ public class ZonaService {
 				zona.getDiasZona().add(nuevoDiaZona);
 			}
 		}
-        return mapToDTO(repository.save(zona), populate);
+        Zona zonaReponse = repository.save(zona);
+        productos.forEach(p -> {
+        	ProductoZona pz = new ProductoZona();
+			pz.setProducto(p);
+			pz.setZona(zonaReponse);
+			pZonarepository.save(pz);
+	
+		});
+        return mapToDTO(zonaReponse, populate);
     }
 
     public ZonaDTOResponse update(Long id, ZonaDTORequestPut entidad ,String[] populate) {

@@ -45,10 +45,10 @@ public class DomicilioSpecification {
 
             if (filtro.habilitado() != null) {
                 switch (filtro.habilitado()) {
-                    case "Todos" -> predicates.add(cb.notEqual(root.get("habilitado"), "Deshabilitada")); // Mostrar todos excepto Deshabilitados
-                    case "Habilitados" -> predicates.add(cb.equal(root.get("habilitado"), "Habilitada"));
+                    case "Todos" -> predicates.add(cb.notEqual(root.get("habilitado"), "Deshabilitado")); // Mostrar todos excepto Deshabilitados
+                    case "Habilitados" -> predicates.add(cb.equal(root.get("habilitado"), "Habilitado"));
                     case "Pendientes de aprobacion" -> predicates.add(cb.equal(root.get("habilitado"), "Pendiente"));
-                    case "Rechazados" -> predicates.add(cb.equal(root.get("habilitado"), "Deshabilitada"));
+                    case "Rechazados" -> predicates.add(cb.equal(root.get("habilitado"), "Deshabilitado"));
                 }
             }else {
                 predicates.add(cb.notEqual(root.get("habilitado"), 2));

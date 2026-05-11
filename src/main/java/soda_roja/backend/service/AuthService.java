@@ -27,8 +27,10 @@ import soda_roja.backend.dtoResponse.LoginDTOResponse;
 import soda_roja.backend.dtoResponse.PersonaDTOResponse;
 import soda_roja.backend.dtoResponse.RegisterDTOResponse;
 import soda_roja.backend.model.Carga;
+import soda_roja.backend.model.Persona;
 import soda_roja.backend.model.Usuario;
 import soda_roja.backend.repository.CamionRepository;
+import soda_roja.backend.repository.PersonaRepository;
 import soda_roja.backend.repository.UsuarioRepository;
 import soda_roja.backend.token.JwtService;
 
@@ -50,6 +52,9 @@ public class AuthService {
     
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private PersonaRepository personaRepository;
     @Autowired
     private CamionRepository cargaRepository;
     
@@ -102,7 +107,7 @@ public class AuthService {
     	if (usuarioService.getByEmail(request.getEmail(),null) != null) {
 			return new RegisterDTOResponse(false, "El email ya está registrado");
         }
-		PersonaDTORequest nuevaPersona = PersonaDTORequest.builder()
+		Persona nuevaPersona = Persona.builder()
 				.tipoDoc(request.getPersona_tipoDoc())
 				.nroDocumento(request.getPersona_nroDoc())
 				.nombre(request.getPersona_nombre())
@@ -112,14 +117,15 @@ public class AuthService {
 				.estado("Habilitado")
 				.saldo(0)
 				.build();
-		PersonaDTOResponse nuevaPersonaDto = personaService.save(nuevaPersona, null);
+		
+		Persona persona = personaRepository.save(nuevaPersona);
 		
 		UsuarioDTORequest nuevoUsuario = UsuarioDTORequest.builder()
 				 .nombreUsuario(request.getUsuario_nombre())
 				 .email(request.getEmail())
 				 .contrasena(request.getUsuario_contrasena())
 				 .nivelAcceso(request.getUsuario_nivelAcceso())
-				 .personaId(nuevaPersonaDto.getId())
+				 .personaId(persona.getId())
 				 .build();
 		usuarioService.save(nuevoUsuario, null);
 		

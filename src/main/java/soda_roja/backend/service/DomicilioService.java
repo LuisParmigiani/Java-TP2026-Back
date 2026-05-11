@@ -18,6 +18,7 @@ import soda_roja.backend.repository.*;
 import soda_roja.backend.specification.DomicilioSpecification;
 import soda_roja.backend.dtoRequest.DiaDomicilioDTORequest;
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 @Service
 public class DomicilioService {
@@ -96,7 +97,8 @@ public class DomicilioService {
     }
 
     public DomicilioDTOResponse save(DomicilioDTORequest dto,String userId,String[] populate) {
-        Usuario usuario = usuarioRepository.getById(dto.getPersonaId());
+        Usuario usuario = usuarioRepository.findById(Long.parseLong(userId))
+        						.orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + userId));
         Zona zona = findZonaOrThrow(dto.getZonaId());
         for(int i =0 ;i<usuario.getPersona().getDomicilios().size();i++){
             if(usuario.getPersona().getDomicilios().get(i).getCalle().equalsIgnoreCase(dto.getCalle()) && usuario.getPersona().getDomicilios().get(i).getNumero().equalsIgnoreCase(dto.getNumero()) && usuario.getPersona().getDomicilios().get(i).getCasa().equalsIgnoreCase(dto.getCasa()) ){
@@ -194,7 +196,7 @@ public class DomicilioService {
         if (entidad.getCasa() != null) existing.setCasa(entidad.getCasa());
 
         if (entidad.getHabilitado() != null) {
-            if (entidad.getHabilitado().equalsIgnoreCase("Deshabilitada") && !existing.getHabilitado().equalsIgnoreCase("Deshabilitada")) {
+            if (entidad.getHabilitado().equalsIgnoreCase("Deshabilitado") && !existing.getHabilitado().equalsIgnoreCase("Deshabilitado")) {
                 existing.getDiasDomicilio().forEach(dd -> {
                     if (dd.getEstado().equalsIgnoreCase("ACTIVO")) {
                         DiaZona diaZona = diaZonaRepository.getByDiaIdAndZonaId(dd.getDia().getId(), existing.getZona().getId());
@@ -202,7 +204,7 @@ public class DomicilioService {
                     }
                 });
             }
-            if (entidad.getHabilitado().equalsIgnoreCase("Habilitada") && !existing.getHabilitado().equalsIgnoreCase("Habilitada")) {
+            if (entidad.getHabilitado().equalsIgnoreCase("Habilitado") && !existing.getHabilitado().equalsIgnoreCase("Habilitado")) {
                 existing.getDiasDomicilio().forEach(dd -> {
                     if (dd.getEstado().equalsIgnoreCase("ACTIVO") && existing.getActivo().equalsIgnoreCase("Activa")) {
                         DiaZona diaZona = diaZonaRepository.getByDiaIdAndZonaId(dd.getDia().getId(), existing.getZona().getId());

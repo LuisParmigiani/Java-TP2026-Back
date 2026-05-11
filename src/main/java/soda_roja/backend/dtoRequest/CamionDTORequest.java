@@ -20,12 +20,12 @@ public class CamionDTORequest {
 	@Pattern(regexp = "^([A-Z]{3}\\s?\\d{3}|[A-Z]{2}\\s?\\d{3}\\s?[A-Z]{2})$", message = "La patente debe tener formato argentino: AAA 000 o AA 000 AA")
     private String patente;
 	
-	@Size(min=10, max = 250, message = "El modelo no puede tener menos de 10 caracteres ni más de 250 caracteres") // Valida el tamaño del campo
+	@Size(min=1, max = 250, message = "El modelo no puede tener menos de 1 caracteres ni más de 250 caracteres") // Valida el tamaño del campo
 	@NotBlank(message = "El modelo no puede estar vacío")
 	@Schema(example = "Sprinter Chasis", description = "Modelo del camion")
     private String modelo;
 	
-	@Size(min=10, max = 250, message = "La marca no puede tener menos de 10 caracteres ni más de 250 caracteres") // Valida el tamaño del campo
+	@Size(min=1, max = 250, message = "La marca no puede tener menos de 1 caracteres ni más de 250 caracteres") // Valida el tamaño del campo
 	@NotBlank(message = "La marca no puede estar vacío")
 	@Schema(example = "Mercedez Benz", description = "Marca del camion")
 	private String marca;

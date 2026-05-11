@@ -67,7 +67,7 @@ public class DomicilioController {
             @RequestParam(required = false) String[] populate,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
-
+//
     ){
         return ResponseEntity.ok(service.getByUserId(Long.parseLong(userId),orderBy,nameSearch,enabledStatus, estado, dias,populate, page, size));
     }

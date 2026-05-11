@@ -68,22 +68,22 @@ public class DataSeeder implements CommandLineRunner {
 	    if (productoRepository.count() > 0) {
 	        return;
 	    }
-	    List<Producto> productos = seedProductos();
-	    List<Camion> camiones = seedCamiones();
-	    List<Zona> zonas = seedZonas(camiones);
+//	    List<Producto> productos = seedProductos();
+//	    List<Camion> camiones = seedCamiones();
+//	    List<Zona> zonas = seedZonas(camiones);
 	    seedPersonaYUsuario();
 	    List<Dia> dias = seedDias();
-	    List<Domicilio> domicilios = seedDomicilios(zonas, personas);
-	    List<DiaZona> diasZona = seedDiasZona(zonas, dias);
-	    List<DiaDomicilio> diasDomicilio = seedDiasDomicilio(domicilios, dias,diasZona);
-	    List<ProductoZona> productoZonas = seedProductoZonas(zonas, productos);
-	    List<ProductoDomicilio> productosDomicilio = seedProductosDomicilio(domicilios, productos);
-	    List<PedidoSemanal> pedidosSemanales = seedPedidosSemanales(domicilios, productoZonas);
-	    List<DiaZonaOrden> diaZonaOrdenes = seedDiaZonaOrdenes(diasZona, diasDomicilio, domicilios);
-	    List<Venta> ventas = seedVentas(domicilios, productoZonas);
-	    List<Gasto> gastos = seedGastos(camiones);
-	    List<Pago> pagos = seedPagos();
-	    List<Carga> cargas = seedCargas(camiones, productos);
+//	    List<Domicilio> domicilios = seedDomicilios(zonas, personas);
+//	    List<DiaZona> diasZona = seedDiasZona(zonas, dias);
+//	    List<DiaDomicilio> diasDomicilio = seedDiasDomicilio(domicilios, dias,diasZona);
+//	    List<ProductoZona> productoZonas = seedProductoZonas(zonas, productos);
+//	    List<ProductoDomicilio> productosDomicilio = seedProductosDomicilio(domicilios, productos);
+//	    List<PedidoSemanal> pedidosSemanales = seedPedidosSemanales(domicilios, productoZonas);
+//	    List<DiaZonaOrden> diaZonaOrdenes = seedDiaZonaOrdenes(diasZona, diasDomicilio, domicilios);
+//	    List<Venta> ventas = seedVentas(domicilios, productoZonas);
+//	    List<Gasto> gastos = seedGastos(camiones);
+//	    List<Pago> pagos = seedPagos();
+//	    List<Carga> cargas = seedCargas(camiones, productos);
 	}
 
 	private List<Producto> seedProductos() {
@@ -171,49 +171,49 @@ public class DataSeeder implements CommandLineRunner {
 		List<Persona> personasList = new ArrayList<>();
 		List<Usuario> usuariosList = new ArrayList<>();
 
-		for (int i = 0; i < 60; i++) {
-			Persona persona = new Persona();
-			persona.setNombre(faker.name().firstName());
-			persona.setApellido(faker.name().lastName());
-			persona.setTipoDoc(faker.options().option("DNI", "Pasaporte", "Cédula"));
-			persona.setNroDocumento(Integer.toString(faker.number().numberBetween(10000000, 99999999) + i));
-			persona.setTelefono(faker.phoneNumber().cellPhone());
-			String email = faker.internet().emailAddress() + i;
-			persona.setEmail(email);
-			persona.setSaldo(faker.number().numberBetween(-2000, 100000));
-			persona.setEstado(faker.options().option("Habilitado", "Deshabilitado"));
-			persona.setDomicilios(new ArrayList<>());
-			personasList.add(persona);
-
-			Usuario usuario = new Usuario();
-			usuario.setNombreUsuario(faker.name().username().replace(".", "_") + i);
-			usuario.setContrasena(passwordEncoder.encode("123456"));
-			usuario.setNivelAcceso("Usuario");
-			usuario.setEmail(email);
-			usuario.setPersona(persona);
-			usuariosList.add(usuario);
-		}
-
-		for (int i = 0; i < 20; i++) {
-			Persona persona = new Persona();
-			persona.setNombre(faker.name().firstName());
-			persona.setApellido(faker.name().lastName());
-			persona.setTipoDoc(faker.options().option("DNI", "Pasaporte", "Cédula"));
-			persona.setNroDocumento(Integer.toString(faker.number().numberBetween(10000000, 99999999) + 100 + i));
-			persona.setTelefono(faker.phoneNumber().cellPhone());
-			String email = faker.internet().emailAddress() + "emp" + i;
-			persona.setEmail(email);
-			persona.setSaldo(faker.number().numberBetween(-2000, 100000));
-			persona.setDomicilios(new ArrayList<>());
-			personasList.add(persona);
-			Usuario usuario = new Usuario();
-			usuario.setNombreUsuario(faker.name().username().replace(".", "_") + "emp" + i);
-			usuario.setContrasena(passwordEncoder.encode("123456"));
-			usuario.setNivelAcceso("Empleado");
-			usuario.setEmail(email);
-			usuario.setPersona(persona);
-			usuariosList.add(usuario);
-		}
+//		for (int i = 0; i < 60; i++) {
+//			Persona persona = new Persona();
+//			persona.setNombre(faker.name().firstName());
+//			persona.setApellido(faker.name().lastName());
+//			persona.setTipoDoc(faker.options().option("DNI", "Pasaporte", "Cédula"));
+//			persona.setNroDocumento(Integer.toString(faker.number().numberBetween(10000000, 99999999) + i));
+//			persona.setTelefono(faker.phoneNumber().cellPhone());
+//			String email = faker.internet().emailAddress() + i;
+//			persona.setEmail(email);
+//			persona.setSaldo(faker.number().numberBetween(-2000, 100000));
+//			persona.setEstado(faker.options().option("Habilitado", "Deshabilitado"));
+//			persona.setDomicilios(new ArrayList<>());
+//			personasList.add(persona);
+//
+//			Usuario usuario = new Usuario();
+//			usuario.setNombreUsuario(faker.name().username().replace(".", "_") + i);
+//			usuario.setContrasena(passwordEncoder.encode("123456"));
+//			usuario.setNivelAcceso("Usuario");
+//			usuario.setEmail(email);
+//			usuario.setPersona(persona);
+//			usuariosList.add(usuario);
+//		}
+//
+//		for (int i = 0; i < 20; i++) {
+//			Persona persona = new Persona();
+//			persona.setNombre(faker.name().firstName());
+//			persona.setApellido(faker.name().lastName());
+//			persona.setTipoDoc(faker.options().option("DNI", "Pasaporte", "Cédula"));
+//			persona.setNroDocumento(Integer.toString(faker.number().numberBetween(10000000, 99999999) + 100 + i));
+//			persona.setTelefono(faker.phoneNumber().cellPhone());
+//			String email = faker.internet().emailAddress() + "emp" + i;
+//			persona.setEmail(email);
+//			persona.setSaldo(faker.number().numberBetween(-2000, 100000));
+//			persona.setDomicilios(new ArrayList<>());
+//			personasList.add(persona);
+//			Usuario usuario = new Usuario();
+//			usuario.setNombreUsuario(faker.name().username().replace(".", "_") + "emp" + i);
+//			usuario.setContrasena(passwordEncoder.encode("123456"));
+//			usuario.setNivelAcceso("Empleado");
+//			usuario.setEmail(email);
+//			usuario.setPersona(persona);
+//			usuariosList.add(usuario);
+//		}
 
 		Persona adminPersona = new Persona();
 		adminPersona.setNombre("Admin");

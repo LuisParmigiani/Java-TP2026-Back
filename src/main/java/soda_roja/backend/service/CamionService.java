@@ -54,6 +54,7 @@ public class CamionService {
                 .patente(entidad.getPatente())
                 .modelo(entidad.getModelo())
                 .marca(entidad.getMarca())
+                .estado(entidad.getEstado())
                 .kilometraje(entidad.getKilometraje())
                 .build();
         Camion saved = repository.save(camion);

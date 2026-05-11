@@ -1,10 +1,12 @@
 package soda_roja.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import soda_roja.backend.dtoRequest.ProductoDTORequest;
 import soda_roja.backend.dtoRequestPut.ProductoDTORequestPut;
 import soda_roja.backend.dtoResponse.DomicilioDTOResponse;
@@ -14,7 +16,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import soda_roja.backend.model.Zona;
+import soda_roja.backend.model.ProductoZona;
 import soda_roja.backend.repository.ProductoRepository;
+import soda_roja.backend.repository.ProductoZonaRepository;
+import soda_roja.backend.repository.ZonaRepository;
 import soda_roja.backend.model.Producto;
 import soda_roja.backend.specification.ProductoSpecification;
 
@@ -25,6 +30,10 @@ public class ProductoService {
 
     @Autowired
     private ProductoRepository repository;
+    @Autowired
+    private ProductoZonaRepository pZonarepository;
+    @Autowired
+    private ZonaRepository zonaRepository;
     @Autowired
     private MapToDTO mapToDTOMapper;
     @Autowired
@@ -41,7 +50,14 @@ public class ProductoService {
             String userId, String sortOption, String searchTerm,
             Double minPrice, Double maxPrice, String directionId,
             String[] populate, int page, int size) {
-
+    	System.out.println("getActive called with parameters:");
+    			System.out.println("userId: " + userId);
+    			System.out.println("sortOption: " + sortOption);
+    			System.out.println("searchTerm: " + searchTerm);
+    			System.out.println("minPrice: " + minPrice);
+    			System.out.println("maxPrice: " + maxPrice);
+    			System.out.println("directionId: " + directionId);
+    			
         Sort sort = Sort.unsorted();
         DomicilioDTOResponse domicilio = null;
 
@@ -72,6 +88,15 @@ public class ProductoService {
 
             String zone = domicilio != null ? domicilio.getZonaId().toString() : null;
             String estado = "activo";
+            System.out.println("Filtering with parameters:");
+            System.out.println("userId: " + userId);
+            System.out.println("zone: " + zone);
+            System.out.println("estado: " + estado);
+            System.out.println("searchTerm: " + searchTerm);
+            System.out.println("minPrice: " + minPrice);
+            System.out.println("maxPrice: " + maxPrice);
+            	
+            
             ProductoSpecification.ProductoFiltrosDTO filtros =
                     new ProductoSpecification.ProductoFiltrosDTO(
                             userId,
@@ -92,8 +117,11 @@ public class ProductoService {
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
         return mapToDTO(producto, populate);
     }
-
+    @Transactional
     public ProductoDTOResponse save(ProductoDTORequest entidad, MultipartFile file, String[] populate) {
+    	List<Zona> zonas = zonaRepository.findAll().stream()
+				.toList();
+    	
         Producto producto = Producto.builder()
                 .nombre(entidad.getNombre())
                 .detalle(entidad.getDetalle())
@@ -102,18 +130,28 @@ public class ProductoService {
                 .activo(entidad.isActivo())
                 .build();
 
-        producto = repository.save(producto);
-
+       
+        
+    
+        
         if (file != null && !file.isEmpty()) {
             try {
                 String imageUrl = cloudinaryService.uploadImage(file, "producto",producto.getId());
                 producto.setImagenUrl(imageUrl);
-                producto = repository.save(producto);
             } catch (Exception e) {
                 throw new RuntimeException("Error uploading image: " + e.getMessage());
             }
         }
 
+            Producto productoResponse = repository.save(producto);
+        	zonas.forEach(z -> {
+        	ProductoZona pz = new ProductoZona();
+			pz.setProducto(productoResponse);
+			pz.setZona(z);
+			
+			pZonarepository.save(pz);
+		});
+        	
         return mapToDTO(producto, populate);
     }
         
