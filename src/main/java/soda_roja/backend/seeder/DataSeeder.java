@@ -43,10 +43,6 @@ public class DataSeeder implements CommandLineRunner {
 	@Autowired
 	private PagoRepository pagoRepository;
 	@Autowired
-	private ProductoDomicilioRepository productoDomicilioRepository;
-	@Autowired
-	private LineaPedidoRepository lineaPedidoRepository;
-	@Autowired
 	private PedidoSemanalRepository pedidoSemanalRepository;
 	@Autowired
 	private DiaRepository diaRepository;
@@ -269,7 +265,7 @@ public class DataSeeder implements CommandLineRunner {
 	                domicilio.setProductoDomicilio(new ArrayList<>());
 	                domicilio.setDiasDomicilio(new ArrayList<>());
 	                domicilio.setPersona(persona);
-					domicilio.setHabilitado(faker.options().option("Habilitada", "Pendiente","Deshabilitada"));
+					domicilio.setHabilitado(faker.options().option("Habilitado", "Pendiente","Deshabilitado"));
 	                domicilio.setActivo(faker.options().option("Inactiva", "Activa"));
 	                domicilios.add(domicilio);
 	            }
@@ -278,7 +274,7 @@ public class DataSeeder implements CommandLineRunner {
 	            Zona zona = zonas.get(faker.number().numberBetween(0, zonas.size()));
 	            domicilio.setCalle(faker.address().streetName());
 	            domicilio.setNumero(String.valueOf(faker.number().numberBetween(1, 1000)));
-				domicilio.setHabilitado("Habilitada");
+				domicilio.setHabilitado("Habilitado");
 
 				domicilio.setCasa(faker.number().numberBetween(1, 100) + "A");
 	            domicilio.setZona(zona);
@@ -527,7 +523,7 @@ public class DataSeeder implements CommandLineRunner {
 	        // Obtener domicilios de esta zona que están activos ese día
 	        List<Domicilio> domiciliosPorZona = domicilios.stream()
 	                .filter(d -> d.getZona().getId().equals(zona.getId()))
-	                .filter(d -> "Habilitada".equals(d.getHabilitado()))
+	                .filter(d -> "Habilitado".equals(d.getHabilitado()))
 	                .filter(d -> "Activa".equals(d.getActivo()))
 	                .filter(d -> diasDomicilio.stream()
 	                        .anyMatch(dd -> dd.getDomicilio().getId().equals(d.getId())

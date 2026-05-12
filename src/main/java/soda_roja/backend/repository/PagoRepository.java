@@ -15,6 +15,6 @@ public interface PagoRepository extends JpaRepository<Pago, Long> , JpaSpecifica
     // No es necesario escribir código adicional aquí a menos que quieras métodos personalizados
     List<Pago> findByPersonaUsuarioIdOrderByFechaDesc(Long userId);
 
-    @Query("SELECT COALESCE(SUM(p.monto), 0) FROM Pago p WHERE p.fecha BETWEEN :mesAtras AND :hoy AND p.estado = 'Aprobado'")
+    @Query("SELECT COALESCE(SUM(p.monto), 0) FROM Pago p WHERE p.fecha BETWEEN :mesAtras AND :hoy AND p.estado = 'Completado'")
     Float findIngresosMensuales(@Param("hoy") java.util.Date hoy, @Param("mesAtras") java.util.Date mesAtras);
 }

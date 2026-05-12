@@ -15,7 +15,7 @@ public interface DiaZonaRepository extends JpaRepository<DiaZona, Long>, JpaSpec
 
     @Query(value = "SELECT DISTINCT dz.* FROM dia_zona dz " +
             "INNER JOIN dia_zona_orden dzo ON dz.id = dzo.dia_zona_id " +
-            "INNER JOIN domicilio d ON d.id = dzo.domicilio_id AND d.habilitado = 'Habilitada' " +
+            "INNER JOIN domicilio d ON d.id = dzo.domicilio_id AND d.habilitado = 'Habilitado' " +
             "WHERE dz.dia_id = :diaId AND dz.zona_id = :zonaId",
             nativeQuery = true)
     List<DiaZona> findByZonaIdAndDiaId(@Param("zonaId") Long zonaId, @Param("diaId") Long diaId);
@@ -33,8 +33,7 @@ public interface DiaZonaRepository extends JpaRepository<DiaZona, Long>, JpaSpec
                     "INNER JOIN  d.ventas v " +
                     "WHERE c.id = :camionId " +
                     "AND dz.dia.id = :diaId " +
-                    "AND dzo.domicilio.habilitado = 'Habilitada' " +
-
+                    "AND dzo.domicilio.habilitado = 'Habilitado' " +
                     "AND (:zonaNombre IS NULL OR TRIM(:zonaNombre) = '' OR LOWER(z.nombre) LIKE CONCAT('%', LOWER(:zonaNombre), '%')) " +
                     "AND (:calle IS NULL OR TRIM(:calle) = '' OR LOWER(d.calle) LIKE CONCAT('%', LOWER(:calle), '%')) " +
                     "ORDER BY dzo.orden ASC"
@@ -50,13 +49,13 @@ public interface DiaZonaRepository extends JpaRepository<DiaZona, Long>, JpaSpec
         "LEFT JOIN  d.ventas v ON v.estado = 'En Proceso' " +
         "WHERE c.id = :camionId " +
         "AND dz.dia.id = :diaId " +
-        "AND dzo.domicilio.habilitado = 'Habilitada' " +
+        "AND dzo.domicilio.habilitado = 'Habilitado' " +
         "AND NOT EXISTS (" +
         "  SELECT 1 FROM Venta v " +
         "  WHERE v.domicilio.id = dzo.domicilio.id " +
         "  AND v.fecha >= :initialDay " +
         "  AND v.fecha < :finalDay " +
-        "AND v.estado = 'Completado'" +
+        "AND v.estado = 'Completada'" +
         ") " +
                 "AND (:zonaNombre IS NULL OR TRIM(:zonaNombre) = '' OR LOWER(z.nombre) LIKE CONCAT('%', LOWER(:zonaNombre), '%')) " +
                 "AND (:calle IS NULL OR TRIM(:calle) = '' OR LOWER(d.calle) LIKE CONCAT('%', LOWER(:calle), '%')) " +

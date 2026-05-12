@@ -55,21 +55,21 @@ public class SecurityConfig {
                 .requestMatchers("/api/producto/active/**").permitAll()
                 .requestMatchers("/api/producto/customer/active").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**","/swagger-ui.html").permitAll()
-                
+
                 //rutas usuario
-                .requestMatchers("/api/usuario/me").hasAuthority("Usuario")
+                    .requestMatchers("/api/usuario/me").hasAnyAuthority("Empleado","Administrador","Usuario")
                 .requestMatchers("/api/usuario/updatePersona").hasAuthority("Usuario")
                 .requestMatchers("/api/domicilio/**").hasAnyAuthority("Administrador","Empleado","Usuario")
                 .requestMatchers("/api/venta/token/ByUserId").hasAuthority("Usuario")
-                .requestMatchers("/api/venta/ventaHoy/**").hasAuthority("Usuario")
+                .requestMatchers("/api/venta/ventaHoy/**").hasAnyAuthority("Usuario","Empleado")
                 .requestMatchers("/api/pedidoSemanal/**").hasAuthority("Usuario")
                 .requestMatchers("/api/pago/me").hasAuthority("Usuario")
-                
+
                 //rutas empleado
 				.requestMatchers("/api/usuario/driver").hasAuthority("Empleado")
 				.requestMatchers("/api/venta/driver").hasAuthority("Empleado")
 				.requestMatchers("/api/dia-zona/camion/me/dia/**").hasAuthority("Empleado")
-				
+
 				//rutas administrador
 				.requestMatchers("/api/admin/**").hasAuthority("Empleado")
                 .requestMatchers("/api/producto/activo/sinPag").hasAuthority("Administrador")
@@ -80,17 +80,17 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.PUT, "/api/producto").hasAuthority("Administrador")
                 .requestMatchers(HttpMethod.POST, "/api/producto").hasAuthority("Administrador")
                 .requestMatchers(HttpMethod.DELETE, "/api/producto").hasAuthority("Administrador")
-                .requestMatchers("/api/zona/**").hasAnyAuthority("Administrador","Empleado","Usuario") 
+                .requestMatchers("/api/zona/**").hasAnyAuthority("Administrador","Empleado","Usuario")
                 .requestMatchers("/api/camion/**").hasAuthority("Administrador")
                 .requestMatchers("/api/usuario/empleados").hasAuthority("Administrador")
-                .requestMatchers("/api/usuario/**").hasAuthority("Administrador") 
+                .requestMatchers("/api/usuario/**").hasAuthority("Administrador")
                 .requestMatchers("/api/persona/search/**").hasAnyAuthority("Administrador","Empleado")
-                .requestMatchers("/api/persona").hasAuthority("Administrador")
+                .requestMatchers("/api/persona").hasAnyAuthority("Administrador","Empleado")
                 .requestMatchers("/api/gasto").hasAuthority("Administrador")
                 .requestMatchers("/api/pago/ingressos").hasAuthority("Administrador")
                 
                 //rutas compartidas entre admin y usuario
-                .requestMatchers("/api/venta").hasAnyAuthority("Administrador","Usuario")
+                .requestMatchers("/api/venta").hasAnyAuthority("Administrador","Usuario","Empleado")
                 .requestMatchers("/api/venta/**").hasAnyAuthority("Administrador","Usuario","Empleado")
                 
                 // Lista de empleados restringida a administrador

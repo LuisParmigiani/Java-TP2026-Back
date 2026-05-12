@@ -85,8 +85,8 @@ public class VentaController {
 
     @PostMapping("/driver")
     public ResponseEntity<VentaDTOResponse> createByDriver(
+            @AuthenticationPrincipal String driverId,
             @Valid @RequestBody CreatVentaDriverDTORequest dto,
-            @RequestParam(required = false) String driverId,
             @RequestParam(required = false) String monto,
             @RequestParam(required = false) String[] populate) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.saveByDriver(dto.getVenta(), dto.getProductoDomicilio(), monto, populate,driverId));
