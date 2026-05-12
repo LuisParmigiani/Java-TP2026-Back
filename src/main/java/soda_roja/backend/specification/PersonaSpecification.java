@@ -19,4 +19,8 @@ public class PersonaSpecification {
     public static Specification<Persona> porDia(Dia dia) {
         return (root, query, cb) -> dia == null ? null : cb.equal(root.get("Domicilios").get("diasDomicilio").get("dia"), dia);
     }
+    
+    public static Specification<Persona> porNivelAcceso(String estado) {
+        return (root, query, cb) -> estado == null ? null : cb.equal(root.get("usuario").get("nivelAcceso"), estado);
+    }
 }

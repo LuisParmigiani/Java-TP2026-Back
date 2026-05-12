@@ -84,7 +84,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/camion/**").hasAuthority("Administrador")
                 .requestMatchers("/api/usuario/empleados").hasAuthority("Administrador")
                 .requestMatchers("/api/usuario/**").hasAuthority("Administrador") 
-                .requestMatchers("/api/persona/search/**").hasAuthority("Administrador")
+                .requestMatchers("/api/persona/search/**").hasAnyAuthority("Administrador","Empleado")
                 .requestMatchers("/api/persona").hasAuthority("Administrador")
                 .requestMatchers("/api/gasto").hasAuthority("Administrador")
                 .requestMatchers("/api/pago/ingressos").hasAuthority("Administrador")

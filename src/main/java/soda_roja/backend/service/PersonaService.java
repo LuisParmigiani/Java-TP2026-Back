@@ -80,7 +80,9 @@ public class PersonaService {
     }
 
     public List<PersonaDTOResponse> getByNameOnly(String query, String[] populate) {
-        Specification<Persona> spec = (root, queryObj, cb) -> {
+    	String estado="Usuario";
+        Specification<Persona> spec = Specification.where(PersonaSpecification.porNivelAcceso(estado))
+        		.and((root, queryObj, cb) -> {
             if (query == null || query.isEmpty()) {
                 return cb.conjunction();
             }
@@ -88,7 +90,7 @@ public class PersonaService {
                 cb.like(cb.lower(root.get("nombre")), "%" + query.toLowerCase() + "%"),
                 cb.like(cb.lower(root.get("apellido")), "%" + query.toLowerCase() + "%")
             );
-        };
+        });
         
         return repository.findAll(spec).stream()
             .map(p -> mapToDTO(p, populate))
