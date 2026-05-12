@@ -69,10 +69,8 @@ public class UsuarioController {
             @Valid @RequestPart("entidad") UsuarioDTORequestPut entidad,
             @RequestPart(value = "file", required = false) MultipartFile file,
             @RequestParam(required = false) String[] populate) {
-    	UsuarioDTOResponse usuario= service.getById(Long.parseLong(userId), new String[0]);
-    	servicePersona.update(usuario.getPersonaId(), entidad.getPersona() , new String[0]);
-    	UsuarioDTOResponse usuarioActualizado= service.update(Long.parseLong(userId), entidad, file, populate);
-    	
+        
+    	UsuarioDTOResponse usuarioActualizado = service.updateProfile(Long.parseLong(userId), entidad, file, populate);
     	return ResponseEntity.ok(usuarioActualizado);
     }
     

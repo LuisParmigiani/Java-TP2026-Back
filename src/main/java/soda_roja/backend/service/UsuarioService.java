@@ -251,6 +251,48 @@ public class UsuarioService {
         
         return mapToDTO(existing, populate);
     }
+    
+    @Transactional
+    public UsuarioDTOResponse updateProfile(Long id, UsuarioDTORequestPut entidad, MultipartFile file, String[] populate) {
+        Usuario existing = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con id: " + id));
+
+        if (entidad.getPersona() != null && existing.getPersona() != null) {
+            Persona existingPersona = existing.getPersona();
+            PersonaDTORequestPut personaDto = entidad.getPersona();
+
+            if (personaDto.getNombre() != null) existingPersona.setNombre(personaDto.getNombre());
+            if (personaDto.getApellido() != null) existingPersona.setApellido(personaDto.getApellido());
+            if (personaDto.getTipoDoc() != null) existingPersona.setTipoDoc(personaDto.getTipoDoc());
+            if (personaDto.getNroDocumento() != null) existingPersona.setNroDocumento(personaDto.getNroDocumento());
+            if (personaDto.getTelefono() != null) existingPersona.setTelefono(personaDto.getTelefono());
+            if (personaDto.getEmail() != null) {
+				existingPersona.setEmail(personaDto.getEmail());
+				existing.setEmail(personaDto.getEmail()); //también modificamos el mail del usuario
+			}
+            
+            personaRepository.save(existingPersona);
+        }
+        
+     //Actualización de Usuario
+        if(entidad.getNombreUsuario() != null) existing.setNombreUsuario(entidad.getNombreUsuario()); 
+        if(entidad.getContrasena() != null) existing.setContrasena(passwordEncoder.encode(entidad.getContrasena()));
+        Usuario saved = repository.save(existing);
+
+        
+        // Manejo de la subida de archivo (Imagen)
+        if (file != null && !file.isEmpty()) {
+            try {
+                String imageUrl = cloudinaryService.uploadImage(file, "usuario", existing.getId());
+                existing.setImagenUrl(imageUrl);
+            } catch (Exception e) {
+                throw new RuntimeException("Error uploading image: " + e.getMessage());
+            }
+        }
+        
+        
+        return mapToDTO(saved, populate);
+    }
 
             
     @Transactional
